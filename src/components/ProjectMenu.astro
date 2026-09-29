@@ -103,7 +103,7 @@ const { projects, current, variant = 'hero' } = Astro.props;
   /* Signature: staggered rise on first paint (home only). */
   .pmenu--hero .pmenu__item {
     opacity: 0;
-    animation: pmenu-rise 0.6s var(--ease-out, ease) both;
+    animation: pmenu-rise 0.6s var(--ease-in-out, ease) both;
     animation-delay: calc(120ms + var(--i) * 65ms);
   }
   @keyframes pmenu-rise {
@@ -118,22 +118,12 @@ const { projects, current, variant = 'hero' } = Astro.props;
     line-height: 1.2;
     letter-spacing: -0.01em;
     color: var(--muted);
-    transition: color var(--dur-1, 0.18s) var(--ease-out, ease);
+    transition: color var(--dur-2, 0.32s) var(--ease-in-out, ease);
   }
-  /* Hover/focus underline — grows left→right (non-current items). */
-  .pmenu__name::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -2px;
-    height: 2px;
-    background: var(--accent);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform var(--dur-2, 0.32s) var(--ease-out, ease);
-  }
-  /* Current project's underline — a real element that morphs across pages. */
+  /* Current project's underline — a real element that morphs across pages.
+     Only the current item gets a line. Hovering shows just the gradient
+     spotlight, so nothing competes with this line as it travels from one
+     project to the next on navigation. */
   .pmenu__rule {
     position: absolute;
     left: 0;
@@ -143,13 +133,10 @@ const { projects, current, variant = 'hero' } = Astro.props;
     background: var(--accent);
     border-radius: 2px;
   }
-  /* Hover, focus, and current-project all resolve to the same accented state,
-     so the colour is correct regardless of whether the item is selected. */
+  /* Hover, focus, and current-project all take the accent colour. */
   .pmenu__item:hover .pmenu__name,
   .pmenu__item:focus-visible .pmenu__name,
   .pmenu__item.active .pmenu__name { color: var(--accent); }
-  .pmenu__item:hover .pmenu__name::after,
-  .pmenu__item:focus-visible .pmenu__name::after { transform: scaleX(1); }
 
   /* Drive the underline morph: interpolate position + width over the same beat
      as the page slide; the old/new colours cross-fade as it travels. */
@@ -198,51 +185,63 @@ const { projects, current, variant = 'hero' } = Astro.props;
 
     let hovered: HTMLElement | null = null;
     let raf = 0;
+    // Rendered state + the eased tween each move runs through.
     let cy = 0, ch = 0, op = 0;
-    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+    let fy = 0, fh = 0, fo = 0;   // from
+    let ty = 0, th = 0, to = 0;   // to
+    let t0 = 0;
+    const DUR = 380;              // ms per move
+    // easeInOutCubic — the "easy in, easy out" curve, matched in JS.
+    const easeInOut = (t: number) =>
+      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
     const targetEl = () => hovered ?? rest ?? null;
     const targetOp = () => (hovered ? 1 : rest ? 0.5 : 0);
 
-    function frame() {
+    function retarget() {
       const el = targetEl();
-      const ty = el ? el.offsetTop - nav.scrollTop : cy;
-      const th = el ? el.offsetHeight : ch;
-      const to = targetOp();
-      cy = lerp(cy, ty, 0.22);
-      ch = lerp(ch, th, 0.22);
-      op = lerp(op, to, 0.18);
+      // Fresh appearance: place the box on the item so it fades in, not slides.
+      if (!hovered && op < 0.02 && el) { cy = el.offsetTop - nav.scrollTop; ch = el.offsetHeight; }
+      fy = cy; fh = ch; fo = op;
+      ty = el ? el.offsetTop - nav.scrollTop : cy;
+      th = el ? el.offsetHeight : ch;
+      to = targetOp();
+      t0 = performance.now();
+      if (!raf) raf = requestAnimationFrame(frame);
+    }
+
+    function frame(now: number) {
+      const t = Math.min(1, (now - t0) / DUR);
+      const e = easeInOut(t);
+      cy = fy + (ty - fy) * e;
+      ch = fh + (th - fh) * e;
+      op = fo + (to - fo) * e;
       glow!.style.transform = `translateY(${cy}px)`;
       glow!.style.height = `${ch}px`;
       glow!.style.opacity = `${op}`;
-      const done =
-        Math.abs(op - to) < 0.005 &&
-        Math.abs(cy - ty) < 0.4 &&
-        Math.abs(ch - th) < 0.4;
-      if (done) { raf = 0; return; }
-      raf = requestAnimationFrame(frame);
+      if (t < 1) raf = requestAnimationFrame(frame); else raf = 0;
     }
-    const kick = () => { if (!raf) raf = requestAnimationFrame(frame); };
 
-    // Snap onto the resting item (or the first) so it fades in place.
-    const start = rest ?? items[0];
-    cy = start.offsetTop - nav.scrollTop;
-    ch = start.offsetHeight;
-    kick();
+    // Rest on the current item (or the first) and fade in place.
+    const startEl = rest ?? items[0];
+    cy = startEl.offsetTop - nav.scrollTop;
+    ch = startEl.offsetHeight;
+    retarget();
 
     items.forEach((el) => {
       const enter = () => {
         if (!hovered && op < 0.02) { cy = el.offsetTop - nav.scrollTop; ch = el.offsetHeight; }
         hovered = el;
-        kick();
+        retarget();
       };
       el.addEventListener('pointerenter', enter);
       el.addEventListener('focus', enter);
     });
-    nav.addEventListener('pointerleave', () => { hovered = null; kick(); });
+    nav.addEventListener('pointerleave', () => { hovered = null; retarget(); });
     nav.addEventListener('focusout', (e) => {
-      if (!nav.contains(e.relatedTarget as Node)) { hovered = null; kick(); }
+      if (!nav.contains(e.relatedTarget as Node)) { hovered = null; retarget(); }
     });
-    nav.addEventListener('scroll', kick, { passive: true });
+    nav.addEventListener('scroll', retarget, { passive: true });
   });
   }
 
