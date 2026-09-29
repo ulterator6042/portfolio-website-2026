@@ -11,15 +11,15 @@ import CaseScrollIndicator from './CaseScrollIndicator.astro';
 import CaseVideo from './CaseVideo.astro';
 import hero from '../../assets/grab/hero.png';
 import closing from '../../assets/grab/closing.png';
-import iconOpenPalm from '../../assets/grab/icon-open-palm.png';
+import iconOpenPalm from '../../assets/grab/icon-open-palm.svg';
 import iconPoint from '../../assets/grab/icon-point.png';
-import iconGrab from '../../assets/grab/icon-grab.png';
+import iconGrab from '../../assets/grab/icon-grab.svg';
 import dot from '../../assets/grab/dot.svg';
 
 const stages = [
   { n: '01', title: 'Webcam', body: 'A standard webcam watches your hand at thirty frames a second.' },
   { n: '02', title: 'Hand tracking', body: 'Computer vision finds the palm and reads whether it is open or closed.' },
-  { n: '03', title: 'TouchDesigner', body: 'Hand position drives the canvas — panning, momentum and the selection dot all resolve here.' },
+  { n: '03', title: 'TouchDesigner', body: 'Hand position drives the canvas, panning, momentum and the selection dot all resolve here.' },
   { n: '04', title: 'The canvas', body: 'The field of images answers instantly: glide, grab, release.' },
 ];
 ---
@@ -78,8 +78,8 @@ const stages = [
       <p class="grab-demo-copy__lead">No scroll direction, no imposed order.</p>
       <p>Explore through your preferred peripheral or through your body.</p>
       <div class="grab-demo-copy__icons">
-        <Image src={iconOpenPalm} alt="" widths={[62, 124]} />
-        <Image src={iconGrab} alt="" widths={[62, 124]} />
+        <img src={iconOpenPalm.src} alt="" width={iconOpenPalm.width} height={iconOpenPalm.height} />
+        <img src={iconGrab.src} alt="" width={iconGrab.width} height={iconGrab.height} />
         <Image src={iconPoint} alt="" widths={[62, 124]} />
       </div>
     </div>
@@ -96,7 +96,7 @@ const stages = [
     </div>
     <div class="grab-gestures">
       <div class="grab-gesture">
-        <Image class="grab-gesture__icon" src={iconOpenPalm} alt="" widths={[112, 224]} />
+        <img class="grab-gesture__icon" src={iconOpenPalm.src} alt="" width={iconOpenPalm.width} height={iconOpenPalm.height} />
         <div>
           <h3>Open palm <span>·</span> glide</h3>
           <p>Move your open hand and the whole field slides with it. Let go and it
@@ -104,7 +104,7 @@ const stages = [
         </div>
       </div>
       <div class="grab-gesture">
-        <Image class="grab-gesture__icon" src={iconGrab} alt="" widths={[120, 240]} />
+        <img class="grab-gesture__icon" src={iconGrab.src} alt="" width={iconGrab.width} height={iconGrab.height} />
         <div>
           <h3>Closed fist <span>·</span> grab</h3>
           <p>Close your hand to expand the image under the dot, connecting our
