@@ -10,7 +10,8 @@ const path = Astro.url.pathname;
     {nav.map((item) => (
       <a
         href={item.href}
-        class:list={['nav__link', { active: path === item.href }]}
+        class:list={['nav__link', 'u-underline', { active: path === item.href }]}
+        data-astro-reload={item.href.includes('/work/photography') ? true : undefined}
       >{item.label}</a>
     ))}
   </nav>
@@ -21,10 +22,11 @@ const path = Astro.url.pathname;
     position: sticky;
     top: 0;
     z-index: 50;
+    min-height: var(--nav-h);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem var(--page-pad);
+    padding-inline: var(--page-pad);
     background: var(--header-bg);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
@@ -36,17 +38,16 @@ const path = Astro.url.pathname;
   }
   .nav__brand {
     font-weight: 700;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     color: #ffffff;
     text-decoration: none;
-    font-size: 1.1rem;
+    font-size: 1.6rem;
   }
   .nav__links { display: flex; gap: 1.75rem; }
   .nav__link {
     color: var(--header-text);
-    text-decoration: none;
     font-size: 0.95rem;
-    transition: color 0.15s ease;
+    transition: color var(--dur-1) var(--ease-in-out);
   }
-  .nav__link:hover, .nav__link.active { color: #ffffff; }
+  .nav__link:hover, .nav__link:focus-visible, .nav__link.active { color: #ffffff; }
 </style>

@@ -31,7 +31,7 @@ const accentVars = [
 <Base title={d.title} description={d.summary}>
   <div class:list={['case-shell', { dark }]} style={accentVars}>
     <ProjectRail projects={railProjects} current={project.id} dark={dark} />
-    <article class="case">
+    <article class="case" transition:name="case-content">
       {!d.hideHeader && (
         <ProjectHeader
           title={d.title}
@@ -56,6 +56,31 @@ const accentVars = [
 <style is:global>
   html { scrollbar-width: none; }        /* Firefox */
   html::-webkit-scrollbar { display: none; } /* Chromium / WebKit */
+
+  /* Project → project navigation: the incoming case content slides in from the
+     left while the outgoing one eases out. The rail stays put; its underline
+     morphs across (see ProjectMenu). Paired with the underline's 460ms beat. */
+  @keyframes case-slide-in {
+    from { opacity: 0; transform: translateX(-7vw); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes case-slide-out {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(4vw); }
+  }
+  ::view-transition-old(case-content) {
+    animation: case-slide-out 240ms var(--ease-in-out, ease) both;
+  }
+  ::view-transition-new(case-content) {
+    animation: case-slide-in 460ms var(--ease-in-out, ease) both;
+  }
+
+  /* Respect reduced-motion: skip the directional slide, keep a plain fade. */
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(case-content),
+    ::view-transition-new(case-content) { animation: none; }
+    ::view-transition-group(proj-underline) { animation-duration: 0.001ms; }
+  }
 </style>
 
 <style>

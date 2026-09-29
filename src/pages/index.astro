@@ -1,44 +1,28 @@
 ---
 import Base from '@layouts/Base.astro';
-import { Image } from 'astro:assets';
-import { site, categories } from '@config/site';
-import { getProjects, projectHref } from '../lib/projects';
+import ProjectMenu from '@components/ProjectMenu.astro';
+import { site } from '@config/site';
+import { getProjects } from '../lib/projects';
 
 const all = await getProjects();
 // Photography is not a column item — it's a header link next to About.
 const projects = all.filter((p) => p.data.category !== 'photography');
-const catLabel = (id: string) => categories.find((c) => c.id === id)?.label ?? id;
 ---
 <Base bare={true} lockScroll={true}>
   <div class="home">
     <!-- Dark top bar: name + section links -->
     <header class="topbar">
-      <span class="topbar__name">{site.name}</span>
+      <a class="topbar__name" href="/">{site.name}</a>
       <nav class="topbar__links">
-        <a href="/about">About me</a>
-        <a href="/work/photography">Photography</a>
+        <a class="u-underline" href="/about">About me</a>
+        <a class="u-underline" href="/work/photography" data-astro-reload>Photography</a>
       </nav>
     </header>
 
     <div class="stage">
-      <!-- Left: the project menu — identical behaviour to the in-project rail.
-           Each item links straight to that project's scrollable page. -->
+      <!-- Left: the shared project menu (same component powers the case rail). -->
       <div class="col">
-        <nav class="list" aria-label="Projects">
-          {projects.map((p) => (
-            <a class="list__item" href={projectHref(p)}>
-              <span class="list__thumb">
-                {p.data.cover
-                  ? <Image class="list__img" src={p.data.cover} alt={p.data.title} widths={[220, 440]} sizes="220px" />
-                  : <span class="list__ph" aria-hidden="true"></span>}
-                <span class="list__scrim"></span>
-                <span class="list__tag">{catLabel(p.data.category)}</span>
-                {p.data.wip && <span class="list__wip">Soon</span>}
-              </span>
-              <span class="list__name">{p.data.title}</span>
-            </a>
-          ))}
-        </nav>
+        <ProjectMenu projects={projects} variant="hero" />
         <div class="scroll-cue" data-cue hidden aria-hidden="true">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
@@ -57,17 +41,24 @@ const catLabel = (id: string) => categories.find((c) => c.id === id)?.label ?? i
 </Base>
 
 <script>
-  // Scroll cue: show the chevron only when the list has more below the fold.
-  const list = document.querySelector<HTMLElement>('.list');
-  const cue = document.querySelector<HTMLElement>('[data-cue]');
+  // Scroll cue: show the chevron only when the menu has more below the fold.
+  // (The spotlight interaction lives inside the ProjectMenu component.)
+  // Re-wired on each navigation so it survives client-side routing.
+  let menu: HTMLElement | null = null;
+  let cue: HTMLElement | null = null;
   function updateCue() {
-    if (!list || !cue) return;
-    const more = list.scrollHeight - list.clientHeight - list.scrollTop > 4;
+    if (!menu || !cue) return;
+    const more = menu.scrollHeight - menu.clientHeight - menu.scrollTop > 4;
     cue.hidden = !more;
   }
-  list?.addEventListener('scroll', updateCue, { passive: true });
+  function setupCue() {
+    menu = document.querySelector<HTMLElement>('.pmenu');
+    cue = document.querySelector<HTMLElement>('[data-cue]');
+    menu?.addEventListener('scroll', updateCue, { passive: true });
+    updateCue();
+  }
   window.addEventListener('resize', updateCue);
-  updateCue();
+  document.addEventListener('astro:page-load', setupCue);
 </script>
 
 <style>
@@ -76,134 +67,46 @@ const catLabel = (id: string) => categories.find((c) => c.id === id)?.label ?? i
   /* Top bar */
   .topbar {
     flex: 0 0 auto;
-    height: 72px;
+    min-height: var(--nav-h);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-inline: 30px;
+    padding: 0.75rem 30px;
     background: var(--header-bg);
   }
   .topbar__name {
-    color: var(--header-text);
+    color: #fff;
     font-weight: 700;
-    font-size: 2rem;
+    font-size: 1.6rem;
     letter-spacing: -0.02em;
+    text-decoration: none;
   }
   .topbar__links { display: flex; gap: 1.75rem; }
   .topbar__links a {
     color: var(--header-text);
-    text-decoration: underline 1.5px transparent;
-    text-underline-offset: 4px;
     font-size: 0.95rem;
-    transition: text-decoration-color 0.15s ease, color 0.15s ease;
+    transition: color var(--dur-1) var(--ease-in-out);
   }
-  .topbar__links a:hover {
-    color: #fff;
-    text-decoration-color: #fff; /* white underline on hover */
-  }
+  .topbar__links a:hover,
+  .topbar__links a:focus-visible { color: #fff; }
 
-  /* Stage = list + detail */
+  /* Stage = menu + detail. The menu column matches the in-project rail width
+     so the home and case-study navigation read as the same panel. */
   .stage {
     flex: 1 1 auto;
     min-height: 0;
     display: grid;
-    grid-template-columns: 260px 1fr;
+    grid-template-columns: 300px 1fr;
   }
 
-  /* Left column wrapper (holds the scroll area + the scroll cue) */
+  /* Left column wrapper (holds the shared ProjectMenu + the scroll cue). The
+     menu component owns its own list styling; this just frames the column. */
   .col {
     position: relative;
     min-height: 0;
     display: flex;
     flex-direction: column;
     border-right: 1px solid var(--border);
-  }
-  .list {
-    flex: 1 1 auto;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    /* Left padding = 30px so the column aligns with the header name. */
-    padding: 1.5rem 20px 1.5rem 30px;
-    overflow-y: auto;
-    scrollbar-width: none; /* Firefox */
-  }
-  .list::-webkit-scrollbar { display: none; } /* Chromium/WebKit */
-
-  /* ── Menu item — mirrors the in-project rail (art + hover pill) ──────── */
-  .list__item {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    text-decoration: none;
-    color: inherit;
-  }
-  .list__thumb {
-    position: relative;
-    display: block;
-    height: 108px;
-    border-radius: 6px;
-    overflow: hidden;
-    background: #f0f0f0;
-  }
-  .list__img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: filter 0.25s ease, transform 0.25s ease;
-  }
-  .list__ph { position: absolute; inset: 0; background: #f0f0f0; }
-  .list__scrim {
-    position: absolute;
-    inset: 0;
-    background: rgba(10, 10, 10, 0);
-    transition: background 0.25s ease;
-  }
-  .list__tag {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%) scale(0.94);
-    padding: 5px 15px;
-    border: 2px solid #ffffff;
-    border-radius: 29px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    color: #ffffff;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-  }
-  .list__item:hover .list__img { filter: blur(6px); transform: scale(1.06); }
-  .list__item:hover .list__scrim { background: rgba(10, 10, 10, 0.35); }
-  .list__item:hover .list__tag { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-
-  .list__name {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    color: #6b6b6b;
-    transition: color 0.15s ease;
-  }
-  .list__item:hover .list__name { color: #111111; }
-
-  /* Under-construction badge (e.g. Talaris) */
-  .list__wip {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    padding: 3px 9px;
-    border-radius: 999px;
-    background: rgba(10, 10, 10, 0.72);
-    color: #fff;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    font-size: 11px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
   }
 
   /* Scroll cue — fades in over the bottom of the list when scrollable */

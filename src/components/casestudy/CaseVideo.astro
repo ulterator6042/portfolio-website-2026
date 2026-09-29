@@ -54,24 +54,29 @@ const { src, caption, poster, ratio = '16 / 9', class: klass } = Astro.props;
 </style>
 
 <script>
-  // Attach src on first intersection, then play/pause with visibility. Runs for
-  // every CaseVideo on the page.
-  const vids = document.querySelectorAll<HTMLVideoElement>('.case-video__el');
-  if (vids.length) {
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          const el = entry.target as HTMLVideoElement;
-          if (entry.isIntersecting) {
-            if (!el.src && el.dataset.src) el.src = el.dataset.src;
-            el.play().catch(() => {});
-          } else {
-            el.pause();
+  // Attach src on first intersection, then play/pause with visibility. One
+  // observer, re-scanned after each navigation so newly-swapped videos hook in.
+  let io: IntersectionObserver | null = null;
+  function scanVideos() {
+    if (!io) {
+      io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            const el = entry.target as HTMLVideoElement;
+            if (entry.isIntersecting) {
+              if (!el.src && el.dataset.src) el.src = el.dataset.src;
+              el.play().catch(() => {});
+            } else {
+              el.pause();
+            }
           }
-        }
-      },
-      { threshold: 0.35 },
-    );
-    vids.forEach((v) => io.observe(v));
+        },
+        { threshold: 0.35 },
+      );
+    }
+    document.querySelectorAll<HTMLVideoElement>('.case-video__el').forEach((v) => {
+      if (!v.dataset.observed) { io!.observe(v); v.dataset.observed = '1'; }
+    });
   }
+  document.addEventListener('astro:page-load', scanVideos);
 </script>

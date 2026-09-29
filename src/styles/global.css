@@ -17,6 +17,26 @@
   --case-max: 1280px;
   --case-pad: clamp(1.25rem, 6vw, 5rem);
   --case-gap: clamp(4rem, 9vw, 9rem);
+  --nav-h: 64px; /* shared header height → sticky offsets read from this */
+
+  /* ── Motion system — one vocabulary the whole site animates with ─────────
+     Every transition/animation references these, so timing feels deliberate
+     and consistent rather than ad-hoc. --ease-out is the signature curve. */
+  --dur-1: 0.18s;   /* small state changes (colour, opacity)   */
+  --dur-2: 0.32s;   /* underlines, hovers                      */
+  --dur-3: 0.5s;    /* reveals, drop-downs                     */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);   /* entrances, expansions */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1); /* movement             */
+}
+
+/* Respect users who ask for less motion: strip animation everywhere. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 html {
@@ -39,6 +59,35 @@ h1 { font-size: clamp(2.5rem, 6vw, 5rem); }
 h2 { font-size: clamp(1.75rem, 3.5vw, 2.75rem); }
 
 ::selection { background: var(--accent); color: var(--accent-text); }
+
+/* Consistent, visible keyboard focus everywhere (mouse users never see it). */
+:where(a, button, [tabindex], input, textarea, select):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* Signature link underline — reused across the nav, about page, and gallery so
+   every text link animates the same way. Grows left→right; retracts on leave. */
+.u-underline {
+  position: relative;
+  text-decoration: none;
+}
+.u-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 1.5px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-2) var(--ease-in-out);
+}
+.u-underline:hover::after,
+.u-underline:focus-visible::after { transform: scaleX(1); }
+.u-underline:focus-visible { outline: none; } /* underline is the focus cue */
 
 /* Shared layout helper */
 .container {
