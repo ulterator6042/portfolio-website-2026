@@ -29,7 +29,7 @@ const accentVars = [
 <Base title={d.title} description={d.summary} bare={true}>
   <ScrollReveal />
   <div class:list={['case-shell', { dark }]} style={accentVars}>
-    <Sidebar current={project.id} />
+    <Sidebar current={project.id} drawer />
     <article class="case" transition:name="case-content">
       {!d.hideHeader && (
         <ProjectHeader

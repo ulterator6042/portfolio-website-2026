@@ -4,10 +4,14 @@ import Sidebar from '@components/Sidebar.astro';
 ---
 <Base bare={true} lockScroll={true}>
   <div class="home">
-    <Sidebar />
+    <Sidebar home />
     <section class="detail">
       <div class="intro">
-        <h1 class="intro__title">Hi! I&rsquo;m Matteo.</h1>
+        <h1 class="intro__title" aria-label="Hi! I'm Matteo.">
+          {/* The exclamation mark is built from a stem + a separate dot so the
+              dot can fly into the menu on hover (see script). */}
+          <span aria-hidden="true">Hi<span class="excl"><span class="excl__stem"></span><span class="hero-dot" data-hero-dot></span></span> I&rsquo;m Matteo.</span>
+        </h1>
       </div>
     </section>
   </div>
@@ -35,8 +39,110 @@ import Sidebar from '@components/Sidebar.astro';
     letter-spacing: -0.02em;
   }
 
+  /* Hand-built exclamation mark: a stem and a detachable dot. */
+  .excl {
+    position: relative;
+    display: inline-block;
+    width: 0.14em;
+    height: 0.72em;
+    vertical-align: baseline;
+    margin: 0 0.02em;
+  }
+  .excl__stem {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    width: 0.11em;
+    height: 0.52em;
+    background: currentColor;
+    border-radius: 0.06em;
+  }
+  /* The travelling dot. Centred with margin (not transform) so transform is
+     free for the flight. z-index lifts it above the sidebar column. */
+  .hero-dot {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    margin-left: -0.065em;
+    width: 0.13em;
+    height: 0.13em;
+    border-radius: 50%;
+    background: currentColor;
+    z-index: 5;
+    will-change: transform;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-dot {
+      transition: transform 0.42s var(--ease-in-out, ease);
+    }
+  }
+
   @media (max-width: 720px) {
     .home { grid-template-columns: 1fr; }
     .detail { display: none; }
   }
 </style>
+
+<!-- On the home page only, suppress the menu's own hover dots so the flying
+     exclamation dot is the single dot in play. Under reduced motion we keep the
+     normal static menu dots instead (the flight is disabled). -->
+<style is:global>
+  @media (prefers-reduced-motion: no-preference) {
+    .home .pmenu__dot { opacity: 0 !important; transform: none !important; }
+  }
+</style>
+
+<script>
+  // Fly the exclamation-mark dot to whichever project the cursor is over, then
+  // back to the "!" on release. Home page only.
+  function initHeroDot() {
+    const dot = document.querySelector<HTMLElement>('[data-hero-dot]');
+    const menu = document.querySelector<HTMLElement>('.home .pmenu');
+    if (!dot || !menu) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const items = Array.from(menu.querySelectorAll<HTMLElement>('.pmenu__item'));
+    if (!items.length) return;
+
+    // Home position (dot untransformed) + its rendered size, so we can compute
+    // travel deltas and how far to shrink it to match a menu dot (~5px).
+    let baseCX = 0, baseCY = 0, dotPx = 12;
+    let hovered = false;
+
+    const measure = () => {
+      dot.style.transform = 'none';
+      const r = dot.getBoundingClientRect();
+      baseCX = r.left + r.width / 2;
+      baseCY = r.top + r.height / 2;
+      dotPx = r.width || 12;
+    };
+
+    const flyTo = (el: HTMLElement) => {
+      const t = el.getBoundingClientRect();
+      const tx = t.left + 4.5;          // menu-dot slot centre (left:2px + r)
+      const ty = t.top + t.height / 2;
+      const scale = Math.max(0.25, 5 / dotPx);
+      dot.style.transform =
+        `translate(${tx - baseCX}px, ${ty - baseCY}px) scale(${scale})`;
+    };
+
+    const home = () => { dot.style.transform = 'none'; };
+
+    // Measure after layout/fonts settle.
+    requestAnimationFrame(measure);
+    if ('fonts' in document) document.fonts.ready.then(measure);
+
+    items.forEach((el) => {
+      el.addEventListener('pointerenter', () => { hovered = true; flyTo(el); });
+      el.addEventListener('focus', () => { hovered = true; flyTo(el); });
+    });
+    menu.addEventListener('pointerleave', () => { hovered = false; home(); });
+    menu.addEventListener('focusout', (e) => {
+      if (!menu.contains(e.relatedTarget as Node)) { hovered = false; home(); }
+    });
+    window.addEventListener('resize', () => { if (!hovered) measure(); });
+  }
+
+  document.addEventListener('astro:page-load', initHeroDot);
+</script>

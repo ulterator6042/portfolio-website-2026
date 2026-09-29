@@ -4,6 +4,11 @@
  * page (home, case studies, about). There is no top header; everything lives
  * here: the name at the top, the project menu in the middle, and the About link
  * pinned to the bottom. Photography is intentionally omitted for now.
+ *
+ * On phones the column would swallow the screen, so on case-study / about pages
+ * (`drawer`) it collapses into an off-canvas drawer: hidden by default, reopened
+ * by a small hamburger that floats over the content's top-left corner. The home
+ * page keeps the full-screen menu (it is the content there), so it omits `drawer`.
  */
 import ProjectMenu from './ProjectMenu.astro';
 import { site } from '@config/site';
@@ -14,15 +19,48 @@ interface Props {
   current?: string;
   /** True on the About page (highlights the About link). */
   aboutActive?: boolean;
+  /** Collapse into a mobile drawer with a floating toggle (case / about pages). */
+  drawer?: boolean;
+  /** Home layout: on phones, name + About move to the top, the project menu to
+      the bottom-left, and the negative space hosts a little pong easter egg. */
+  home?: boolean;
 }
-const { current, aboutActive = false } = Astro.props;
+const { current, aboutActive = false, drawer = false, home = false } = Astro.props;
 
 const all = await getProjects();
 // Photography is not a menu item.
 const projects = all.filter((p) => p.data.category !== 'photography');
+
+// Split the name around its "ll" so those two glyphs can become pong paddles
+// (Matteo Isabe[ll]a). Only used in the home layout.
+const llIndex = site.name.indexOf('ll');
+const nameBefore = llIndex >= 0 ? site.name.slice(0, llIndex) : site.name;
+const nameAfter = llIndex >= 0 ? site.name.slice(llIndex + 2) : '';
+const hasLL = llIndex >= 0;
 ---
-<aside class="sidebar">
-  <a class="sidebar__name" href="/">{site.name}</a>
+{drawer && (
+  <button
+    class="sidebar__toggle"
+    data-sidebar-toggle
+    type="button"
+    aria-label="Open menu"
+    aria-expanded="false"
+    aria-controls="site-sidebar"
+  >
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </button>
+  <div class="sidebar__backdrop" data-sidebar-backdrop aria-hidden="true"></div>
+)}
+<aside id="site-sidebar" class:list={['sidebar', { drawer, home }]} data-sidebar>
+  <a class="sidebar__name" href="/">
+    {home && hasLL ? (
+      <>{nameBefore}<span class="pong-l" data-pong-l>l</span><span class="pong-l" data-pong-l>l</span>{nameAfter}</>
+    ) : site.name}
+  </a>
   {/* Hover dot: accent (theme colour) on a project page, plain text colour on
       the home/about menu. */}
   <ProjectMenu projects={projects} current={current} dotColor={current ? 'var(--accent)' : 'var(--text)'} />
@@ -31,6 +69,14 @@ const projects = all.filter((p) => p.data.category !== 'photography');
     href="/about"
     aria-current={aboutActive ? 'page' : undefined}
   >About me</a>
+  {home && (
+    <div class="home-play" data-play>
+      {/* The resting black dot; tap to start the rally. */}
+      <button class="home-play__dot" data-play-dot type="button" aria-label="Play a mini pong game"></button>
+      <span class="home-play__paddle" data-paddle="l" aria-hidden="true"></span>
+      <span class="home-play__paddle" data-paddle="r" aria-hidden="true"></span>
+    </div>
+  )}
 </aside>
 
 <style>
@@ -72,4 +118,328 @@ const projects = all.filter((p) => p.data.category !== 'photography');
   .sidebar__about:hover,
   .sidebar__about:focus-visible,
   .sidebar__about.active { color: var(--accent); }
+
+  /* ── Home pong easter egg (mobile only) ───────────────────────────────── */
+  .pong-l { display: inline; transition: opacity 0.25s var(--ease-out, ease); }
+  .home-play { display: none; } /* desktop: no play area */
+
+  /* ── Mobile drawer ─────────────────────────────────────────────────────
+     Hidden on desktop; only the drawer variant collapses on small screens. */
+  .sidebar__toggle { display: none; }
+  .sidebar__backdrop { display: none; }
+
+  @media (max-width: 720px) {
+    /* Floating menu button over the content's bottom-left corner (thumb reach). */
+    .sidebar__toggle {
+      position: fixed;
+      bottom: 16px;
+      left: 16px;
+      z-index: 50;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--bg) 82%, transparent);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      color: var(--text);
+      cursor: pointer;
+      transition: opacity var(--dur-1) var(--ease-out);
+    }
+
+    /* Off-canvas drawer. */
+    .sidebar.drawer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      height: 100dvh;
+      flex-basis: auto;
+      width: min(82vw, 300px);
+      transform: translateX(-100%);
+      transition: transform 0.3s var(--ease-in-out, ease);
+      z-index: 60;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.25);
+    }
+    .sidebar.drawer.open { transform: none; }
+
+    .sidebar__backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 55;
+      display: block;
+      background: rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s var(--ease-in-out, ease), visibility 0.3s;
+    }
+    .sidebar__backdrop.show { opacity: 1; visibility: visible; }
+
+    /* Home layout: name + About at the top (reachable), project menu pinned to
+       the bottom-left, and the open middle is the pong play area. */
+    .sidebar.home .sidebar__name { order: 0; }
+    .sidebar.home .sidebar__about { order: 1; padding: 4px 30px 8px; }
+    .sidebar.home .home-play {
+      order: 2;
+      display: block;
+      position: relative;
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+    .sidebar.home :global(.pmenu) {
+      order: 3;
+      flex: 0 0 auto;
+      padding-bottom: 24px;
+    }
+
+    /* Resting black dot, centred in the negative space. */
+    .home-play__dot {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 12px;
+      height: 12px;
+      padding: 0;
+      border: none;
+      border-radius: 50%;
+      background: var(--text);
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+    }
+    /* The two paddles — thin vertical bars echoing the name's "ll". */
+    .home-play__paddle {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 36px;
+      border-radius: 3px;
+      background: var(--text);
+      opacity: 0;
+      transition: opacity 0.25s var(--ease-out, ease);
+      will-change: transform;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sidebar.drawer { transition: none; }
+    .sidebar__backdrop { transition: opacity 0.001ms; }
+  }
 </style>
+
+<script>
+  // Mobile drawer open/close. Re-init after each client-side navigation.
+  function initSidebar() {
+    const toggle = document.querySelector<HTMLElement>('[data-sidebar-toggle]');
+    const aside = document.querySelector<HTMLElement>('[data-sidebar]');
+    const backdrop = document.querySelector<HTMLElement>('[data-sidebar-backdrop]');
+    if (!toggle || !aside) return;
+
+    const open = () => {
+      aside.classList.add('open');
+      backdrop?.classList.add('show');
+      toggle.setAttribute('aria-expanded', 'true');
+      toggle.setAttribute('aria-label', 'Close menu');
+    };
+    const close = () => {
+      aside.classList.remove('open');
+      backdrop?.classList.remove('show');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Open menu');
+    };
+
+    toggle.addEventListener('click', () =>
+      aside.classList.contains('open') ? close() : open()
+    );
+    backdrop?.addEventListener('click', close);
+    // Tapping any link (project / name / about) closes the drawer.
+    aside.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
+
+    // Escape closes — dedupe across navigations so we don't stack listeners.
+    const w = window as unknown as { __sbEsc?: (e: KeyboardEvent) => void };
+    if (w.__sbEsc) document.removeEventListener('keydown', w.__sbEsc);
+    w.__sbEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
+    document.addEventListener('keydown', w.__sbEsc);
+  }
+
+  document.addEventListener('astro:page-load', initSidebar);
+
+  // Home pong easter egg: tap the black dot in the negative space and the name's
+  // "ll" travel down into the play area as two paddles that volley the dot fast.
+  function initPong() {
+    const field = document.querySelector<HTMLElement>('[data-play]');
+    if (!field) return;
+    const dot = field.querySelector<HTMLElement>('[data-play-dot]');
+    const pL = field.querySelector<HTMLElement>('[data-paddle="l"]');
+    const pR = field.querySelector<HTMLElement>('[data-paddle="r"]');
+    const nameLs = Array.from(document.querySelectorAll<HTMLElement>('[data-pong-l]'));
+    if (!dot || !pL || !pR) return;
+
+    const BALL = 12, PAD_W = 5, PAD_H = 36, EDGE = 8;
+    const EASE = 'cubic-bezier(0.6, 0, 0.2, 1)'; // --ease-in-out
+    const TRAVEL = 380;                           // ms for the letters to fly in/out
+    const SPEED = 6.2;                            // ball speed (px/frame) — fast
+    const TRACK = 0.3;                            // paddle follow (snappy)
+    let state: 'idle' | 'intro' | 'play' | 'over' | 'outro' = 'idle';
+    let raf = 0;
+    let x = 0, y = 0, vx = 0, vy = 0, lY = 0, rY = 0;
+    let hits = 0, target = 0;
+    let missing: 'l' | 'r' | null = null; // the side that will drop the next ball
+
+    // Where a paddle sits at rest in the play area (its edge, vertically centred).
+    const playX = (which: 'l' | 'r', w: number) =>
+      which === 'l' ? EDGE : w - EDGE - PAD_W;
+
+    // The on-screen offset (within the field) of a name "l", so a paddle can
+    // start from exactly where the letter is before flying down.
+    const letterOffset = (lEl: HTMLElement) => {
+      const fr = field.getBoundingClientRect();
+      const r = lEl.getBoundingClientRect();
+      return { x: r.left - fr.left, y: r.top - fr.top };
+    };
+
+    const reset = () => {
+      dot.style.left = '';
+      dot.style.top = '';
+      dot.style.transform = 'translate(-50%, -50%)';
+      dot.style.opacity = '';
+      dot.style.transition = '';
+      pL.style.transition = 'none';
+      pR.style.transition = 'none';
+      pL.style.opacity = '0';
+      pR.style.opacity = '0';
+      pL.style.background = '';
+      pR.style.background = '';
+      nameLs.forEach((l) => (l.style.opacity = ''));
+    };
+
+    // Fly the two letters down into paddle positions, then start the rally.
+    const start = () => {
+      const w = field.clientWidth, h = field.clientHeight;
+      const oL = letterOffset(nameLs[0] ?? pL);
+      const oR = letterOffset(nameLs[1] ?? pR);
+      state = 'intro';
+      nameLs.forEach((l) => (l.style.opacity = '0'));
+
+      // Seed each paddle at its letter's position (no transition), force reflow,
+      // then transition to the play edge, vertically centred.
+      const midY = h / 2 - PAD_H / 2;
+      pL.style.transition = 'none';
+      pR.style.transition = 'none';
+      pL.style.opacity = '1';
+      pR.style.opacity = '1';
+      pL.style.transform = `translate(${oL.x}px, ${oL.y}px)`;
+      pR.style.transform = `translate(${oR.x}px, ${oR.y}px)`;
+      void field.offsetWidth; // reflow so the seed sticks
+      pL.style.transition = `transform ${TRAVEL}ms ${EASE}`;
+      pR.style.transition = `transform ${TRAVEL}ms ${EASE}`;
+      pL.style.transform = `translate(${playX('l', w)}px, ${midY}px)`;
+      pR.style.transform = `translate(${playX('r', w)}px, ${midY}px)`;
+
+      window.setTimeout(() => {
+        if (state !== 'intro') return;
+        // Hand off to the physics loop: clear transitions so per-frame moves snap.
+        pL.style.transition = 'none';
+        pR.style.transition = 'none';
+        x = w / 2; y = h / 2;
+        vx = (Math.random() < 0.5 ? -1 : 1) * SPEED;
+        vy = (Math.random() * 2 - 1) * SPEED * 0.55;
+        lY = h / 2; rY = h / 2;
+        hits = 0;
+        target = 4 + Math.floor(Math.random() * 4); // 4–7 volleys, then a miss
+        missing = null;
+        dot.style.transition = '';
+        dot.style.opacity = '1';
+        dot.style.left = '0';
+        dot.style.top = '0';
+        state = 'play';
+        if (!raf) raf = requestAnimationFrame(loop);
+      }, TRAVEL);
+    };
+
+    // Send both letters back up to the name, then clear the board.
+    const retreat = () => {
+      if (raf) { cancelAnimationFrame(raf); raf = 0; }
+      const oL = letterOffset(nameLs[0] ?? pL);
+      const oR = letterOffset(nameLs[1] ?? pR);
+      state = 'outro';
+      pL.style.transition = `transform ${TRAVEL}ms ${EASE}`;
+      pR.style.transition = `transform ${TRAVEL}ms ${EASE}`;
+      pL.style.transform = `translate(${oL.x}px, ${oL.y}px)`;
+      pR.style.transform = `translate(${oR.x}px, ${oR.y}px)`;
+      window.setTimeout(() => {
+        if (state !== 'outro') return;
+        state = 'idle';
+        reset();
+      }, TRAVEL);
+    };
+
+    // A side missed: the winner flashes, the ball fades, then the letters retreat.
+    const endRally = (winner: 'l' | 'r') => {
+      if (state !== 'play') return;
+      state = 'over';
+      if (raf) { cancelAnimationFrame(raf); raf = 0; }
+      const win = winner === 'l' ? pL : pR;
+      win.style.transition = 'background 0.15s ease';
+      win.style.background = 'var(--accent)';
+      dot.style.transition = 'opacity 0.2s ease';
+      dot.style.opacity = '0';
+      window.setTimeout(retreat, 300);
+    };
+
+    // Count a volley; after the target, whichever side the ball is now heading
+    // toward is marked to miss the next return.
+    function onHit() {
+      hits += 1;
+      if (!missing && hits >= target) missing = vx > 0 ? 'r' : 'l';
+    }
+
+    function loop() {
+      const w = field.clientWidth, h = field.clientHeight;
+      x += vx; y += vy;
+      // Bounce off top / bottom.
+      if (y < BALL / 2) { y = BALL / 2; vy = Math.abs(vy); }
+      if (y > h - BALL / 2) { y = h - BALL / 2; vy = -Math.abs(vy); }
+      // Only the paddle the ball is heading toward chases it (and only if it is
+      // not the one set to miss); the other drifts to centre. So they never move
+      // in lock-step, and the losing side visibly fails to reach the ball.
+      const chaseL = vx < 0 && missing !== 'l';
+      const chaseR = vx > 0 && missing !== 'r';
+      lY += chaseL ? (y - lY) * TRACK : (h / 2 - lY) * TRACK * 0.15;
+      rY += chaseR ? (y - rY) * TRACK : (h / 2 - rY) * TRACK * 0.15;
+      const leftX = EDGE + PAD_W / 2, rightX = w - EDGE - PAD_W / 2;
+      if (missing !== 'l' && x <= leftX + BALL / 2 && vx < 0) {
+        x = leftX + BALL / 2; vx = Math.abs(vx); vy += (y - lY) * 0.12; onHit();
+      }
+      if (missing !== 'r' && x >= rightX - BALL / 2 && vx > 0) {
+        x = rightX - BALL / 2; vx = -Math.abs(vx); vy += (y - rY) * 0.12; onHit();
+      }
+      vy = Math.max(-SPEED, Math.min(SPEED, vy));
+      dot.style.transform = `translate(${x - BALL / 2}px, ${y - BALL / 2}px)`;
+      pL.style.transform = `translate(${EDGE}px, ${lY - PAD_H / 2}px)`;
+      pR.style.transform = `translate(${w - EDGE - PAD_W}px, ${rY - PAD_H / 2}px)`;
+      // Ball past an edge → that side missed; the other wins.
+      if (x < -BALL) { endRally('r'); return; }
+      if (x > w + BALL) { endRally('l'); return; }
+      if (state === 'play') raf = requestAnimationFrame(loop);
+    }
+
+    dot.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (state === 'idle') start();
+      else if (state === 'play') {
+        // Manual stop mid-rally: fade the ball and send the letters home.
+        dot.style.transition = 'opacity 0.2s ease';
+        dot.style.opacity = '0';
+        retreat();
+      }
+    });
+    reset();
+  }
+
+  document.addEventListener('astro:page-load', initPong);
+</script>
