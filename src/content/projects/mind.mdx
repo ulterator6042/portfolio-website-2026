@@ -9,68 +9,11 @@ cover: ./mind-cover.png
 order: 1
 featured: true
 draft: false
+hideHeader: true
+accent: '#8a73e0'
+accentText: '#ffffff'
 ---
 
-import Section from '@components/casestudy/Section.astro';
-import Quote from '@components/casestudy/Quote.astro';
-import Journey from '@components/casestudy/Journey.astro';
-import Findings from '@components/casestudy/Findings.astro';
+import MindCaseStudy from '@components/casestudy/MindCaseStudy.astro';
 
-<Quote>Interruptions are inevitable.</Quote>
-
-<Section>
-The average worker goes through 25 cycles of focus, interruption and re-entry in
-a single day, losing the precious momentum they had built while focusing on a
-task. Each cycle runs the same loop — focused work, an external trigger, the
-interruption, its resolution, and a slow re-entry to rebuild lost context.
-</Section>
-
-<Section>
-## Priorities according to users
-
-When we asked what a recovery tool would need to earn a place in their workflow,
-professionals ranked their priorities clearly:
-
-1. Speed of interaction
-2. Ease of resumption
-3. Depth of detail capture
-4. Ability to save multiple contexts
-5. Control over what is saved
-6. Privacy and data handling
-
-<p style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted);">*153 survey samples</p>
-</Section>
-
-<Quote>One trigger saves everything you were doing before an interruption; one trigger brings it all back.</Quote>
-
-<Section>
-It rebuilds your context and reminds you where you left off, so returning to work
-costs seconds instead of minutes.
-</Section>
-
-<Section>
-## The re-entry, with and without
-
-Mapping the same six moments — from deep focus to resumption — shows where the
-tool changes the experience: it removes the manual reconstruction and protects
-the momentum that would otherwise drain away.
-</Section>
-
-<Journey phases={[
-  { name: 'Deep Focus', without: 'Deep in the task, holding a fragile mental model.', withTool: 'Same deep focus — the tool captures context silently in the background.' },
-  { name: 'The Slip', without: 'Interruption hits. They drop everything — no time to note anything.', withTool: 'One quick trigger stores the full context. Nothing to write down.' },
-  { name: 'Handling It', without: 'Mind trying to keep track of the main task; tabs and windows pile up.', withTool: 'Attends to the interruption freely — the system watches what changes.' },
-  { name: 'Return', without: 'A messy desktop, scattered windows, debris tabs.', withTool: 'One trigger, and the workspace rebuilds itself. Debris cleared.' },
-  { name: 'Re-entry', without: 'Manual reconstruction: re-reads, repositions, closes tabs.', withTool: 'The welcome-back card restores context at a glance.' },
-  { name: 'Resumption', without: 'Momentum rebuilds slowly; time and energy already lost.', withTool: 'Resumes right where they left off — back in flow.' },
-]} />
-
-<Section>
-## What we learned
-</Section>
-
-<Findings items={[
-  { title: 'Window restoration vs welcome-back card', good: 'The restoration of windows is an instant memory trigger, well valued by the professionals.', future: 'The welcome-back card has a high learning curve and can be confusing at first; it needs more research on what data actually helps workers.' },
-  { title: 'Ghost interface', good: 'The interface is unobtrusive — it does not distract you while you are focused on your tasks.', future: 'That low profile risks lowering engagement; it needs exploration of methods that keep the user engaged while staying out of the way.' },
-  { title: 'Gestures and hardware', good: 'Users responded well to being able to adapt the trigger signal to their own preference.', future: 'Full integration with Logitech’s physical products is so far only theoretical; more of the available gestures would unlock even more customization.' },
-]} />
+<MindCaseStudy />

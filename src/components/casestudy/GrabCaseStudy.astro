@@ -1,9 +1,10 @@
 ---
 /**
- * Grab — full-bleed dark case study, ported from the Figma "Frame 137" layout.
- * Self-contained: renders its own hero (the [slug] template drops ProjectHeader
- * via `hideHeader: true`). Copy + assets adapted from the Figma deck; a handful
- * of obvious source typos were corrected in the prose.
+ * Grab — full-bleed dark case study, ported to match the current Figma
+ * "Grab demo" layout (node 85:1237). Self-contained: renders its own hero
+ * (the [slug] template drops ProjectHeader via `hideHeader: true`). Copy +
+ * assets adapted from the Figma deck; a handful of obvious source typos were
+ * corrected in the prose.
  */
 import { Image } from 'astro:assets';
 import CaseScrollIndicator from './CaseScrollIndicator.astro';
@@ -41,6 +42,16 @@ const stages = [
     </div>
   </header>
 
+  <!-- ── What is Grab? ────────────────────────────────────────────────── -->
+  <div class="grab-inner grab-whatis">
+    <h2 class="grab-display grab-display--full">What is Grab?</h2>
+    <p class="grab-whatis__lead">
+      Grab is an <strong>experiment in browsing photos</strong> by moving through
+      them rather than scrolling past them. A webcam reads your hand to move
+      through the space, creating an experiment in <strong>gesture and discovery.</strong>
+    </p>
+  </div>
+
   <!-- ── A new interaction with my photos ─────────────────────────────── -->
   <div class="grab-inner grab-row">
     <h2 class="grab-display">A new interaction with my photos</h2>
@@ -61,8 +72,28 @@ const stages = [
     </div>
   </div>
 
-  <!-- ── Gestures  ·  In touch with your memories ─────────────────────── -->
+  <!-- ── Video demo  ·  no imposed order ──────────────────────────────── -->
+  <div class="grab-inner grab-row grab-row--demo">
+    <div class="grab-demo-copy">
+      <p class="grab-demo-copy__lead">No scroll direction, no imposed order.</p>
+      <p>Explore through your preferred peripheral or through your body.</p>
+      <div class="grab-demo-copy__icons">
+        <Image src={iconOpenPalm} alt="" widths={[62, 124]} />
+        <Image src={iconGrab} alt="" widths={[62, 124]} />
+        <Image src={iconPoint} alt="" widths={[62, 124]} />
+      </div>
+    </div>
+    <CaseVideo src="/media/grab.mp4" caption="Video demo" />
+  </div>
+
+  <!-- ── In touch with your memories  ·  gestures ─────────────────────── -->
   <div class="grab-inner grab-row grab-row--gestures">
+    <div class="grab-stack grab-stack--lead">
+      <h2 class="grab-display">In touch with your memories</h2>
+      <p>The whole interface is read from your webcam with no need for mouse or keys.
+        Open hand to move, closed hand to choose, and a single dot that mirrors where
+        your hand is on the screen.</p>
+    </div>
     <div class="grab-gestures">
       <div class="grab-gesture">
         <Image class="grab-gesture__icon" src={iconOpenPalm} alt="" widths={[112, 224]} />
@@ -73,14 +104,6 @@ const stages = [
         </div>
       </div>
       <div class="grab-gesture">
-        <img class="grab-gesture__icon grab-gesture__icon--dot" src={dot.src} alt="" width="96" height="96" />
-        <div>
-          <h3>The dot <span>·</span> your cursor</h3>
-          <p>A single point tracks your hand against the screen to provide the
-            feedback that keeps a touchless move legible.</p>
-        </div>
-      </div>
-      <div class="grab-gesture">
         <Image class="grab-gesture__icon" src={iconGrab} alt="" widths={[120, 240]} />
         <div>
           <h3>Closed fist <span>·</span> grab</h3>
@@ -88,48 +111,31 @@ const stages = [
             physicality to our decisions.</p>
         </div>
       </div>
-    </div>
-    <div class="grab-stack grab-stack--lead">
-      <h2 class="grab-display">In touch with your memories</h2>
-      <p>The whole interface is read from your webcam with no need for mouse or keys.
-        Open hand to move, closed hand to choose, and a single dot that mirrors where
-        your hand is on the screen.</p>
-    </div>
-  </div>
-
-  <!-- ── Video demo  ·  no imposed order ──────────────────────────────── -->
-  <div class="grab-inner grab-row grab-row--demo">
-    <CaseVideo src="/media/grab.mp4" caption="Video demo" />
-    <div class="grab-demo-copy">
-      <p class="grab-demo-copy__lead">No scroll direction, no imposed order.</p>
-      <p>Explore through your preferred peripheral or through your body.</p>
-      <div class="grab-demo-copy__icons">
-        <Image src={iconOpenPalm} alt="" widths={[62, 124]} />
-        <Image src={iconGrab} alt="" widths={[62, 124]} />
-        <Image src={iconPoint} alt="" widths={[62, 124]} />
+      <div class="grab-gesture">
+        <img class="grab-gesture__icon grab-gesture__icon--dot" src={dot.src} alt="" width="96" height="96" />
+        <div>
+          <h3>The dot <span>·</span> your cursor</h3>
+          <p>A single point tracks your hand against the screen to provide the
+            feedback that keeps a touchless move legible.</p>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- ── How it works ─────────────────────────────────────────────────── -->
-  <div class="grab-inner grab-how">
-    <div class="grab-how__head">
-      <h3>How it works</h3>
-      <p>Grab is a live pipeline — everything runs in real time, from one ordinary
-        webcam.</p>
-    </div>
+  <!-- ── Real time pipeline ───────────────────────────────────────────── -->
+  <div class="grab-inner grab-row grab-row--pipeline">
     <div class="grab-stages">
-      {stages.map((s, i) => (
-        <Fragment>
-          <article class="grab-stage">
+      {stages.map((s) => (
+        <article class="grab-stage">
+          <div class="grab-stage__head">
             <span class="grab-stage__num">{s.n}</span>
             <h4>{s.title}</h4>
-            <p>{s.body}</p>
-          </article>
-          {i < stages.length - 1 && <span class="grab-stage__arrow" aria-hidden="true">→</span>}
-        </Fragment>
+          </div>
+          <p>{s.body}</p>
+        </article>
       ))}
     </div>
+    <h2 class="grab-display grab-display--pipeline">Real time pipeline</h2>
   </div>
 
   <!-- ── Closing reflections ──────────────────────────────────────────── -->
@@ -144,7 +150,7 @@ const stages = [
         <h3>Spatial browsing removes hierarchy</h3>
         <p>Without a clear grid and chronological order there is no “first” photo.
           Every encounter becomes a new finding, using the inherent chaos of the
-          structure to shift the emotional register.</p>
+          structure as a changer for the emotional register.</p>
       </div>
     </div>
     <Image
@@ -222,7 +228,6 @@ const stages = [
     color: rgba(255, 255, 255, 0.85);
   }
   .grab-hero__title h1 {
-    font-family: 'DM Sans', sans-serif;
     font-weight: 900;
     font-size: clamp(4rem, 13vw, 11rem);
     line-height: 0.9;
@@ -231,7 +236,6 @@ const stages = [
   }
   .grab-hero__title p {
     margin-top: 0.6rem;
-    font-family: 'DM Sans', sans-serif;
     font-weight: 700;
     font-size: clamp(1.15rem, 2.6vw, 2.25rem);
     max-width: 22ch;
@@ -245,7 +249,6 @@ const stages = [
     align-items: center;
   }
   .grab-display {
-    font-family: 'DM Sans', sans-serif;
     font-weight: 800;
     color: var(--accent);
     font-size: clamp(2.5rem, 6vw, 6rem);
@@ -260,7 +263,6 @@ const stages = [
   }
   .grab-stack--lead { gap: clamp(1.5rem, 2.5vw, 2rem); }
   .grab h3 {
-    
     font-weight: 700;
     font-size: clamp(1.35rem, 2.1vw, 2rem);
     line-height: 1.15;
@@ -274,6 +276,29 @@ const stages = [
     margin-top: 0.6rem;
   }
   .grab-stack--lead > p { font-size: clamp(1.05rem, 1.4vw, 1.5rem); }
+
+  /* ── What is Grab? ──────────────────────────────────────────────────── */
+  .grab-whatis {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+  }
+  .grab-display--full {
+    font-size: clamp(3rem, 8vw, 7rem);
+    line-height: 1;
+  }
+  .grab-whatis__lead {
+    font-weight: 300;
+    font-size: clamp(1.1rem, 1.7vw, 1.75rem);
+    line-height: 1.5;
+    color: var(--body);
+    max-width: 60ch;
+    margin: 0;
+  }
+  .grab-whatis__lead strong {
+    color: var(--accent);
+    font-weight: 700;
+  }
 
   /* ── Gesture list ───────────────────────────────────────────────────── */
   .grab-row--gestures { align-items: center; }
@@ -299,7 +324,7 @@ const stages = [
   .grab-gesture p { font-size: clamp(0.95rem, 1.15vw, 1.25rem); }
 
   /* ── Video demo row ─────────────────────────────────────────────────── */
-  .grab-row--demo { grid-template-columns: 1.1fr 0.9fr; }
+  .grab-row--demo { grid-template-columns: 0.9fr 1.1fr; }
   .grab-demo-copy__lead {
     font-weight: 700;
     color: #fff;
@@ -316,16 +341,17 @@ const stages = [
   }
   .grab-demo-copy__icons :global(img) { height: clamp(48px, 6vw, 78px); width: auto; }
 
-  /* ── How it works ───────────────────────────────────────────────────── */
-  .grab-how { display: flex; flex-direction: column; gap: clamp(1.75rem, 4vw, 3rem); }
-  .grab-how__head { max-width: 60ch; }
+  /* ── Real time pipeline ─────────────────────────────────────────────── */
+  .grab-row--pipeline {
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: center;
+  }
   .grab-stages {
-    display: flex;
-    align-items: stretch;
-    gap: clamp(0.5rem, 1vw, 1rem);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(0.75rem, 1.5vw, 1.25rem);
   }
   .grab-stage {
-    flex: 1;
     display: flex;
     flex-direction: column;
     gap: clamp(0.75rem, 1.5vw, 1.25rem);
@@ -335,19 +361,22 @@ const stages = [
     padding: clamp(1.25rem, 2vw, 2rem) clamp(1.25rem, 2.2vw, 2.5rem);
     box-shadow: 0 11px 33px 1px rgba(0, 0, 0, 0.25);
   }
+  .grab-stage__head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.9rem;
+  }
   .grab-stage__num { color: var(--accent); font-weight: 700; font-size: 1.05rem; }
   .grab-stage h4 {
-    
     font-weight: 700;
     font-size: clamp(1.15rem, 1.6vw, 1.5rem);
     line-height: 1.15;
+    margin: 0;
   }
   .grab-stage p { margin: 0; font-size: clamp(0.9rem, 1.1vw, 1.15rem); }
-  .grab-stage__arrow {
-    align-self: center;
-    color: rgba(255, 255, 255, 0.4);
-    font-size: clamp(1.25rem, 2.4vw, 2.25rem);
-    font-weight: 300;
+  .grab-display--pipeline {
+    font-size: clamp(2.75rem, 7vw, 6.5rem);
+    line-height: 1;
   }
 
   /* ── Closing row ────────────────────────────────────────────────────── */
@@ -361,11 +390,12 @@ const stages = [
   /* ── Responsive ─────────────────────────────────────────────────────── */
   @media (max-width: 900px) {
     .grab-row,
-    .grab-row--demo { grid-template-columns: 1fr; }
-    /* Lead heading + intro should read heading-first on mobile. */
-    .grab-row--gestures { direction: ltr; }
-    .grab-row--gestures .grab-stack--lead { order: -1; }
-    .grab-stages { flex-direction: column; }
-    .grab-stage__arrow { transform: rotate(90deg); }
+    .grab-row--demo,
+    .grab-row--pipeline { grid-template-columns: 1fr; }
+    .grab-stages { grid-template-columns: 1fr; }
+    /* On mobile the demo video should read after its copy. */
+    .grab-row--demo .grab-demo-copy { order: -1; }
+    /* Pipeline heading reads first on mobile. */
+    .grab-display--pipeline { order: -1; }
   }
 </style>

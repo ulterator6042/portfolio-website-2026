@@ -1,0 +1,410 @@
+---
+/**
+ * Logitech Mind — light-theme thesis case study, ported from the Figma "Mind
+ * demo" page (node 87:2190). Self-contained: renders its own hero (the [slug]
+ * template drops ProjectHeader via `hideHeader: true`).
+ *
+ * The circular "×25" cycle diagram is exported flat from Figma as a PNG (labels
+ * baked in) per PORTING_GUIDE.md §6 — it is NOT rebuilt in CSS. The survey
+ * ranking is rebuilt as a clean two-column list. The user-journey map reuses the
+ * shared, approved <Journey> component. The evaluation outcome cards are
+ * bespoke, reusing the retired Findings copy.
+ */
+import { Image } from 'astro:assets';
+import CaseScrollIndicator from './CaseScrollIndicator.astro';
+import CaseVideo from './CaseVideo.astro';
+import Journey from './Journey.astro';
+import laptop from '../../assets/mind/hero-laptop.png';
+import marks from '../../assets/mind/marks.png';
+import cycle from '../../assets/mind/diagrams/cycle.png';
+
+const priorities = [
+  { need: 'Speed of interaction', answer: 'One trigger interaction' },
+  { need: 'Ease of resumption', answer: 'Welcome back card info' },
+  { need: 'Depth of detail capture', answer: 'Full context snapshot' },
+  { need: 'Ability to save multiple contexts', answer: 'Save work for later' },
+  { need: 'Control over what is saved', answer: 'User confirmed trigger' },
+  { need: 'Privacy and data handling', answer: 'Locally stored information' },
+];
+
+const phases = [
+  { name: 'Deep Focus', without: 'Deep in the task, holding a fragile mental model.', withTool: 'Same deep focus — the tool captures context silently in the background.' },
+  { name: 'The Slip', without: 'Interruption hits. They drop everything — no time to note anything.', withTool: 'One quick trigger stores the full context. Nothing to write down.' },
+  { name: 'Handling It', without: 'Mind trying to keep track of the main task; tabs and windows pile up.', withTool: 'Attends to the interruption freely — the system watches what changes.' },
+  { name: 'Return', without: 'A messy desktop, scattered windows, debris tabs.', withTool: 'One trigger, and the workspace rebuilds itself. Debris cleared.' },
+  { name: 'Re-entry', without: 'Manual reconstruction: re-reads, repositions, closes tabs.', withTool: 'The welcome-back card restores context at a glance.' },
+  { name: 'Resumption', without: 'Momentum rebuilds slowly; time and energy already lost.', withTool: 'Resumes right where they left off — back in flow.' },
+];
+
+const outcomes = [
+  {
+    n: '01',
+    title: 'Window restoration vs welcome-back card',
+    good: 'The restoration of windows is an instant memory trigger, well valued by the professionals.',
+    future: 'The welcome-back card has a high learning curve and can be confusing at first; it needs more research on what data actually helps workers.',
+  },
+  {
+    n: '02',
+    title: 'Ghost interface',
+    good: 'The interface is unobtrusive — it does not distract you while you are focused on your tasks.',
+    future: 'That low profile risks lowering engagement; it needs exploration of methods that keep the user engaged while staying out of the way.',
+  },
+  {
+    n: '03',
+    title: 'Gestures and hardware',
+    good: 'Users responded well to being able to adapt the trigger signal to their own preference.',
+    future: 'Full integration with Logitech’s physical products is so far only theoretical; more of the available gestures would unlock even more customization.',
+  },
+];
+---
+
+<section class="mind">
+  <CaseScrollIndicator />
+
+  <!-- ── Hero ─────────────────────────────────────────────────────────── -->
+  <header class="mind-hero">
+    <div class="mind-inner mind-hero__inner">
+      <div class="mind-hero__top">
+        <div class="mind-hero__meta">
+          <p>Thesis project</p>
+          <p>Tools: Figma, Claude Code, Python</p>
+        </div>
+        <Image class="mind-hero__marks" src={marks} alt="TU Delft × Logitech" widths={[300, 600]} sizes="(max-width: 900px) 200px, 310px" />
+      </div>
+      <div class="mind-hero__title">
+        <h1><span class="mind-hero__logi">logitech</span><span class="mind-hero__brand">Mind</span></h1>
+        <p>Better recovery from workplace interruptions</p>
+      </div>
+    </div>
+    <Image
+      class="mind-hero__laptop"
+      src={laptop}
+      alt="A laptop showing the Mind interruption-manager interface capturing an active work session"
+      widths={[700, 1100, 1400]}
+      sizes="(max-width: 900px) 100vw, 50vw"
+    />
+  </header>
+
+  <!-- ── What is Logitech Mind? ───────────────────────────────────────── -->
+  <div class="mind-inner mind-stack mind-stack--lead">
+    <h2 class="mind-display">What is Logitech Mind?</h2>
+    <p>Mind is a desktop tool that helps workers <strong>recover from interruptions.</strong>
+      One trigger captures everything you were working on, one trigger brings it all back;
+      <strong>rebuilding your context in seconds.</strong></p>
+  </div>
+
+  <!-- ── Interruptions are inevitable · cycle diagram ─────────────────── -->
+  <div class="mind-inner mind-row mind-row--cycle">
+    <div class="mind-stack mind-stack--lead">
+      <h2 class="mind-display">Interruptions are inevitable.</h2>
+      <p>The average worker goes through 25 cycles of focus, interruption and re-entry in
+        a single day, losing the precious momentum they had built while focusing on a
+        task. <strong>The biggest energy cost is in the re-entry.</strong></p>
+    </div>
+    <Image
+      class="mind-cycle"
+      src={cycle}
+      alt="A cycle repeated 25 times a day: Focused work (momentum builds) → Trigger (external interruption) → Interruption (attention breaks) → Resolution (interruption handled) → Re-entry (rebuild context), and back to focused work."
+      widths={[500, 800, 1000]}
+      sizes="(max-width: 900px) 100vw, 45vw"
+    />
+  </div>
+
+  <!-- ── Working prototype · video ────────────────────────────────────── -->
+  <div class="mind-inner mind-row mind-row--demo">
+    <CaseVideo src="/media/mind.mp4" caption="Working prototype" />
+    <div class="mind-stack mind-stack--lead">
+      <h2 class="mind-display">Working prototype</h2>
+      <p><strong>One trigger</strong> saves everything you were doing before an interruption;
+        one trigger brings it all back.</p>
+      <p>It <strong>rebuilds your context</strong> and reminds you where you left off, so
+        <strong>returning to work costs seconds instead of minutes.</strong></p>
+    </div>
+  </div>
+
+  <!-- ── Priority to constraints · ranked survey list ─────────────────── -->
+  <div class="mind-inner mind-priorities">
+    <div class="mind-priorities__head">
+      <h2 class="mind-display">Priority to constraints</h2>
+      <p class="mind-note">*153 survey samples</p>
+    </div>
+    <ol class="mind-rank">
+      {priorities.map((p) => (
+        <li class="mind-rank__row">
+          <span class="mind-rank__need">{p.need}</span>
+          <span class="mind-rank__arrow" aria-hidden="true">→</span>
+          <span class="mind-rank__answer">{p.answer}</span>
+        </li>
+      ))}
+    </ol>
+  </div>
+
+  <!-- ── User journey map (shared component) ──────────────────────────── -->
+  <div class="mind-inner mind-journey">
+    <h2 class="mind-display">User journey map</h2>
+    <Journey phases={phases} />
+  </div>
+
+  <!-- ── Evaluation outcome · bespoke 3-card grid ─────────────────────── -->
+  <div class="mind-inner mind-outcome">
+    <h2 class="mind-display">Evaluation outcome</h2>
+    <div class="mind-cards">
+      {outcomes.map((o) => (
+        <article class="mind-card">
+          <span class="mind-card__num">{o.n}</span>
+          <h3>{o.title}</h3>
+          <div class="mind-card__split">
+            <span class="mind-card__label">What went well</span>
+            <p>{o.good}</p>
+          </div>
+          <div class="mind-card__split">
+            <span class="mind-card__label mind-card__label--muted">Future work</span>
+            <p class="mind-card__future">{o.future}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .mind {
+    --surface: #f2f3f7;
+    --card: #ffffff;
+    --hair: rgba(30, 20, 60, 0.1);
+    --body: rgba(24, 20, 40, 0.72);
+    --ink: #141225;
+    background: var(--surface);
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+    gap: var(--case-gap);
+    padding-bottom: var(--case-gap);
+    width: 100%;
+    overflow-x: clip;
+  }
+
+  .mind-inner {
+    width: 100%;
+    max-width: var(--case-max);
+    margin-inline: auto;
+    padding-inline: var(--case-pad);
+  }
+
+  /* ── Hero ───────────────────────────────────────────────────────────── */
+  .mind-hero {
+    position: relative;
+    isolation: isolate;
+    min-height: min(88vh, 880px);
+    display: flex;
+    align-items: center;
+  }
+  .mind-hero__laptop {
+    position: absolute;
+    inset: 0 0 0 auto;
+    width: min(52%, 820px);
+    height: 100%;
+    object-fit: contain;
+    object-position: center right;
+    z-index: -1;
+  }
+  .mind-hero__inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: clamp(3rem, 12vw, 9rem);
+    padding-block: clamp(2rem, 5vw, 4rem);
+  }
+  .mind-hero__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+  .mind-hero__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-weight: 300;
+    font-size: var(--fs-small);
+    color: var(--body);
+  }
+  .mind-hero__marks { width: clamp(180px, 22vw, 310px); height: auto; }
+  .mind-hero__title h1 {
+    display: flex;
+    align-items: baseline;
+    gap: 0.1em;
+    flex-wrap: wrap;
+    font-weight: 900;
+    font-size: clamp(3rem, 9vw, 7.5rem);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    margin: 0;
+  }
+  .mind-hero__logi { color: var(--ink); }
+  .mind-hero__brand { color: var(--accent); }
+  .mind-hero__title p {
+    margin-top: 0.7rem;
+    font-weight: 700;
+    font-size: clamp(1.15rem, 2.6vw, 2.25rem);
+    max-width: 24ch;
+  }
+
+  /* ── Display headings + text stacks ─────────────────────────────────── */
+  .mind-display {
+    font-weight: 800;
+    color: var(--accent);
+    font-size: var(--fs-display);
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .mind-stack {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.25rem, 2.5vw, 2rem);
+  }
+  .mind p {
+    font-weight: 300;
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    color: var(--body);
+  }
+  .mind-stack--lead > p { font-size: clamp(1.05rem, 1.4vw, 1.5rem); }
+  .mind strong { font-weight: 700; color: var(--ink); }
+
+  /* ── Two-column editorial rows ──────────────────────────────────────── */
+  .mind-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 6vw, 6.5rem);
+    align-items: center;
+  }
+  .mind-cycle {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+  .mind-row--demo { grid-template-columns: 1.1fr 0.9fr; }
+
+  /* ── Priority to constraints (ranked list) ──────────────────────────── */
+  .mind-priorities { display: flex; flex-direction: column; gap: clamp(1.5rem, 3vw, 2.5rem); }
+  .mind-priorities__head { display: flex; flex-direction: column; gap: 0.75rem; }
+  .mind-note {
+    font-weight: 500;
+    font-size: var(--fs-small);
+    color: var(--body);
+    letter-spacing: 0.02em;
+  }
+  .mind-rank {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.75rem, 1.5vw, 1.25rem);
+    counter-reset: rank;
+  }
+  .mind-rank__row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: clamp(1rem, 4vw, 3rem);
+    position: relative;
+    padding-left: clamp(1rem, 2vw, 1.75rem);
+  }
+  /* accent gradient rail on the left, echoing the Figma bar. */
+  .mind-rank::before {
+    content: '';
+    position: absolute;
+    left: calc(var(--case-pad) - 2px);
+    top: 0.6rem;
+    bottom: 0.6rem;
+    width: 6px;
+    border-radius: 999px;
+    background: linear-gradient(to bottom, var(--accent), rgba(138, 115, 224, 0.15));
+  }
+  .mind-rank { position: relative; }
+  .mind-rank__need,
+  .mind-rank__answer {
+    background: var(--card);
+    border: 1px solid var(--hair);
+    border-radius: 999px;
+    padding: clamp(0.75rem, 1.4vw, 1.1rem) clamp(1.25rem, 2.4vw, 2rem);
+    font-weight: 500;
+    font-size: clamp(1rem, 1.2vw, 1.25rem);
+    box-shadow: 0 10px 24px -14px rgba(30, 20, 60, 0.35);
+    text-align: center;
+  }
+  .mind-rank__answer { color: var(--body); }
+  .mind-rank__arrow { color: var(--body); font-size: 1.35rem; font-weight: 300; }
+
+  /* ── Journey / outcome section headings ─────────────────────────────── */
+  .mind-journey,
+  .mind-outcome { display: flex; flex-direction: column; gap: clamp(1.5rem, 3vw, 2.5rem); }
+  /* Journey component uses global page tokens; drop its own outer padding so it
+     aligns to the case inner width. */
+  .mind-journey :global(.journey) { margin: 0; padding-inline: 0; max-width: none; }
+
+  /* ── Evaluation outcome cards ───────────────────────────────────────── */
+  .mind-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(1.25rem, 2.5vw, 2rem);
+    align-items: stretch;
+  }
+  .mind-card {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.9rem, 1.6vw, 1.35rem);
+    background: var(--card);
+    border: 1px solid var(--hair);
+    border-radius: var(--radius-lg, 20px);
+    padding: clamp(1.5rem, 2.4vw, 2.25rem);
+    box-shadow: 0 18px 40px -26px rgba(30, 20, 60, 0.4);
+  }
+  .mind-card__num { color: var(--accent); font-weight: 700; font-size: 0.95rem; }
+  .mind-card h3 {
+    font-weight: 700;
+    font-size: clamp(1.15rem, 1.6vw, 1.5rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .mind-card__split { display: flex; flex-direction: column; gap: 0.35rem; }
+  .mind-card__label {
+    font-weight: 500;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .mind-card__label--muted { color: var(--body); }
+  .mind-card p { font-size: clamp(0.95rem, 1.1vw, 1.15rem); line-height: 1.55; }
+  .mind-card__future { color: var(--body); }
+
+  /* ── Responsive ─────────────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .mind-hero {
+      min-height: 0;
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .mind-hero__laptop {
+      position: static;
+      width: 100%;
+      height: auto;
+      order: 1;
+      margin-top: 2rem;
+    }
+    .mind-row,
+    .mind-row--demo { grid-template-columns: 1fr; }
+    /* Heading-first reading order on mobile. */
+    .mind-row--cycle .mind-stack--lead { order: -1; }
+    .mind-rank__row { grid-template-columns: 1fr; gap: 0.4rem; text-align: left; }
+    .mind-rank__arrow { transform: rotate(90deg); justify-self: start; }
+    .mind-rank__need,
+    .mind-rank__answer { text-align: left; }
+    .mind-cards { grid-template-columns: 1fr; }
+  }
+</style>
