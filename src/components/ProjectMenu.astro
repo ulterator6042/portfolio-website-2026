@@ -16,6 +16,10 @@ interface Props {
   current?: string;
 }
 const { projects, current } = Astro.props;
+
+// Compact discipline label shown on hover (UI/UX vs Product).
+const catTag = (id: string) =>
+  id === 'uiux' ? 'UI/UX' : id === 'product' ? 'Product' : id;
 ---
 <nav class="pmenu" aria-label="Projects" data-pmenu>
   <!-- Gradient spotlight that chases the active item (decorative; see script). -->
@@ -36,7 +40,7 @@ const { projects, current } = Astro.props;
           <span class="pmenu__rule" transition:name="proj-underline"></span>
         )}
       </span>
-      {p.data.wip && <span class="pmenu__soon">Soon</span>}
+      <span class="pmenu__tag">{p.data.wip ? 'Soon' : catTag(p.data.category)}</span>
     </a>
   ))}
 </nav>
@@ -122,17 +126,30 @@ const { projects, current } = Astro.props;
     animation-timing-function: var(--ease-in-out, ease);
   }
 
-  /* "Soon" chip (e.g. Talaris) */
-  .pmenu__soon {
+  /* Discipline / status chip (UI/UX · Product · Soon). Hidden in the resting
+     menu; fades in only when the item is hovered or focused. */
+  .pmenu__tag {
     align-self: center;
     padding: 3px 9px;
     border-radius: 999px;
-    background: color-mix(in srgb, currentColor 10%, transparent);
-    color: var(--muted);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--accent);
     font-weight: 500;
     font-size: 11px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(-4px);
+    transition:
+      opacity var(--dur-1, 0.12s) var(--ease-out, ease),
+      transform var(--dur-1, 0.12s) var(--ease-out, ease);
+    pointer-events: none;
+  }
+  .pmenu__item:hover .pmenu__tag,
+  .pmenu__item:focus-visible .pmenu__tag {
+    opacity: 1;
+    transform: none;
   }
 </style>
 
