@@ -1,59 +1,76 @@
 ---
 /**
  * Logitech Mind — light-theme thesis case study, ported from the Figma "Mind
- * demo" page (node 87:2190). Self-contained: renders its own hero (the [slug]
- * template drops ProjectHeader via `hideHeader: true`).
+ * demo" page (node 87:2190). Self-contained hero (hideHeader: true).
  *
- * The circular "×25" cycle diagram is exported flat from Figma as a PNG (labels
- * baked in) per PORTING_GUIDE.md §6 — it is NOT rebuilt in CSS. The survey
- * ranking is rebuilt as a clean two-column list. The user-journey map reuses the
- * shared, approved <Journey> component. The evaluation outcome cards are
- * bespoke, reusing the retired Findings copy.
+ * The circular "×25" cycle diagram is an exported flat PNG. The user-journey map
+ * is a bespoke chart (phase timeline · Without/With lanes with emotion tags ·
+ * momentum bars) rebuilt from the Figma "Journey Map — With vs Without" frame.
  */
 import { Image } from 'astro:assets';
 import CaseScrollIndicator from './CaseScrollIndicator.astro';
 import CaseVideo from './CaseVideo.astro';
-import Journey from './Journey.astro';
 import laptop from '../../assets/mind/hero-laptop.png';
 import marks from '../../assets/mind/marks.png';
 import cycle from '../../assets/mind/diagrams/cycle.png';
 
 const priorities = [
-  { need: 'Speed of interaction', answer: 'One trigger interaction' },
+  { need: 'Speed of Interaction', answer: 'One trigger interaction' },
   { need: 'Ease of resumption', answer: 'Welcome back card info' },
   { need: 'Depth of detail capture', answer: 'Full context snapshot' },
   { need: 'Ability to save multiple contexts', answer: 'Save work for later' },
   { need: 'Control over what is saved', answer: 'User confirmed trigger' },
-  { need: 'Privacy and data handling', answer: 'Locally stored information' },
+  { need: 'Privacy and data handling', answer: 'locally stored information' },
 ];
 
-const phases = [
-  { name: 'Deep Focus', without: 'Deep in the task, holding a fragile mental model.', withTool: 'Same deep focus — the tool captures context silently in the background.' },
-  { name: 'The Slip', without: 'Interruption hits. They drop everything — no time to note anything.', withTool: 'One quick trigger stores the full context. Nothing to write down.' },
-  { name: 'Handling It', without: 'Mind trying to keep track of the main task; tabs and windows pile up.', withTool: 'Attends to the interruption freely — the system watches what changes.' },
-  { name: 'Return', without: 'A messy desktop, scattered windows, debris tabs.', withTool: 'One trigger, and the workspace rebuilds itself. Debris cleared.' },
-  { name: 'Re-entry', without: 'Manual reconstruction: re-reads, repositions, closes tabs.', withTool: 'The welcome-back card restores context at a glance.' },
-  { name: 'Resumption', without: 'Momentum rebuilds slowly; time and energy already lost.', withTool: 'Resumes right where they left off — back in flow.' },
+// ── User-journey map data (from Figma node 87:2060) ──────────────────────────
+const phases = ['Deep Focus', 'The Slip', 'Handling It', 'Return', 'Re-entry', 'Resumption'];
+
+const withoutLane = [
+  { text: 'Deep in the task, holding a fragile mental model.', emotion: 'Focused', tone: 'neutral' },
+  { text: 'Interruption hits. They drop everything — no time to note anything.', emotion: 'Startled', tone: 'bad' },
+  { text: 'Mind trying to keep track of main task; tabs and windows pile up.', emotion: 'Torn', tone: 'bad' },
+  { text: 'A messy desktop, scattered windows, debris tabs.', emotion: 'Overwhelmed', tone: 'bad' },
+  { text: 'Manual reconstruction: Re-reads, repositions, closes tabs.', emotion: 'Frustrated', tone: 'bad' },
+  { text: 'Momentum rebuilds slowly time and energy already lost.', emotion: 'Depleted', tone: 'warn' },
+];
+
+const withLane = [
+  { text: 'Same deep focus, the tool captures context silently in the background.', emotion: 'Focused, secure', hl: false },
+  { text: 'One quick trigger stores the full context. Nothing to write down.', emotion: 'Calm, in control', hl: true },
+  { text: 'Attends to the interruption freely, the system watches what changes.', emotion: 'Present', hl: false },
+  { text: 'One trigger, and the workspace rebuilds itself. Debris cleared.', emotion: 'Relief', hl: true },
+  { text: 'The welcome-back card restores context at a glance.', emotion: 'Oriented', hl: true },
+  { text: 'Resumes right where they left off — back in flow.', emotion: 'Confident', hl: false },
+];
+
+const momentumWithout = [
+  { h: 100, tone: 'good' }, { h: 82, tone: 'warn' }, { h: 34, tone: 'bad' },
+  { h: 16, tone: 'bad' }, { h: 37, tone: 'bad' }, { h: 68, tone: 'warn' },
+];
+const momentumWith = [
+  { h: 100, tone: 'good' }, { h: 79, tone: 'warn' }, { h: 34, tone: 'bad' },
+  { h: 17, tone: 'bad' }, { h: 84, tone: 'warn' }, { h: 100, tone: 'good' },
 ];
 
 const outcomes = [
   {
     n: '01',
-    title: 'Window restoration vs welcome-back card',
+    title: 'Window restoration vs Welcome back card',
     good: 'The restoration of windows is an instant memory trigger, well valued by the professionals.',
-    future: 'The welcome-back card has a high learning curve and can be confusing at first; it needs more research on what data actually helps workers.',
+    future: 'The welcome back card has a high learning curve and can be confusing at first; needs more research on what data can help workers.',
   },
   {
     n: '02',
     title: 'Ghost interface',
-    good: 'The interface is unobtrusive — it does not distract you while you are focused on your tasks.',
-    future: 'That low profile risks lowering engagement; it needs exploration of methods that keep the user engaged while staying out of the way.',
+    good: 'The interface is unobtrusive, it does not distract you while you are focused on your tasks.',
+    future: 'The interface risks lowering the user’s engagement; it needs exploration of different methods to ensure engagement while maintaining a low profile.',
   },
   {
     n: '03',
     title: 'Gestures and hardware',
-    good: 'Users responded well to being able to adapt the trigger signal to their own preference.',
-    future: 'Full integration with Logitech’s physical products is so far only theoretical; more of the available gestures would unlock even more customization.',
+    good: 'Users responded well to the possibility of adapting the trigger signal to their own preference.',
+    future: 'Full integration with Logitech’s physical products is only a theoretical application; more exploration of the specific gestures available will unlock even more customization.',
   },
 ];
 ---
@@ -63,26 +80,24 @@ const outcomes = [
 
   <!-- ── Hero ─────────────────────────────────────────────────────────── -->
   <header class="mind-hero">
-    <div class="mind-inner mind-hero__inner">
-      <div class="mind-hero__top">
-        <div class="mind-hero__meta">
-          <p>Thesis project</p>
-          <p>Tools: Figma, Claude Code, Python</p>
-        </div>
-        <Image class="mind-hero__marks" src={marks} alt="TU Delft × Logitech" widths={[300, 600]} sizes="(max-width: 900px) 200px, 310px" />
+    <div class="mind-inner mind-hero__grid">
+      <div class="mind-hero__meta">
+        <p>Thesis project</p>
+        <p>Tools: Figma, Claude Code, Python</p>
       </div>
+      <Image class="mind-hero__marks" src={marks} alt="TU Delft × Logitech" widths={[300, 600]} sizes="260px" />
       <div class="mind-hero__title">
         <h1><span class="mind-hero__logi">logitech</span><span class="mind-hero__brand">Mind</span></h1>
         <p>Better recovery from workplace interruptions</p>
       </div>
+      <Image
+        class="mind-hero__laptop"
+        src={laptop}
+        alt="A laptop showing the Mind interruption-manager interface capturing an active work session"
+        widths={[700, 1100, 1400]}
+        sizes="(max-width: 900px) 100vw, 50vw"
+      />
     </div>
-    <Image
-      class="mind-hero__laptop"
-      src={laptop}
-      alt="A laptop showing the Mind interruption-manager interface capturing an active work session"
-      widths={[700, 1100, 1400]}
-      sizes="(max-width: 900px) 100vw, 50vw"
-    />
   </header>
 
   <!-- ── What is Logitech Mind? ───────────────────────────────────────── -->
@@ -104,7 +119,7 @@ const outcomes = [
     <Image
       class="mind-cycle"
       src={cycle}
-      alt="A cycle repeated 25 times a day: Focused work (momentum builds) → Trigger (external interruption) → Interruption (attention breaks) → Resolution (interruption handled) → Re-entry (rebuild context), and back to focused work."
+      alt="A cycle repeated 25 times a day: Focused work → Trigger → Interruption → Resolution → Re-entry, and back to focused work."
       widths={[500, 800, 1000]}
       sizes="(max-width: 900px) 100vw, 45vw"
     />
@@ -112,7 +127,7 @@ const outcomes = [
 
   <!-- ── Working prototype · video ────────────────────────────────────── -->
   <div class="mind-inner mind-row mind-row--demo">
-    <CaseVideo src="/media/mind.mp4" caption="Working prototype" />
+    <CaseVideo src="/media/mind.mp4" />
     <div class="mind-stack mind-stack--lead">
       <h2 class="mind-display">Working prototype</h2>
       <p><strong>One trigger</strong> saves everything you were doing before an interruption;
@@ -122,27 +137,83 @@ const outcomes = [
     </div>
   </div>
 
-  <!-- ── Priority to constraints · ranked survey list ─────────────────── -->
+  <!-- ── Priority to constraints · ranked survey mapping ──────────────── -->
   <div class="mind-inner mind-priorities">
     <div class="mind-priorities__head">
       <h2 class="mind-display">Priority to constraints</h2>
       <p class="mind-note">*153 survey samples</p>
     </div>
-    <ol class="mind-rank">
-      {priorities.map((p) => (
-        <li class="mind-rank__row">
-          <span class="mind-rank__need">{p.need}</span>
-          <span class="mind-rank__arrow" aria-hidden="true">→</span>
-          <span class="mind-rank__answer">{p.answer}</span>
-        </li>
-      ))}
-    </ol>
+    <div class="mind-prio">
+      <div class="mind-prio__rail" aria-hidden="true"></div>
+      <ol class="mind-prio__rows">
+        {priorities.map((p) => (
+          <li class="mind-prio__row">
+            <span class="mind-prio__pill">{p.need}</span>
+            <span class="mind-prio__arrow" aria-hidden="true">→</span>
+            <span class="mind-prio__pill mind-prio__pill--answer">{p.answer}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
   </div>
 
-  <!-- ── User journey map (shared component) ──────────────────────────── -->
+  <!-- ── User journey map · bespoke With/Without chart ────────────────── -->
   <div class="mind-inner mind-journey">
     <h2 class="mind-display">User journey map</h2>
-    <Journey phases={phases} />
+    <div class="mind-jscroll">
+      <div class="mind-jmap">
+        <!-- Phase timeline -->
+        <div></div>
+        {phases.map((name, i) => (
+          <div class="mind-jmap__phase">
+            <span class="mind-jmap__badge">{i + 1}</span>
+            <b>{name}</b>
+          </div>
+        ))}
+
+        <!-- Without lane -->
+        <div class="mind-jmap__rowlabel">
+          <b>Without the tool</b><span>the current reality</span>
+        </div>
+        {withoutLane.map((c) => (
+          <article class="mind-jcard">
+            <p>{c.text}</p>
+            <span class="mind-jcard__emo">
+              <span class={`mind-jcard__dot tone-${c.tone}`}></span>{c.emotion}
+            </span>
+          </article>
+        ))}
+
+        <!-- Without momentum -->
+        <div class="mind-jmap__rowlabel">
+          <b>Momentum</b><span>deep valley, slow climb</span>
+        </div>
+        {momentumWithout.map((m) => (
+          <div class="mind-jbar"><span class={`tone-${m.tone}`} style={`height:${m.h}%`}></span></div>
+        ))}
+
+        <!-- With lane -->
+        <div class="mind-jmap__rowlabel mind-jmap__rowlabel--accent">
+          <b>With the tool</b><span>using the prototype</span>
+        </div>
+        {withLane.map((c) => (
+          <article class={`mind-jcard${c.hl ? ' mind-jcard--hl' : ''}`}>
+            <p>{c.text}</p>
+            <span class="mind-jcard__emo">
+              <span class="mind-jcard__dot tone-good"></span>{c.emotion}
+            </span>
+          </article>
+        ))}
+
+        <!-- With momentum -->
+        <div class="mind-jmap__rowlabel">
+          <b>Momentum</b><span>quicker recovery</span>
+        </div>
+        {momentumWith.map((m) => (
+          <div class="mind-jbar"><span class={`tone-${m.tone}`} style={`height:${m.h}%`}></span></div>
+        ))}
+      </div>
+    </div>
   </div>
 
   <!-- ── Evaluation outcome · bespoke 3-card grid ─────────────────────── -->
@@ -153,8 +224,9 @@ const outcomes = [
         <article class="mind-card">
           <span class="mind-card__num">{o.n}</span>
           <h3>{o.title}</h3>
+          <div class="mind-card__rule"></div>
           <div class="mind-card__split">
-            <span class="mind-card__label">What went well</span>
+            <span class="mind-card__label">What was good</span>
             <p>{o.good}</p>
           </div>
           <div class="mind-card__split">
@@ -169,17 +241,19 @@ const outcomes = [
 
 <style>
   .mind {
-    --surface: #f2f3f7;
     --card: #ffffff;
     --hair: rgba(30, 20, 60, 0.1);
     --body: rgba(24, 20, 40, 0.72);
     --ink: #141225;
-    background: var(--surface);
+    --warn: #e0a338;
+    --bad: #e56540;
+    --neutral: #9aa0ab;
+    background: #f4f3f9;
     color: var(--ink);
     display: flex;
     flex-direction: column;
-    gap: var(--case-gap);
-    padding-bottom: var(--case-gap);
+    gap: clamp(3rem, 6vw, 6rem);
+    padding-bottom: clamp(3rem, 6vw, 6rem);
     width: 100%;
     overflow-x: clip;
   }
@@ -193,218 +267,165 @@ const outcomes = [
 
   /* ── Hero ───────────────────────────────────────────────────────────── */
   .mind-hero {
-    position: relative;
-    isolation: isolate;
-    min-height: min(88vh, 880px);
-    display: flex;
+    /* Soft purple wash toward the bottom, matching the Figma hero gradient. */
+    background: linear-gradient(180deg, #ffffff 0%, #fbfaff 42%, #e7e0f8 100%);
+  }
+  .mind-hero__grid {
+    min-height: min(82vh, 820px);
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    grid-template-rows: auto 1fr;
     align-items: center;
-  }
-  .mind-hero__laptop {
-    position: absolute;
-    inset: 0 0 0 auto;
-    width: min(52%, 820px);
-    height: 100%;
-    object-fit: contain;
-    object-position: center right;
-    z-index: -1;
-  }
-  .mind-hero__inner {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: clamp(3rem, 12vw, 9rem);
-    padding-block: clamp(2rem, 5vw, 4rem);
-  }
-  .mind-hero__top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1.5rem;
+    column-gap: clamp(1rem, 3vw, 3rem);
+    padding-block: clamp(1.75rem, 3.5vw, 3rem);
   }
   .mind-hero__meta {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    font-weight: 300;
-    font-size: var(--fs-small);
-    color: var(--body);
+    grid-column: 1; grid-row: 1;
+    align-self: start;
+    display: flex; flex-direction: column; gap: 0.3rem;
+    font-weight: 300; font-size: var(--fs-small); color: var(--body);
   }
-  .mind-hero__marks { width: clamp(180px, 22vw, 310px); height: auto; }
+  .mind-hero__marks {
+    grid-column: 2; grid-row: 1;
+    justify-self: end; align-self: start;
+    width: clamp(180px, 20vw, 280px); height: auto;
+  }
+  .mind-hero__title { grid-column: 1; grid-row: 2; align-self: center; }
   .mind-hero__title h1 {
-    display: flex;
-    align-items: baseline;
-    gap: 0.1em;
-    flex-wrap: wrap;
+    display: flex; align-items: baseline; flex-wrap: wrap;
     font-weight: 900;
-    font-size: clamp(3rem, 9vw, 7.5rem);
-    line-height: 0.9;
-    letter-spacing: -0.04em;
-    margin: 0;
+    font-size: clamp(2.5rem, 6.5vw, 5.75rem);
+    line-height: 0.92; letter-spacing: -0.04em; margin: 0;
   }
   .mind-hero__logi { color: var(--ink); }
   .mind-hero__brand { color: var(--accent); }
   .mind-hero__title p {
-    margin-top: 0.7rem;
-    font-weight: 700;
-    font-size: clamp(1.15rem, 2.6vw, 2.25rem);
-    max-width: 24ch;
+    margin-top: 0.7rem; font-weight: 700;
+    font-size: clamp(1.05rem, 2.2vw, 1.9rem); max-width: 24ch;
+  }
+  .mind-hero__laptop {
+    grid-column: 2; grid-row: 2;
+    justify-self: end; align-self: center;
+    width: 100%; max-width: 860px; height: auto; object-fit: contain;
   }
 
   /* ── Display headings + text stacks ─────────────────────────────────── */
   .mind-display {
-    font-weight: 800;
-    color: var(--accent);
-    font-size: var(--fs-display);
-    line-height: 1.0;
-    letter-spacing: -0.02em;
-    margin: 0;
+    font-weight: 800; color: var(--accent);
+    font-size: var(--fs-display); line-height: 1.0;
+    letter-spacing: -0.02em; margin: 0;
   }
-  .mind-stack {
-    display: flex;
-    flex-direction: column;
-    gap: clamp(1.25rem, 2.5vw, 2rem);
-  }
-  .mind p {
-    font-weight: 300;
-    font-size: var(--fs-body);
-    line-height: 1.6;
-    color: var(--body);
-  }
+  .mind-stack { display: flex; flex-direction: column; gap: clamp(1.25rem, 2.5vw, 2rem); }
+  .mind p { font-weight: 300; font-size: var(--fs-body); line-height: 1.6; color: var(--body); }
   .mind-stack--lead > p { font-size: clamp(1.05rem, 1.4vw, 1.5rem); }
   .mind strong { font-weight: 700; color: var(--ink); }
 
   /* ── Two-column editorial rows ──────────────────────────────────────── */
   .mind-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: clamp(2rem, 6vw, 6.5rem);
-    align-items: center;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 6vw, 6.5rem); align-items: center;
   }
-  .mind-cycle {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-  }
+  .mind-cycle { width: 100%; height: auto; object-fit: contain; }
   .mind-row--demo { grid-template-columns: 1.1fr 0.9fr; }
 
-  /* ── Priority to constraints (ranked list) ──────────────────────────── */
+  /* ── Priority to constraints ────────────────────────────────────────── */
   .mind-priorities { display: flex; flex-direction: column; gap: clamp(1.5rem, 3vw, 2.5rem); }
   .mind-priorities__head { display: flex; flex-direction: column; gap: 0.75rem; }
-  .mind-note {
-    font-weight: 500;
-    font-size: var(--fs-small);
-    color: var(--body);
-    letter-spacing: 0.02em;
-  }
-  .mind-rank {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: clamp(0.75rem, 1.5vw, 1.25rem);
-    counter-reset: rank;
-  }
-  .mind-rank__row {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: clamp(1rem, 4vw, 3rem);
-    position: relative;
-    padding-left: clamp(1rem, 2vw, 1.75rem);
-  }
-  /* accent gradient rail on the left, echoing the Figma bar. */
-  .mind-rank::before {
-    content: '';
-    position: absolute;
-    left: calc(var(--case-pad) - 2px);
-    top: 0.6rem;
-    bottom: 0.6rem;
-    width: 6px;
-    border-radius: 999px;
-    background: linear-gradient(to bottom, var(--accent), rgba(138, 115, 224, 0.15));
-  }
-  .mind-rank { position: relative; }
-  .mind-rank__need,
-  .mind-rank__answer {
-    background: var(--card);
-    border: 1px solid var(--hair);
-    border-radius: 999px;
-    padding: clamp(0.75rem, 1.4vw, 1.1rem) clamp(1.25rem, 2.4vw, 2rem);
-    font-weight: 500;
-    font-size: clamp(1rem, 1.2vw, 1.25rem);
-    box-shadow: 0 10px 24px -14px rgba(30, 20, 60, 0.35);
-    text-align: center;
-  }
-  .mind-rank__answer { color: var(--body); }
-  .mind-rank__arrow { color: var(--body); font-size: 1.35rem; font-weight: 300; }
+  .mind-note { font-weight: 500; font-size: var(--fs-small); color: var(--body); letter-spacing: 0.02em; }
 
-  /* ── Journey / outcome section headings ─────────────────────────────── */
-  .mind-journey,
-  .mind-outcome { display: flex; flex-direction: column; gap: clamp(1.5rem, 3vw, 2.5rem); }
-  /* Journey component uses global page tokens; drop its own outer padding so it
-     aligns to the case inner width. */
-  .mind-journey :global(.journey) { margin: 0; padding-inline: 0; max-width: none; }
+  .mind-prio { display: grid; grid-template-columns: auto 1fr; gap: clamp(1rem, 3vw, 2.5rem); }
+  .mind-prio__rail {
+    width: 10px; border-radius: 999px;
+    background: linear-gradient(to bottom, var(--accent), rgba(138, 115, 224, 0.12));
+  }
+  .mind-prio__rows {
+    list-style: none; margin: 0; padding: 0;
+    display: flex; flex-direction: column; gap: clamp(0.6rem, 1.4vw, 1.15rem);
+  }
+  .mind-prio__row {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center; gap: clamp(1rem, 4vw, 4rem);
+  }
+  .mind-prio__pill {
+    justify-self: start;
+    background: var(--card); border: 1px solid var(--hair); border-radius: 999px;
+    padding: clamp(0.7rem, 1.3vw, 1rem) clamp(1.25rem, 2.2vw, 1.9rem);
+    font-weight: 500; font-size: clamp(0.95rem, 1.15vw, 1.2rem);
+    box-shadow: 0 12px 26px -16px rgba(30, 20, 60, 0.4);
+  }
+  .mind-prio__pill--answer { color: var(--body); }
+  .mind-prio__arrow { justify-self: center; color: var(--body); font-size: 1.4rem; font-weight: 300; }
 
-  /* ── Evaluation outcome cards ───────────────────────────────────────── */
-  .mind-cards {
+  /* ── User journey map ───────────────────────────────────────────────── */
+  .mind-journey { display: flex; flex-direction: column; gap: clamp(1.5rem, 3vw, 2.5rem); }
+  .mind-jscroll { overflow-x: auto; padding-bottom: 0.5rem; }
+  .mind-jmap {
+    min-width: 880px;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: clamp(1.25rem, 2.5vw, 2rem);
+    grid-template-columns: clamp(120px, 12vw, 168px) repeat(6, minmax(0, 1fr));
+    gap: clamp(0.5rem, 0.9vw, 0.85rem);
     align-items: stretch;
   }
+  .mind-jmap__rowlabel { align-self: center; display: flex; flex-direction: column; gap: 0.1rem; padding-right: 0.5rem; }
+  .mind-jmap__rowlabel b { font-weight: 700; font-size: clamp(0.85rem, 1vw, 1rem); color: var(--ink); }
+  .mind-jmap__rowlabel span { font-size: 0.72rem; color: var(--body); }
+  .mind-jmap__rowlabel--accent b { color: var(--accent); }
+
+  .mind-jmap__phase { display: flex; align-items: center; gap: 0.5rem; padding-bottom: 0.3rem; }
+  .mind-jmap__badge {
+    width: 26px; height: 26px; border-radius: 999px; flex: 0 0 auto;
+    background: var(--accent); color: #fff; font-weight: 700; font-size: 0.8rem;
+    display: grid; place-items: center;
+  }
+  .mind-jmap__phase b { font-weight: 700; font-size: clamp(0.85rem, 1vw, 1.05rem); }
+
+  .mind-jcard {
+    background: var(--card); border: 1px solid var(--hair); border-radius: 14px;
+    padding: clamp(0.7rem, 1.1vw, 1.05rem);
+    display: flex; flex-direction: column; gap: 0.55rem;
+    box-shadow: 0 10px 24px -18px rgba(30, 20, 60, 0.4);
+  }
+  .mind-jcard--hl { border-color: rgba(138, 115, 224, 0.55); background: #f3f0fd; }
+  .mind-jcard p { font-size: clamp(0.78rem, 0.9vw, 0.95rem); line-height: 1.4; margin: 0; color: var(--ink); font-weight: 400; }
+  .mind-jcard__emo { display: flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; color: var(--body); }
+  .mind-jcard__dot { width: 9px; height: 9px; border-radius: 999px; flex: 0 0 auto; }
+
+  .mind-jbar { display: flex; align-items: flex-end; justify-content: center; height: clamp(72px, 8vw, 118px); }
+  .mind-jbar span { width: clamp(30px, 3.4vw, 54px); border-radius: 8px; min-height: 8px; }
+
+  .tone-good { background: var(--accent); }
+  .tone-warn { background: var(--warn); }
+  .tone-bad { background: var(--bad); }
+  .tone-neutral { background: var(--neutral); }
+
+  /* ── Evaluation outcome cards ───────────────────────────────────────── */
+  .mind-outcome { display: flex; flex-direction: column; gap: clamp(1.5rem, 3vw, 2.5rem); }
+  .mind-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.25rem, 2.5vw, 2rem); align-items: stretch; }
   .mind-card {
-    display: flex;
-    flex-direction: column;
-    gap: clamp(0.9rem, 1.6vw, 1.35rem);
-    background: var(--card);
-    border: 1px solid var(--hair);
-    border-radius: var(--radius-lg, 20px);
-    padding: clamp(1.5rem, 2.4vw, 2.25rem);
+    display: flex; flex-direction: column; gap: clamp(0.75rem, 1.4vw, 1.15rem);
+    background: var(--card); border: 1px solid var(--hair);
+    border-radius: var(--radius-lg, 20px); padding: clamp(1.5rem, 2.4vw, 2.25rem);
     box-shadow: 0 18px 40px -26px rgba(30, 20, 60, 0.4);
   }
   .mind-card__num { color: var(--accent); font-weight: 700; font-size: 0.95rem; }
-  .mind-card h3 {
-    font-weight: 700;
-    font-size: clamp(1.15rem, 1.6vw, 1.5rem);
-    line-height: 1.15;
-    letter-spacing: -0.01em;
-    margin: 0;
-  }
+  .mind-card h3 { font-weight: 700; font-size: clamp(1.15rem, 1.6vw, 1.5rem); line-height: 1.15; letter-spacing: -0.01em; margin: 0; }
+  .mind-card__rule { height: 1px; background: var(--hair); margin: 0.25rem 0; }
   .mind-card__split { display: flex; flex-direction: column; gap: 0.35rem; }
-  .mind-card__label {
-    font-weight: 500;
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--accent);
-  }
+  .mind-card__label { font-weight: 500; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); }
   .mind-card__label--muted { color: var(--body); }
   .mind-card p { font-size: clamp(0.95rem, 1.1vw, 1.15rem); line-height: 1.55; }
   .mind-card__future { color: var(--body); }
 
   /* ── Responsive ─────────────────────────────────────────────────────── */
   @media (max-width: 900px) {
-    .mind-hero {
-      min-height: 0;
-      flex-direction: column;
-      align-items: stretch;
-    }
-    .mind-hero__laptop {
-      position: static;
-      width: 100%;
-      height: auto;
-      order: 1;
-      margin-top: 2rem;
-    }
-    .mind-row,
-    .mind-row--demo { grid-template-columns: 1fr; }
-    /* Heading-first reading order on mobile. */
+    .mind-hero__grid { grid-template-columns: 1fr; grid-template-rows: auto auto auto; }
+    .mind-hero__meta { grid-column: 1; grid-row: 1; }
+    .mind-hero__marks { grid-column: 1; grid-row: 1; }
+    .mind-hero__laptop { grid-column: 1; grid-row: 2; justify-self: center; margin-block: 1.5rem; }
+    .mind-hero__title { grid-column: 1; grid-row: 3; }
+    .mind-row, .mind-row--demo { grid-template-columns: 1fr; }
     .mind-row--cycle .mind-stack--lead { order: -1; }
-    .mind-rank__row { grid-template-columns: 1fr; gap: 0.4rem; text-align: left; }
-    .mind-rank__arrow { transform: rotate(90deg); justify-self: start; }
-    .mind-rank__need,
-    .mind-rank__answer { text-align: left; }
+    .mind-prio__row { gap: clamp(0.75rem, 3vw, 1.5rem); }
     .mind-cards { grid-template-columns: 1fr; }
   }
 </style>
