@@ -1,0 +1,224 @@
+---
+/**
+ * Product Photography — full-bleed dark case study, ported from the Figma
+ * "Frame 143" layout. Image-forward: hero render, a 2×2 photo grid, and a
+ * closing render pair with caption. Renders its own hero (the [slug] template
+ * drops ProjectHeader via `hideHeader: true`). A couple of source typos in the
+ * captions were corrected.
+ */
+import { Image } from 'astro:assets';
+import heroRender from '../../assets/product-photography/hero-render.png';
+import renderKeyshot from '../../assets/product-photography/render-keyshot.png';
+import dsc9436 from '../../assets/product-photography/dsc9436.png';
+import dsc9408 from '../../assets/product-photography/dsc9408.png';
+import dsc9395 from '../../assets/product-photography/dsc9395.png';
+import dsc9418 from '../../assets/product-photography/dsc9418.png';
+
+const grid = [
+  { src: dsc9436, alt: 'Behind the scenes — the goggles lit on a red studio set' },
+  { src: dsc9408, alt: 'The goggles under blue and magenta gel lighting' },
+  { src: dsc9395, alt: 'Close product shot of the goggles in red light' },
+  { src: dsc9418, alt: 'The goggles backlit in blue' },
+];
+---
+
+<section class="pp">
+  <!-- Minimal scroll indicator -->
+  <div class="pp-scroll" aria-hidden="true"><div class="pp-scroll__thumb"></div></div>
+
+  <!-- ── Hero ─────────────────────────────────────────────────────────── -->
+  <header class="pp-hero">
+    <div class="pp-inner pp-hero__grid">
+      <div class="pp-hero__text">
+        <div class="pp-hero__meta">
+          <p>University project — 2023</p>
+          <p>Tools: Adobe Lightroom, KeyShot, Alias 3D</p>
+        </div>
+        <div class="pp-hero__title">
+          <h1>Product<br />photography</h1>
+          <p>Creative product advertisement, picture and rendering exercise</p>
+        </div>
+      </div>
+      <Image class="pp-hero__render" src={heroRender} alt="Neon-lit render of the goggles in blue and magenta" widths={[600, 1050]} sizes="(max-width: 900px) 90vw, 45vw" />
+    </div>
+  </header>
+
+  <!-- ── 2×2 photo grid ───────────────────────────────────────────────── -->
+  <div class="pp-grid">
+    {grid.map((g) => (
+      <Image class="pp-grid__img" src={g.src} alt={g.alt} widths={[720, 1200, 1920]} sizes="(max-width: 720px) 100vw, 50vw" />
+    ))}
+  </div>
+
+  <!-- ── Closing render pair ──────────────────────────────────────────── -->
+  <div class="pp-close">
+    <div class="pp-inner pp-close__pair">
+      <Image class="pp-close__img" src={heroRender} alt="Final render of the goggles" widths={[600, 1050]} sizes="(max-width: 900px) 90vw, 45vw" />
+      <Image class="pp-close__img" src={renderKeyshot} alt="KeyShot render presentation of the goggles" widths={[700, 1200]} sizes="(max-width: 900px) 90vw, 45vw" />
+    </div>
+    <p class="pp-inner pp-close__caption">Model created with Alias 3D, renderings made with KeyShot 12.</p>
+  </div>
+</section>
+
+<style>
+  .pp {
+    --ink: #0e0a10;
+    --body: rgba(255, 255, 255, 0.82);
+    background: var(--ink);
+    color: #fff;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(3rem, 7vw, 7rem);
+    padding-bottom: clamp(3rem, 7vw, 6rem);
+    width: 100%;
+    overflow-x: clip;
+  }
+  .pp-inner {
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 6vw, 5rem);
+  }
+
+  /* ── Hero ───────────────────────────────────────────────────────────── */
+  .pp-hero__grid {
+    min-height: min(84vh, 840px);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: clamp(2rem, 5vw, 5rem);
+  }
+  .pp-hero__text {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.5rem, 4vw, 3rem);
+  }
+  .pp-hero__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-weight: 200;
+    font-size: clamp(0.85rem, 1.4vw, 1.1rem);
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .pp-hero__title h1 {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 900;
+    font-size: clamp(3rem, 8vw, 8rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin: 0;
+  }
+  .pp-hero__title p {
+    margin-top: 0.75rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.15rem, 2.4vw, 2.25rem);
+    max-width: 20ch;
+  }
+  .pp-hero__render {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  /* ── Photo grid ─────────────────────────────────────────────────────── */
+  .pp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .pp-grid__img {
+    width: 100%;
+    height: clamp(220px, 30vw, 540px);
+    object-fit: cover;
+    display: block;
+  }
+
+  /* ── Closing pair ───────────────────────────────────────────────────── */
+  .pp-close {
+    background: #000;
+    padding-block: clamp(2.5rem, 6vw, 5rem);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+  }
+  .pp-close__pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+  }
+  .pp-close__img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  .pp-close__caption {
+    color: var(--body);
+    font-weight: 300;
+    font-size: clamp(1rem, 1.3vw, 1.35rem);
+  }
+
+  /* ── Scroll indicator ───────────────────────────────────────────────── */
+  .pp-scroll {
+    position: fixed;
+    top: 65px;
+    right: 6px;
+    bottom: 10px;
+    width: 5px;
+    z-index: 40;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .pp-scroll__thumb {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    min-height: 40px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.85);
+    will-change: transform, height;
+  }
+
+  /* ── Responsive ─────────────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .pp-hero__grid { grid-template-columns: 1fr; }
+    .pp-close__pair { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 720px) {
+    .pp-grid { grid-template-columns: 1fr; }
+    .pp-scroll { display: none; }
+  }
+</style>
+
+<script>
+  // Minimal scroll indicator — matches the Grab case study behaviour.
+  const bar = document.querySelector<HTMLElement>('.pp-scroll');
+  const thumb = document.querySelector<HTMLElement>('.pp-scroll__thumb');
+  if (bar && thumb) {
+    const update = () => {
+      const winH = window.innerHeight;
+      const docH = document.documentElement.scrollHeight;
+      const trackH = bar.clientHeight;
+      const scrollable = docH - winH;
+      if (scrollable <= 4) {
+        bar.style.opacity = '0';
+        return;
+      }
+      bar.style.opacity = '1';
+      const thumbH = Math.max(40, trackH * (winH / docH));
+      const scrolled = Math.min(1, Math.max(0, window.scrollY / scrollable));
+      thumb.style.height = `${thumbH}px`;
+      thumb.style.transform = `translateY(${scrolled * (trackH - thumbH)}px)`;
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+  }
+</script>

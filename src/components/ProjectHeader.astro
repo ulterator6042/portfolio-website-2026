@@ -1,0 +1,60 @@
+---
+import { Image } from 'astro:assets';
+import { categories } from '@config/site';
+interface Props {
+  title: string;
+  summary: string;
+  category: string;
+  year?: number;
+  role?: string;
+  tools?: string[];
+  cover?: ImageMetadata;
+}
+const { title, summary, category, year, role, tools = [], cover } = Astro.props;
+const catLabel = categories.find((c) => c.id === category)?.label ?? category;
+---
+<header class="ph container">
+  <p class="eyebrow">{catLabel}</p>
+  <h1>{title}</h1>
+  <p class="ph__summary">{summary}</p>
+  <dl class="ph__meta">
+    {year && <div><dt>Year</dt><dd>{year}</dd></div>}
+    {role && <div><dt>Role</dt><dd>{role}</dd></div>}
+    {tools.length > 0 && <div><dt>Tools</dt><dd>{tools.join(', ')}</dd></div>}
+  </dl>
+</header>
+{cover && (
+  <div class="ph__cover">
+    <Image src={cover} alt={title} widths={[900, 1600, 2200]} sizes="100vw" />
+  </div>
+)}
+
+<style>
+  .ph { padding-top: clamp(3rem, 8vw, 6rem); }
+  .ph__summary {
+    max-width: 46ch;
+    margin-top: 1rem;
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    color: var(--muted);
+  }
+  .ph__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+    margin-top: 2.5rem;
+  }
+  .ph__meta dt {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .ph__meta dd { margin-top: 0.25rem; font-size: 0.95rem; }
+  .ph__cover {
+    margin: clamp(2.5rem, 6vw, 4.5rem) auto 0;
+    max-width: var(--page-max);
+    padding-inline: var(--page-pad);
+  }
+  .ph__cover :global(img) { width: 100%; border-radius: var(--radius-lg); }
+</style>

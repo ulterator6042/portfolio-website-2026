@@ -1,0 +1,82 @@
+---
+import { site, theme } from '@config/site';
+import Nav from '@components/Nav.astro';
+import Footer from '@components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Set on the home page so the header sits over the hero. */
+  transparentNav?: boolean;
+  /** Hide the shared Nav + Footer (single-screen pages render their own chrome). */
+  bare?: boolean;
+  /** Hide just the Footer (e.g. the full-bleed Grab case study). */
+  hideFooter?: boolean;
+  /** Lock the viewport — no page scroll (the fixed home screen). */
+  lockScroll?: boolean;
+}
+
+const {
+  title,
+  description = site.description,
+  transparentNav = false,
+  bare = false,
+  hideFooter = false,
+  lockScroll = false,
+} = Astro.props;
+
+const pageTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.tagline}`;
+
+// Mirror the master-config design tokens into CSS custom properties so the
+// whole stylesheet (and every page) reads from one place.
+const c = theme.color;
+const cssVars = [
+  `--bg:${c.bg}`,
+  `--surface:${c.surface}`,
+  `--text:${c.text}`,
+  `--muted:${c.muted}`,
+  `--border:${c.border}`,
+  `--accent:${c.accent}`,
+  `--accent-text:${c.accentText}`,
+  `--header-bg:${c.headerBg}`,
+  `--header-text:${c.headerText}`,
+  `--font-sans:${theme.font.sans}`,
+  `--font-mono:${theme.font.mono}`,
+  `--radius-sm:${theme.radius.sm}`,
+  `--radius-md:${theme.radius.md}`,
+  `--radius-lg:${theme.radius.lg}`,
+  `--page-pad:${theme.space.page}`,
+  `--page-max:${theme.space.max}`,
+].join(';');
+---
+
+<!doctype html>
+<html lang={site.locale} style={cssVars}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href={site.favicon} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,700;9..40,800;9..40,900&family=Inter:wght@200;300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={site.ogImage} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href={new URL(Astro.url.pathname, site.url)} />
+  </head>
+  <body class:list={{ 'lock-scroll': lockScroll }}>
+    {!bare && <Nav transparent={transparentNav} />}
+    <main>
+      <slot />
+    </main>
+    {!bare && !hideFooter && <Footer />}
+  </body>
+</html>

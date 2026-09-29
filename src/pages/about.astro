@@ -1,0 +1,35 @@
+---
+import Base from '@layouts/Base.astro';
+import { site, socials } from '@config/site';
+---
+<Base title="About" description={`About ${site.name}`}>
+  <section class="about container">
+    <p class="eyebrow">About</p>
+    <h1>{site.name}</h1>
+    <div class="about__body">
+      <p>
+        I'm a designer and creative technologist working across interaction
+        design, product design, and photography. This page is a placeholder —
+        the full bio, background, and CV go here.
+      </p>
+      <p>Get in touch:</p>
+      <ul class="about__links">
+        {socials.map((s) => (
+          <li>
+            <a href={s.href} rel={('external' in s && s.external) ? 'noopener noreferrer' : undefined}
+               target={('external' in s && s.external) ? '_blank' : undefined}>{s.label}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .about { padding-top: clamp(4rem, 10vw, 8rem); max-width: 760px; }
+  .about__body { margin-top: 2rem; }
+  .about__body p { color: var(--muted); font-size: 1.1rem; }
+  .about__body p + p { margin-top: 1.25rem; }
+  .about__links { list-style: none; padding: 0; margin-top: 1rem; display: flex; gap: 1.5rem; }
+  .about__links a { color: var(--accent); text-decoration: none; }
+</style>

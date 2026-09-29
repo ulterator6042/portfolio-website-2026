@@ -1,0 +1,61 @@
+/* ============================================================
+   Gallery canvas + items
+   ============================================================ */
+
+#gallery-canvas {
+  position: fixed;
+  inset: 0;
+  /* Items are positioned absolutely via translate3d in JS */
+  /* Let JS own all touch gestures (drag pan / pinch zoom) — no native scroll/zoom */
+  touch-action: none;
+}
+
+.gallery-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  will-change: transform;
+  transition: box-shadow 0.3s ease;
+}
+
+/* ============================================================
+   Edge indicators (subtle gradient at viewport edges)
+   ============================================================ */
+
+.edge-indicator {
+  position: fixed;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.edge-indicator.visible {
+  opacity: 1;
+}
+
+.edge-top {
+  inset: 0 0 auto 0;
+  height: 80px;
+  background: linear-gradient(to bottom, rgba(10, 10, 10, 0.5), transparent);
+}
+
+.edge-bottom {
+  inset: auto 0 0 0;
+  height: 80px;
+  background: linear-gradient(to top, rgba(10, 10, 10, 0.5), transparent);
+}
+
+.edge-left {
+  inset: 0 auto 0 0;
+  width: 80px;
+  background: linear-gradient(to right, rgba(10, 10, 10, 0.5), transparent);
+}
+
+.edge-right {
+  inset: 0 0 0 auto;
+  width: 80px;
+  background: linear-gradient(to left, rgba(10, 10, 10, 0.5), transparent);
+}

@@ -1,0 +1,53 @@
+---
+import { Image } from 'astro:assets';
+import { categories } from '@config/site';
+interface Props {
+  href: string;
+  title: string;
+  summary: string;
+  category: string;
+  cover?: ImageMetadata;
+}
+const { href, title, summary, category, cover } = Astro.props;
+const catLabel = categories.find((c) => c.id === category)?.label ?? category;
+---
+<a class="card" href={href} data-category={category}>
+  <div class="card__media">
+    {cover
+      ? <Image src={cover} alt={title} widths={[600, 900]} sizes="(max-width: 700px) 100vw, 50vw" />
+      : <div class="card__placeholder" aria-hidden="true"></div>}
+  </div>
+  <div class="card__body">
+    <span class="card__cat">{catLabel}</span>
+    <h3 class="card__title">{title}</h3>
+    <p class="card__summary">{summary}</p>
+  </div>
+</a>
+
+<style>
+  .card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+  .card:hover { transform: translateY(-4px); border-color: var(--accent); }
+  .card__media { aspect-ratio: 4 / 3; overflow: hidden; background: var(--bg); }
+  .card__media :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .card__placeholder {
+    width: 100%; height: 100%;
+    background: repeating-linear-gradient(45deg, var(--surface), var(--surface) 12px, var(--bg) 12px, var(--bg) 24px);
+  }
+  .card__body { padding: 1.25rem 1.5rem 1.5rem; }
+  .card__cat {
+    font-family: var(--font-mono);
+    font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent);
+  }
+  .card__title { margin-top: 0.4rem; font-size: 1.3rem; }
+  .card__summary { margin-top: 0.35rem; color: var(--muted); font-size: 0.9rem; }
+</style>

@@ -1,0 +1,61 @@
+---
+/** Editorial before/after journey. Each phase is a row with the "Without"
+ *  and "With the tool" experience side by side. Minimal, typographic. */
+interface Phase { name: string; without: string; withTool: string; }
+interface Props { phases: Phase[]; }
+const { phases } = Astro.props;
+---
+<div class="journey">
+  <div class="journey__head">
+    <span></span>
+    <span class="journey__col">Without the tool</span>
+    <span class="journey__col accent">With the tool</span>
+  </div>
+  {phases.map((p, i) => (
+    <div class="journey__row">
+      <div class="journey__phase">
+        <span class="journey__num">{String(i + 1).padStart(2, '0')}</span>
+        <span class="journey__name">{p.name}</span>
+      </div>
+      <p class="journey__cell">{p.without}</p>
+      <p class="journey__cell">{p.withTool}</p>
+    </div>
+  ))}
+</div>
+
+<style>
+  .journey {
+    max-width: var(--page-max);
+    margin: clamp(2rem, 5vw, 4rem) auto;
+    padding-inline: var(--page-pad);
+  }
+  .journey__head, .journey__row {
+    display: grid;
+    grid-template-columns: 180px 1fr 1fr;
+    gap: clamp(1rem, 3vw, 2.5rem);
+  }
+  .journey__head {
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--text);
+  }
+  .journey__col {
+    font-family: var(--font-mono);
+    font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .journey__col.accent { color: var(--accent); }
+  .journey__row { padding-block: 1.25rem; border-bottom: 1px solid var(--border); }
+  .journey__num { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); }
+  .journey__name { display: block; margin-top: 0.25rem; font-weight: 600; }
+  .journey__cell { font-size: 0.95rem; color: var(--muted); margin: 0; }
+  @media (max-width: 720px) {
+    .journey__head { display: none; }
+    .journey__row { grid-template-columns: 1fr; gap: 0.5rem; }
+    .journey__cell::before {
+      font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--muted); display: block;
+    }
+    .journey__cell:nth-of-type(2)::before { content: 'Without'; }
+    .journey__cell:nth-of-type(3)::before { content: 'With the tool'; color: var(--accent); }
+  }
+</style>

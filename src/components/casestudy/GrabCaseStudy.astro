@@ -1,0 +1,474 @@
+---
+/**
+ * Grab — full-bleed dark case study, ported from the Figma "Frame 137" layout.
+ * Self-contained: renders its own hero (the [slug] template drops ProjectHeader
+ * via `hideHeader: true`). Copy + assets adapted from the Figma deck; a handful
+ * of obvious source typos were corrected in the prose.
+ */
+import { Image } from 'astro:assets';
+import hero from '../../assets/grab/hero.png';
+import closing from '../../assets/grab/closing.png';
+import iconOpenPalm from '../../assets/grab/icon-open-palm.png';
+import iconPoint from '../../assets/grab/icon-point.png';
+import iconGrab from '../../assets/grab/icon-grab.png';
+import dot from '../../assets/grab/dot.svg';
+
+const stages = [
+  { n: '01', title: 'Webcam', body: 'A standard webcam watches your hand at thirty frames a second.' },
+  { n: '02', title: 'Hand tracking', body: 'Computer vision finds the palm and reads whether it is open or closed.' },
+  { n: '03', title: 'TouchDesigner', body: 'Hand position drives the canvas — panning, momentum and the selection dot all resolve here.' },
+  { n: '04', title: 'The canvas', body: 'The field of images answers instantly: glide, grab, release.' },
+];
+---
+
+<section class="grab">
+  <!-- Minimal scroll indicator (project accent) -->
+  <div class="grab-scroll" aria-hidden="true"><div class="grab-scroll__thumb"></div></div>
+
+  <!-- ── Hero ─────────────────────────────────────────────────────────── -->
+  <header class="grab-hero">
+    <Image class="grab-hero__bg" src={hero} alt="" widths={[900, 1400, 1920]} sizes="100vw" />
+    <div class="grab-hero__inner grab-inner">
+      <div class="grab-hero__meta">
+        <p>Personal project — 2025</p>
+        <p>Tools: TouchDesigner, Claude Code, Python</p>
+      </div>
+      <div class="grab-hero__title">
+        <h1>Grab</h1>
+        <p>An exploration of a gesture-controlled photo gallery</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── A new interaction with my photos ─────────────────────────────── -->
+  <div class="grab-inner grab-row">
+    <h2 class="grab-display">A new interaction with my photos</h2>
+    <div class="grab-stack">
+      <div>
+        <h3>Every gallery looks the same</h3>
+        <p>A grid, sorted newest-first, scrolled top to bottom. It is efficient and
+          forgettable. We can intentionally retrieve a photo, but rarely rediscover
+          one. The structure fixes the order, and the order flattens everything into
+          a list.</p>
+      </div>
+      <div>
+        <h3>Rethinking the structure</h3>
+        <p>Grab starts from one provocation: what if there were no grid, no timeline,
+          no scroll direction at all? Just an open field of images you drift across,
+          and a way to reach into it with your hand instead of a cursor.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Gestures  ·  In touch with your memories ─────────────────────── -->
+  <div class="grab-inner grab-row grab-row--gestures">
+    <div class="grab-gestures">
+      <div class="grab-gesture">
+        <Image class="grab-gesture__icon" src={iconOpenPalm} alt="" widths={[112, 224]} />
+        <div>
+          <h3>Open palm <span>·</span> glide</h3>
+          <p>Move your open hand and the whole field slides with it. Let go and it
+            drifts to a stop, carrying momentum.</p>
+        </div>
+      </div>
+      <div class="grab-gesture">
+        <img class="grab-gesture__icon grab-gesture__icon--dot" src={dot.src} alt="" width="96" height="96" />
+        <div>
+          <h3>The dot <span>·</span> your cursor</h3>
+          <p>A single point tracks your hand against the screen to provide the
+            feedback that keeps a touchless move legible.</p>
+        </div>
+      </div>
+      <div class="grab-gesture">
+        <Image class="grab-gesture__icon" src={iconGrab} alt="" widths={[120, 240]} />
+        <div>
+          <h3>Closed fist <span>·</span> grab</h3>
+          <p>Close your hand to expand the image under the dot, connecting our
+            physicality to our decisions.</p>
+        </div>
+      </div>
+    </div>
+    <div class="grab-stack grab-stack--lead">
+      <h2 class="grab-display">In touch with your memories</h2>
+      <p>The whole interface is read from your webcam with no need for mouse or keys.
+        Open hand to move, closed hand to choose, and a single dot that mirrors where
+        your hand is on the screen.</p>
+    </div>
+  </div>
+
+  <!-- ── Video demo  ·  no imposed order ──────────────────────────────── -->
+  <div class="grab-inner grab-row grab-row--demo">
+    <figure class="grab-video">
+      <video
+        class="grab-video__el"
+        data-src="/media/grab-demo.mp4"
+        muted
+        loop
+        playsinline
+        preload="none"
+      ></video>
+      <figcaption>Video demo</figcaption>
+    </figure>
+    <div class="grab-demo-copy">
+      <p class="grab-demo-copy__lead">No scroll direction, no imposed order.</p>
+      <p>Explore through your preferred peripheral or through your body.</p>
+      <div class="grab-demo-copy__icons">
+        <Image src={iconOpenPalm} alt="" widths={[62, 124]} />
+        <Image src={iconGrab} alt="" widths={[62, 124]} />
+        <Image src={iconPoint} alt="" widths={[62, 124]} />
+      </div>
+    </div>
+  </div>
+
+  <!-- ── How it works ─────────────────────────────────────────────────── -->
+  <div class="grab-inner grab-how">
+    <div class="grab-how__head">
+      <h3>How it works</h3>
+      <p>Grab is a live pipeline — everything runs in real time, from one ordinary
+        webcam.</p>
+    </div>
+    <div class="grab-stages">
+      {stages.map((s, i) => (
+        <Fragment>
+          <article class="grab-stage">
+            <span class="grab-stage__num">{s.n}</span>
+            <h4>{s.title}</h4>
+            <p>{s.body}</p>
+          </article>
+          {i < stages.length - 1 && <span class="grab-stage__arrow" aria-hidden="true">→</span>}
+        </Fragment>
+      ))}
+    </div>
+  </div>
+
+  <!-- ── Closing reflections ──────────────────────────────────────────── -->
+  <div class="grab-inner grab-row grab-row--closing">
+    <div class="grab-stack">
+      <div>
+        <h3>Physicality creates pause</h3>
+        <p>When selection costs a gesture instead of a click, people look longer
+          before committing. Exploration becomes more intentional and personal.</p>
+      </div>
+      <div>
+        <h3>Spatial browsing removes hierarchy</h3>
+        <p>Without a clear grid and chronological order there is no “first” photo.
+          Every encounter becomes a new finding, using the inherent chaos of the
+          structure to shift the emotional register.</p>
+      </div>
+    </div>
+    <Image
+      class="grab-closing__img"
+      src={closing}
+      alt="A person reaching into a wall of projected photographs"
+      widths={[700, 1100, 1400]}
+      sizes="(max-width: 900px) 100vw, 50vw"
+    />
+  </div>
+</section>
+
+<style>
+  .grab {
+    --ink: #0e0e0e;
+    --orange: #e07856;
+    --card: #161616;
+    --hair: rgba(255, 255, 255, 0.08);
+    --body: rgba(255, 255, 255, 0.82);
+    background: var(--ink);
+    color: #fff;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(4rem, 9vw, 9rem);
+    padding-bottom: clamp(4rem, 9vw, 9rem);
+    width: 100%;
+    overflow-x: clip;
+  }
+
+  .grab-inner {
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 6vw, 5rem);
+  }
+
+  /* ── Hero ───────────────────────────────────────────────────────────── */
+  .grab-hero {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .grab-hero__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center right;
+    z-index: -2;
+  }
+  .grab-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(90deg, var(--ink) 4%, rgba(14, 14, 14, 0.55) 42%, rgba(14, 14, 14, 0.05) 75%),
+      linear-gradient(0deg, var(--ink) 2%, rgba(14, 14, 14, 0) 30%);
+  }
+  .grab-hero__inner {
+    position: relative;
+    z-index: 1;
+    min-height: min(86vh, 860px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-block: clamp(1.75rem, 4vw, 3.25rem);
+  }
+  .grab-hero__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-weight: 200;
+    font-size: clamp(0.85rem, 1.4vw, 1.1rem);
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .grab-hero__title h1 {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 900;
+    font-size: clamp(4rem, 13vw, 11rem);
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    margin: 0;
+  }
+  .grab-hero__title p {
+    margin-top: 0.6rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.15rem, 2.6vw, 2.25rem);
+    max-width: 22ch;
+  }
+
+  /* ── Editorial rows ─────────────────────────────────────────────────── */
+  .grab-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 6vw, 6.5rem);
+    align-items: center;
+  }
+  .grab-display {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 800;
+    color: var(--orange);
+    font-size: clamp(2.5rem, 6vw, 6rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .grab-stack {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.75rem, 3vw, 2.75rem);
+  }
+  .grab-stack--lead { gap: clamp(1.5rem, 2.5vw, 2rem); }
+  .grab h3 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.35rem, 2.1vw, 2rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+  .grab p {
+    font-weight: 300;
+    font-size: clamp(1rem, 1.25vw, 1.35rem);
+    line-height: 1.6;
+    color: var(--body);
+    margin-top: 0.6rem;
+  }
+  .grab-stack--lead > p { font-size: clamp(1.05rem, 1.4vw, 1.5rem); }
+
+  /* ── Gesture list ───────────────────────────────────────────────────── */
+  .grab-row--gestures { align-items: center; }
+  .grab-gestures {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.75rem, 3vw, 2.75rem);
+  }
+  .grab-gesture {
+    display: grid;
+    grid-template-columns: clamp(64px, 8vw, 112px) 1fr;
+    align-items: center;
+    gap: clamp(1.25rem, 3vw, 2.75rem);
+  }
+  .grab-gesture__icon {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+  .grab-gesture__icon--dot { width: clamp(64px, 7vw, 96px); }
+  .grab-gesture h3 { font-size: clamp(1.2rem, 1.9vw, 1.75rem); }
+  .grab-gesture h3 span { color: var(--orange); margin-inline: 0.15em; }
+  .grab-gesture p { font-size: clamp(0.95rem, 1.15vw, 1.25rem); }
+
+  /* ── Video demo row ─────────────────────────────────────────────────── */
+  .grab-row--demo { grid-template-columns: 1.1fr 0.9fr; }
+  .grab-video { margin: 0; display: flex; flex-direction: column; gap: 1rem; }
+  .grab-video__el {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    background: var(--card);
+    border: 1px solid var(--hair);
+    border-radius: 20px;
+  }
+  .grab-video figcaption {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 300;
+    font-size: clamp(0.95rem, 1.15vw, 1.25rem);
+  }
+  .grab-demo-copy__lead {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    color: #fff;
+    font-size: clamp(1.35rem, 2.1vw, 2rem);
+    line-height: 1.2;
+    margin: 0;
+  }
+  .grab-demo-copy > p:not(.grab-demo-copy__lead) { margin-top: 0.75rem; }
+  .grab-demo-copy__icons {
+    display: flex;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-top: clamp(1.5rem, 3vw, 2.5rem);
+  }
+  .grab-demo-copy__icons :global(img) { height: clamp(48px, 6vw, 78px); width: auto; }
+
+  /* ── How it works ───────────────────────────────────────────────────── */
+  .grab-how { display: flex; flex-direction: column; gap: clamp(1.75rem, 4vw, 3rem); }
+  .grab-how__head { max-width: 60ch; }
+  .grab-stages {
+    display: flex;
+    align-items: stretch;
+    gap: clamp(0.5rem, 1vw, 1rem);
+  }
+  .grab-stage {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.75rem, 1.5vw, 1.25rem);
+    background: var(--card);
+    border: 1px solid var(--hair);
+    border-radius: 16px;
+    padding: clamp(1.25rem, 2vw, 2rem) clamp(1.25rem, 2.2vw, 2.5rem);
+    box-shadow: 0 11px 33px 1px rgba(0, 0, 0, 0.25);
+  }
+  .grab-stage__num { color: var(--orange); font-weight: 700; font-size: 1.05rem; }
+  .grab-stage h4 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.15rem, 1.6vw, 1.5rem);
+    line-height: 1.15;
+  }
+  .grab-stage p { margin: 0; font-size: clamp(0.9rem, 1.1vw, 1.15rem); }
+  .grab-stage__arrow {
+    align-self: center;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: clamp(1.25rem, 2.4vw, 2.25rem);
+    font-weight: 300;
+  }
+
+  /* ── Closing row ────────────────────────────────────────────────────── */
+  .grab-row--closing { align-items: center; }
+  .grab-closing__img {
+    width: 100%;
+    height: auto;
+    border-radius: 16px;
+  }
+
+  /* ── Scroll indicator ───────────────────────────────────────────────── */
+  .grab-scroll {
+    position: fixed;
+    top: 65px;
+    right: 6px;
+    bottom: 10px;
+    width: 5px;
+    z-index: 40;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .grab-scroll__thumb {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    min-height: 40px;
+    border-radius: 999px;
+    background: var(--orange);
+    will-change: transform, height;
+  }
+
+  /* ── Responsive ─────────────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .grab-scroll { display: none; }
+    .grab-row,
+    .grab-row--demo { grid-template-columns: 1fr; }
+    /* Lead heading + intro should read heading-first on mobile. */
+    .grab-row--gestures { direction: ltr; }
+    .grab-row--gestures .grab-stack--lead { order: -1; }
+    .grab-stages { flex-direction: column; }
+    .grab-stage__arrow { transform: rotate(90deg); }
+  }
+</style>
+
+<script>
+  // Lazy-load the demo video (src attached on first intersection so the 45 MB
+  // file isn't fetched until scrolled near) and autoplay/pause with visibility.
+  const video = document.querySelector<HTMLVideoElement>('.grab-video__el');
+  if (video) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const el = entry.target as HTMLVideoElement;
+          if (entry.isIntersecting) {
+            if (!el.src && el.dataset.src) {
+              el.src = el.dataset.src;
+            }
+            el.play().catch(() => {});
+          } else {
+            el.pause();
+          }
+        }
+      },
+      { threshold: 0.35 },
+    );
+    io.observe(video);
+  }
+
+  // Minimal scroll indicator — thumb height reflects how much is visible,
+  // its position reflects how far down the page you are.
+  const bar = document.querySelector<HTMLElement>('.grab-scroll');
+  const thumb = document.querySelector<HTMLElement>('.grab-scroll__thumb');
+  if (bar && thumb) {
+    const update = () => {
+      const winH = window.innerHeight;
+      const docH = document.documentElement.scrollHeight;
+      const trackH = bar.clientHeight;
+      const scrollable = docH - winH;
+      if (scrollable <= 4) {
+        bar.style.opacity = '0';
+        return;
+      }
+      bar.style.opacity = '1';
+      const thumbH = Math.max(40, trackH * (winH / docH));
+      const scrolled = Math.min(1, Math.max(0, window.scrollY / scrollable));
+      thumb.style.height = `${thumbH}px`;
+      thumb.style.transform = `translateY(${scrolled * (trackH - thumbH)}px)`;
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+  }
+</script>

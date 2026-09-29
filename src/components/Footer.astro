@@ -1,0 +1,35 @@
+---
+import { site, socials } from '@config/site';
+const year = new Date().getFullYear();
+---
+<footer class="footer">
+  <div class="footer__inner">
+    <span>© {year} {site.name}</span>
+    <nav class="footer__socials">
+      {socials.map((s) => (
+        <a href={s.href} rel={('external' in s && s.external) ? 'noopener noreferrer' : undefined}
+           target={('external' in s && s.external) ? '_blank' : undefined}>{s.label}</a>
+      ))}
+    </nav>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--border);
+    margin-top: 6rem;
+    padding: 2rem var(--page-pad);
+  }
+  .footer__inner {
+    max-width: var(--page-max);
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  .footer__socials { display: flex; gap: 1.25rem; }
+  .footer__socials a { color: var(--muted); text-decoration: none; }
+  .footer__socials a:hover { color: var(--text); }
+</style>

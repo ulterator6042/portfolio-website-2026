@@ -1,0 +1,19 @@
+# build output
+dist/
+.astro/
+
+# deps
+node_modules/
+
+# env
+.env
+.env.production
+
+# os / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# scratch
+_figma_*.png

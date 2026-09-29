@@ -1,0 +1,163 @@
+/* ============================================================
+   Detail overlay
+   ============================================================ */
+
+#detail-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(12px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+#detail-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.detail-content {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transform: translateY(10px);
+  transition: transform 0.4s ease;
+}
+
+#detail-overlay.active .detail-content {
+  transform: translateY(0);
+}
+
+/* Info panel — fixed-width column on the left */
+.detail-info {
+  flex-shrink: 0;
+  width: 280px;
+  padding: 64px 36px 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 16px;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+#detail-title {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.detail-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: #777;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+#detail-desc {
+  font-size: 14px;
+  line-height: 1.65;
+  color: #999;
+  margin-top: 8px;
+}
+
+/* Preview — fills the remaining space */
+#detail-preview {
+  flex: 1;
+  margin: 32px;
+  border-radius: 4px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Close button */
+#detail-close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  color: #e0e0e0;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s ease;
+}
+
+#detail-close:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Download button */
+#detail-download {
+  position: absolute;
+  top: 24px;
+  right: 72px;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  color: #e0e0e0;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s ease;
+}
+
+#detail-download:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .detail-content {
+    flex-direction: column-reverse;
+  }
+
+  .detail-info {
+    width: 100%;
+    padding: 20px 24px;
+    border-right: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    justify-content: flex-start;
+  }
+
+  #detail-preview {
+    margin: 16px;
+    flex: 1;
+  }
+
+  /* Larger, finger-friendly tap targets, clear of notches/safe areas */
+  #detail-close,
+  #detail-download {
+    width: 44px;
+    height: 44px;
+    top: max(16px, env(safe-area-inset-top));
+  }
+
+  #detail-close {
+    right: max(16px, env(safe-area-inset-right));
+  }
+
+  #detail-download {
+    right: calc(max(16px, env(safe-area-inset-right)) + 56px);
+  }
+}

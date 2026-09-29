@@ -1,0 +1,52 @@
+---
+import { site, nav } from '@config/site';
+interface Props { transparent?: boolean }
+const { transparent = false } = Astro.props;
+const path = Astro.url.pathname;
+---
+<header class:list={['nav', { transparent }]}>
+  <a class="nav__brand" href="/">{site.name}</a>
+  <nav class="nav__links">
+    {nav.map((item) => (
+      <a
+        href={item.href}
+        class:list={['nav__link', { active: path === item.href }]}
+      >{item.label}</a>
+    ))}
+  </nav>
+</header>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem var(--page-pad);
+    background: var(--header-bg);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .nav.transparent {
+    position: fixed;
+    inset: 0 0 auto 0;
+    background: transparent;
+    border-bottom-color: transparent;
+  }
+  .nav__brand {
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 1.1rem;
+  }
+  .nav__links { display: flex; gap: 1.75rem; }
+  .nav__link {
+    color: var(--header-text);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.15s ease;
+  }
+  .nav__link:hover, .nav__link.active { color: #ffffff; }
+</style>
