@@ -14,20 +14,18 @@ import { projectHref, type Project } from '../lib/projects';
 interface Props {
   projects: Project[];
   current?: string;
-  variant?: 'hero' | 'rail';
 }
-const { projects, current, variant = 'hero' } = Astro.props;
+const { projects, current } = Astro.props;
 ---
-<nav class:list={['pmenu', `pmenu--${variant}`]} aria-label="Projects" data-pmenu>
+<nav class="pmenu" aria-label="Projects" data-pmenu>
   <!-- Gradient spotlight that chases the active item (decorative; see script). -->
   <span class="pmenu__glow" data-glow aria-hidden="true"></span>
-  {projects.map((p, i) => (
+  {projects.map((p) => (
     <a
       class:list={['pmenu__item', { active: p.id === current }]}
       href={projectHref(p)}
       data-item
       aria-current={p.id === current ? 'page' : undefined}
-      style={`--i:${i}`}
     >
       <span class="pmenu__name">
         {p.data.title}
@@ -46,28 +44,18 @@ const { projects, current, variant = 'hero' } = Astro.props;
 <style>
   .pmenu {
     position: relative; /* containing block for the spotlight */
+    flex: 1 1 auto;     /* fills the middle of the sidebar */
+    min-height: 0;
     display: flex;
     flex-direction: column;
     gap: 2px;
     overflow-y: auto;
     scrollbar-width: none; /* Firefox */
-    /* Shared item metrics — identical in both contexts. */
     --pmenu-fs: 1.12rem;
     --pmenu-pad: 7px 12px;
-    padding: 26px 18px 26px 30px;
+    padding: 4px 18px 8px 18px; /* item text lands at 30px, aligned with name */
   }
   .pmenu::-webkit-scrollbar { display: none; } /* Chromium/WebKit */
-
-  /* ── Variant = column placement only (items are the same) ────────────── */
-  .pmenu--hero {
-    flex: 1 1 auto;
-    min-height: 0;
-  }
-  .pmenu--rail {
-    position: sticky;
-    top: var(--nav-h); /* clears the sticky top nav */
-    max-height: calc(100vh - var(--nav-h));
-  }
 
   /* ── Gradient spotlight ─────────────────────────────────────────────── */
   .pmenu__glow {
@@ -100,17 +88,6 @@ const { projects, current, variant = 'hero' } = Astro.props;
     color: inherit;
     border-radius: 12px;
   }
-  /* Signature: staggered rise on first paint (home only). */
-  .pmenu--hero .pmenu__item {
-    opacity: 0;
-    animation: pmenu-rise 0.42s var(--ease-out, ease) both;
-    animation-delay: calc(80ms + var(--i) * 45ms);
-  }
-  @keyframes pmenu-rise {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
   .pmenu__name {
     position: relative;
     font-weight: 600;

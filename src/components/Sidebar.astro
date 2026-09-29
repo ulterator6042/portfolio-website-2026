@@ -1,0 +1,73 @@
+---
+/**
+ * The site's single navigation surface — a full-height left column used on every
+ * page (home, case studies, about). There is no top header; everything lives
+ * here: the name at the top, the project menu in the middle, and the About link
+ * pinned to the bottom. Photography is intentionally omitted for now.
+ */
+import ProjectMenu from './ProjectMenu.astro';
+import { site } from '@config/site';
+import { getProjects } from '../lib/projects';
+
+interface Props {
+  /** Active project id (highlights it in the menu). */
+  current?: string;
+  /** True on the About page (highlights the About link). */
+  aboutActive?: boolean;
+}
+const { current, aboutActive = false } = Astro.props;
+
+const all = await getProjects();
+// Photography is not a menu item.
+const projects = all.filter((p) => p.data.category !== 'photography');
+---
+<aside class="sidebar">
+  <a class="sidebar__name" href="/">{site.name}</a>
+  <ProjectMenu projects={projects} current={current} />
+  <a
+    class:list={['sidebar__about', { active: aboutActive }]}
+    href="/about"
+    aria-current={aboutActive ? 'page' : undefined}
+  >About me</a>
+</aside>
+
+<style>
+  .sidebar {
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    height: 100dvh;
+    flex: 0 0 300px; /* width when placed in a flex shell (case / about) */
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+    background: var(--bg);
+  }
+
+  .sidebar__name {
+    flex: 0 0 auto;
+    padding: 30px 30px 18px;
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    text-decoration: none;
+    transition: color var(--dur-1) var(--ease-out);
+  }
+  .sidebar__name:hover,
+  .sidebar__name:focus-visible { color: var(--accent); }
+
+  .sidebar__about {
+    flex: 0 0 auto;
+    width: max-content;
+    padding: 18px 30px 30px;
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color var(--dur-1) var(--ease-out);
+  }
+  .sidebar__about:hover,
+  .sidebar__about:focus-visible,
+  .sidebar__about.active { color: var(--accent); }
+</style>

@@ -2,7 +2,7 @@
 import { render } from 'astro:content';
 import Base from '@layouts/Base.astro';
 import ProjectHeader from '@components/ProjectHeader.astro';
-import ProjectRail from '@components/ProjectRail.astro';
+import Sidebar from '@components/Sidebar.astro';
 import ScrollReveal from '@components/casestudy/ScrollReveal.astro';
 import { getProjects } from '../../lib/projects';
 
@@ -17,9 +17,6 @@ export async function getStaticPaths() {
 const { project } = Astro.props;
 const { Content } = await render(project);
 const d = project.data;
-// Side rail mirrors the Figma project column — the built case studies only
-// (exclude custom-route entries like the Photography gallery).
-const railProjects = (await getProjects()).filter((p) => !p.data.externalTemplate);
 const dark = d.dark;
 // Per-project accent → --accent on the shell (falls back to the global token).
 const accentVars = [
@@ -29,10 +26,10 @@ const accentVars = [
   .filter(Boolean)
   .join(';');
 ---
-<Base title={d.title} description={d.summary}>
+<Base title={d.title} description={d.summary} bare={true}>
   <ScrollReveal />
   <div class:list={['case-shell', { dark }]} style={accentVars}>
-    <ProjectRail projects={railProjects} current={project.id} dark={dark} />
+    <Sidebar current={project.id} />
     <article class="case" transition:name="case-content">
       {!d.hideHeader && (
         <ProjectHeader

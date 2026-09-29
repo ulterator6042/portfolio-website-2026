@@ -1,36 +1,49 @@
 ---
 import Base from '@layouts/Base.astro';
+import Sidebar from '@components/Sidebar.astro';
 import { site, socials } from '@config/site';
 ---
-<Base title="About" description={`About ${site.name}`}>
-  <section class="about container">
-    <p class="eyebrow reveal" style="--i:0">About</p>
-    <h1 class="reveal" style="--i:1">{site.name}</h1>
-    <div class="about__body">
-      <p class="reveal" style="--i:2">
-        I'm a designer and creative technologist working across interaction
-        design, product design, and photography. This page is a placeholder —
-        the full bio, background, and CV go here.
-      </p>
-      <p class="about__label reveal" style="--i:3">Get in touch</p>
-      <ul class="about__links reveal" style="--i:4">
-        {socials.map((s) => (
-          <li>
-            <a class="u-underline"
-               href={s.href}
-               rel={('external' in s && s.external) ? 'noopener noreferrer' : undefined}
-               target={('external' in s && s.external) ? '_blank' : undefined}>{s.label}</a>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </section>
+<Base title="About" description={`About ${site.name}`} bare={true}>
+  <div class="page-shell">
+    <Sidebar aboutActive={true} />
+    <main class="page-main">
+      <section class="about">
+        <p class="eyebrow reveal" style="--i:0">About</p>
+        <h1 class="reveal" style="--i:1">{site.name}</h1>
+        <div class="about__body">
+          <p class="reveal" style="--i:2">
+            I'm a designer and creative technologist working across interaction
+            design, product design, and photography. This page is a placeholder —
+            the full bio, background, and CV go here.
+          </p>
+          <p class="about__label reveal" style="--i:3">Get in touch</p>
+          <ul class="about__links reveal" style="--i:4">
+            {socials.map((s) => (
+              <li>
+                <a class="u-underline"
+                   href={s.href}
+                   rel={('external' in s && s.external) ? 'noopener noreferrer' : undefined}
+                   target={('external' in s && s.external) ? '_blank' : undefined}>{s.label}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
 </Base>
 
 <style>
+  .page-shell {
+    display: flex;
+    align-items: flex-start;
+  }
+  .page-main {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
   .about {
-    padding-top: clamp(5rem, 12vw, 9rem);
-    padding-bottom: clamp(3rem, 8vw, 6rem);
+    padding: clamp(5rem, 12vw, 9rem) var(--case-pad) clamp(3rem, 8vw, 6rem);
     max-width: 760px;
   }
   .about__body { margin-top: 2rem; }
@@ -52,7 +65,7 @@ import { site, socials } from '@config/site';
   }
   .about__links a { color: var(--accent); }
 
-  /* Staggered entrance — the same signature as the home menu. */
+  /* Staggered entrance on load. */
   .reveal {
     opacity: 0;
     animation: about-rise 0.45s var(--ease-out) both;
@@ -61,5 +74,8 @@ import { site, socials } from '@config/site';
   @keyframes about-rise {
     from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { animation: none; opacity: 1; }
   }
 </style>
