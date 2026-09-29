@@ -15,7 +15,7 @@ const projects = all.filter((p) => p.data.category !== 'photography');
       <a class="topbar__name" href="/">{site.name}</a>
       <nav class="topbar__links">
         <a class="u-underline" href="/about">About me</a>
-        <a class="u-underline" href="/work/photography">Photography</a>
+        <a class="u-underline" href="/work/photography" data-astro-reload>Photography</a>
       </nav>
     </header>
 
@@ -43,16 +43,22 @@ const projects = all.filter((p) => p.data.category !== 'photography');
 <script>
   // Scroll cue: show the chevron only when the menu has more below the fold.
   // (The spotlight interaction lives inside the ProjectMenu component.)
-  const menu = document.querySelector<HTMLElement>('.pmenu');
-  const cue = document.querySelector<HTMLElement>('[data-cue]');
+  // Re-wired on each navigation so it survives client-side routing.
+  let menu: HTMLElement | null = null;
+  let cue: HTMLElement | null = null;
   function updateCue() {
     if (!menu || !cue) return;
     const more = menu.scrollHeight - menu.clientHeight - menu.scrollTop > 4;
     cue.hidden = !more;
   }
-  menu?.addEventListener('scroll', updateCue, { passive: true });
+  function setupCue() {
+    menu = document.querySelector<HTMLElement>('.pmenu');
+    cue = document.querySelector<HTMLElement>('[data-cue]');
+    menu?.addEventListener('scroll', updateCue, { passive: true });
+    updateCue();
+  }
   window.addEventListener('resize', updateCue);
-  updateCue();
+  document.addEventListener('astro:page-load', setupCue);
 </script>
 
 <style>

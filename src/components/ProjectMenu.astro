@@ -29,7 +29,15 @@ const { projects, current, variant = 'hero' } = Astro.props;
       aria-current={p.id === current ? 'page' : undefined}
       style={`--i:${i}`}
     >
-      <span class="pmenu__name">{p.data.title}</span>
+      <span class="pmenu__name">
+        {p.data.title}
+        {/* Real underline element on the current project. It carries a shared
+            view-transition-name so the browser morphs it (width + colour) from
+            the old project to the new one when you navigate. */}
+        {p.id === current && (
+          <span class="pmenu__rule" transition:name="proj-underline"></span>
+        )}
+      </span>
       {p.data.wip && <span class="pmenu__soon">Soon</span>}
     </a>
   ))}
@@ -112,7 +120,7 @@ const { projects, current, variant = 'hero' } = Astro.props;
     color: var(--muted);
     transition: color var(--dur-1, 0.18s) var(--ease-out, ease);
   }
-  /* Animated underline — grows left→right on hover/focus/active. */
+  /* Hover/focus underline — grows left→right (non-current items). */
   .pmenu__name::after {
     content: '';
     position: absolute;
@@ -125,14 +133,30 @@ const { projects, current, variant = 'hero' } = Astro.props;
     transform-origin: left;
     transition: transform var(--dur-2, 0.32s) var(--ease-out, ease);
   }
+  /* Current project's underline — a real element that morphs across pages. */
+  .pmenu__rule {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
   /* Hover, focus, and current-project all resolve to the same accented state,
      so the colour is correct regardless of whether the item is selected. */
   .pmenu__item:hover .pmenu__name,
   .pmenu__item:focus-visible .pmenu__name,
   .pmenu__item.active .pmenu__name { color: var(--accent); }
   .pmenu__item:hover .pmenu__name::after,
-  .pmenu__item:focus-visible .pmenu__name::after,
-  .pmenu__item.active .pmenu__name::after { transform: scaleX(1); }
+  .pmenu__item:focus-visible .pmenu__name::after { transform: scaleX(1); }
+
+  /* Drive the underline morph: interpolate position + width over the same beat
+     as the page slide; the old/new colours cross-fade as it travels. */
+  :global(::view-transition-group(proj-underline)) {
+    animation-duration: 460ms;
+    animation-timing-function: var(--ease-in-out, ease);
+  }
 
   /* "Soon" chip (e.g. Talaris) */
   .pmenu__soon {
@@ -151,6 +175,8 @@ const { projects, current, variant = 'hero' } = Astro.props;
 <script>
   // Gradient spotlight: a soft glow eases toward whichever item is hovered or
   // focused. On the rail it rests on the current project until you hover.
+  // Runs on every page load AND after each client-side navigation.
+  function initPmenu() {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   document.querySelectorAll<HTMLElement>('[data-pmenu]').forEach((nav) => {
@@ -218,4 +244,8 @@ const { projects, current, variant = 'hero' } = Astro.props;
     });
     nav.addEventListener('scroll', kick, { passive: true });
   });
+  }
+
+  // astro:page-load fires on the initial load and after every view transition.
+  document.addEventListener('astro:page-load', initPmenu);
 </script>

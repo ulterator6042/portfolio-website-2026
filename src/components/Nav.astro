@@ -11,6 +11,7 @@ const path = Astro.url.pathname;
       <a
         href={item.href}
         class:list={['nav__link', 'u-underline', { active: path === item.href }]}
+        data-astro-reload={item.href.includes('/work/photography') ? true : undefined}
       >{item.label}</a>
     ))}
   </nav>

@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import { site, theme } from '@config/site';
 import Nav from '@components/Nav.astro';
 import '../styles/global.css';
@@ -60,6 +61,8 @@ const cssVars = [
       rel="stylesheet"
     />
     <title>{pageTitle}</title>
+    <!-- Client-side routing so project↔project navigation can animate. -->
+    <ClientRouter />
     <meta name="description" content={description} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />

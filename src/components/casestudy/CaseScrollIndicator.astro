@@ -40,26 +40,31 @@
 </style>
 
 <script>
-  const bar = document.querySelector<HTMLElement>('.case-scroll');
-  const thumb = document.querySelector<HTMLElement>('.case-scroll__thumb');
-  if (bar && thumb) {
-    const update = () => {
-      const winH = window.innerHeight;
-      const docH = document.documentElement.scrollHeight;
-      const trackH = bar.clientHeight;
-      const scrollable = docH - winH;
-      if (scrollable <= 4) {
-        bar.style.opacity = '0';
-        return;
-      }
-      bar.style.opacity = '1';
-      const thumbH = Math.max(40, trackH * (winH / docH));
-      const scrolled = Math.min(1, Math.max(0, window.scrollY / scrollable));
-      thumb.style.height = `${thumbH}px`;
-      thumb.style.transform = `translateY(${scrolled * (trackH - thumbH)}px)`;
-    };
+  // Re-query on each navigation so the indicator survives client-side routing.
+  let bar: HTMLElement | null = null;
+  let thumb: HTMLElement | null = null;
+  const update = () => {
+    if (!bar || !thumb) return;
+    const winH = window.innerHeight;
+    const docH = document.documentElement.scrollHeight;
+    const trackH = bar.clientHeight;
+    const scrollable = docH - winH;
+    if (scrollable <= 4) {
+      bar.style.opacity = '0';
+      return;
+    }
+    bar.style.opacity = '1';
+    const thumbH = Math.max(40, trackH * (winH / docH));
+    const scrolled = Math.min(1, Math.max(0, window.scrollY / scrollable));
+    thumb.style.height = `${thumbH}px`;
+    thumb.style.transform = `translateY(${scrolled * (trackH - thumbH)}px)`;
+  };
+  const refresh = () => {
+    bar = document.querySelector<HTMLElement>('.case-scroll');
+    thumb = document.querySelector<HTMLElement>('.case-scroll__thumb');
     update();
-    window.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update);
-  }
+  };
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  document.addEventListener('astro:page-load', refresh);
 </script>
