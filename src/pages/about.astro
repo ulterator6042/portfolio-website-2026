@@ -4,19 +4,21 @@ import { site, socials } from '@config/site';
 ---
 <Base title="About" description={`About ${site.name}`}>
   <section class="about container">
-    <p class="eyebrow">About</p>
-    <h1>{site.name}</h1>
+    <p class="eyebrow reveal" style="--i:0">About</p>
+    <h1 class="reveal" style="--i:1">{site.name}</h1>
     <div class="about__body">
-      <p>
+      <p class="reveal" style="--i:2">
         I'm a designer and creative technologist working across interaction
         design, product design, and photography. This page is a placeholder —
         the full bio, background, and CV go here.
       </p>
-      <p>Get in touch:</p>
-      <ul class="about__links">
+      <p class="about__label reveal" style="--i:3">Get in touch</p>
+      <ul class="about__links reveal" style="--i:4">
         {socials.map((s) => (
           <li>
-            <a href={s.href} rel={('external' in s && s.external) ? 'noopener noreferrer' : undefined}
+            <a class="u-underline"
+               href={s.href}
+               rel={('external' in s && s.external) ? 'noopener noreferrer' : undefined}
                target={('external' in s && s.external) ? '_blank' : undefined}>{s.label}</a>
           </li>
         ))}
@@ -26,10 +28,38 @@ import { site, socials } from '@config/site';
 </Base>
 
 <style>
-  .about { padding-top: clamp(4rem, 10vw, 8rem); max-width: 760px; }
+  .about {
+    padding-top: clamp(5rem, 12vw, 9rem);
+    padding-bottom: clamp(3rem, 8vw, 6rem);
+    max-width: 760px;
+  }
   .about__body { margin-top: 2rem; }
-  .about__body p { color: var(--muted); font-size: 1.1rem; }
-  .about__body p + p { margin-top: 1.25rem; }
-  .about__links { list-style: none; padding: 0; margin-top: 1rem; display: flex; gap: 1.5rem; }
-  .about__links a { color: var(--accent); text-decoration: none; }
+  .about__body p { color: var(--muted); font-size: clamp(1.05rem, 1.6vw, 1.25rem); }
+  .about__label {
+    margin-top: 2.5rem;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text) !important;
+  }
+  .about__links {
+    list-style: none;
+    padding: 0;
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+  .about__links a { color: var(--accent); }
+
+  /* Staggered entrance — the same signature as the home menu. */
+  .reveal {
+    opacity: 0;
+    animation: about-rise 0.65s var(--ease-out) both;
+    animation-delay: calc(80ms + var(--i) * 80ms);
+  }
+  @keyframes about-rise {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 </style>

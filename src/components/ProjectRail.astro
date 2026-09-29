@@ -1,13 +1,14 @@
 ---
 /**
- * Sticky left project-nav rail for case-study pages — ported from the Figma
- * "Column" component. Each box holds the project's art ("Menu art" frame); on
- * hover the art blurs and a white-outlined category pill fades in ("Hover"
- * frame). The current project stays highlighted.
+ * Sticky left project-nav rail for case-study pages. It's the same ProjectMenu
+ * that powers the home hero — text items, hover drop-down, and a gradient
+ * spotlight that here rests on the current project — just scaled to the rail
+ * (`variant="rail"`). Keeping one component means the home and in-project
+ * navigation are identical by construction. The glow inherits the case shell's
+ * `--accent`, so it takes on each project's colour.
  */
-import { Image } from 'astro:assets';
-import { categories } from '@config/site';
-import { projectHref, type Project } from '../lib/projects';
+import ProjectMenu from './ProjectMenu.astro';
+import type { Project } from '../lib/projects';
 
 interface Props {
   projects: Project[];
@@ -15,127 +16,20 @@ interface Props {
   dark?: boolean;
 }
 const { projects, current, dark = false } = Astro.props;
-
-const catLabel = (id: string) => categories.find((c) => c.id === id)?.label ?? id;
 ---
 <aside class:list={['rail', { dark }]}>
-  <nav class="rail__list">
-    {projects.map((p) => (
-      <a
-        class:list={['rail__item', { active: p.id === current }]}
-        href={projectHref(p)}
-        aria-current={p.id === current ? 'page' : undefined}
-      >
-        <span class="rail__thumb">
-          {p.data.cover && (
-            <Image class="rail__img" src={p.data.cover} alt="" widths={[220, 440]} sizes="220px" />
-          )}
-          <span class="rail__scrim"></span>
-          <span class="rail__tag">{catLabel(p.data.category)}</span>
-          {p.data.wip && <span class="rail__wip">Soon</span>}
-        </span>
-        <span class="rail__label">{p.data.title}</span>
-      </a>
-    ))}
-  </nav>
+  <ProjectMenu projects={projects} current={current} variant="rail" />
 </aside>
 
 <style>
   /* The rail is always the light chrome panel — even when the case canvas is
      dark (Grab) — so it reads as a persistent, open sidebar. */
   .rail {
-    flex: 0 0 260px;
+    flex: 0 0 264px;
     align-self: stretch;
-    border-right: 1px solid #e6e6e6;
-    background: #ffffff;
-    color: #111111;
-  }
-  .rail__list {
-    position: sticky;
-    top: 57px; /* clears the sticky top nav */
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    padding: 30px 20px 30px 30px;
-    max-height: calc(100vh - 57px);
-    overflow-y: auto;
-  }
-  .rail__item {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    text-decoration: none;
-  }
-
-  /* ── Menu box (art + hover pill) ────────────────────────────────────── */
-  .rail__thumb {
-    position: relative;
-    display: block;
-    height: 108px;
-    border-radius: 6px;
-    background: #f0f0f0;
-    overflow: hidden;
-  }
-  .rail__img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: filter 0.25s ease, transform 0.25s ease;
-  }
-  .rail__scrim {
-    position: absolute;
-    inset: 0;
-    background: rgba(10, 10, 10, 0);
-    transition: background 0.25s ease;
-  }
-  .rail__tag {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%) scale(0.94);
-    padding: 5px 15px;
-    border: 2px solid #ffffff;
-    border-radius: 29px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    color: #ffffff;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-  }
-  /* Hover: art blurs + a slight scrim, category pill fades/scales in. */
-  .rail__item:hover .rail__img { filter: blur(6px); transform: scale(1.06); }
-  .rail__item:hover .rail__scrim { background: rgba(10, 10, 10, 0.35); }
-  .rail__item:hover .rail__tag { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-
-  .rail__label {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    color: #6b6b6b;
-    transition: color 0.15s ease;
-  }
-  .rail__item:hover .rail__label { color: #111111; }
-  .rail__wip {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    padding: 3px 9px;
-    border-radius: 999px;
-    background: rgba(10, 10, 10, 0.72);
-    color: #fff;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    font-size: 11px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-  .rail__item.active .rail__label {
-    color: var(--accent);
-    text-decoration: underline;
-    text-underline-offset: 2px;
+    border-right: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
   }
 
   /* Rail collapses on narrow viewports — the top Nav covers wayfinding. */

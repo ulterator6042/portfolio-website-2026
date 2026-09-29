@@ -104,16 +104,31 @@ for (const [path, mod] of Object.entries(imageModules)) {
       top: 1rem;
       left: 1rem;
       z-index: 100;
-      font: 500 0.85rem/1 system-ui, sans-serif;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-weight: 500;
+      font-size: 0.85rem;
+      line-height: 1;
       color: #fff;
       text-decoration: none;
-      padding: 0.5rem 0.85rem;
+      padding: 0.55rem 0.95rem;
       border-radius: 999px;
       background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       backdrop-filter: blur(8px);
-      transition: background 0.15s ease;
+      transition:
+        background 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 0.32s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    .gallery-back:hover { background: rgba(0, 0, 0, 0.7); }
+    .gallery-back:hover {
+      background: rgba(0, 0, 0, 0.72);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateX(-2px);
+    }
+    .gallery-back:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 3px;
+    }
   </style>
 </body>
 </html>
