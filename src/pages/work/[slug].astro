@@ -63,18 +63,18 @@ const accentVars = [
      left while the outgoing one eases out. The rail stays put; its underline
      morphs across (see ProjectMenu). Paired with the underline's 460ms beat. */
   @keyframes case-slide-in {
-    from { opacity: 0; transform: translateX(-7vw); }
+    from { opacity: 0; transform: translateX(-3.5vw); }
     to   { opacity: 1; transform: translateX(0); }
   }
   @keyframes case-slide-out {
     from { opacity: 1; transform: translateX(0); }
-    to   { opacity: 0; transform: translateX(4vw); }
+    to   { opacity: 0; transform: translateX(2.5vw); }
   }
   ::view-transition-old(case-content) {
-    animation: case-slide-out 240ms var(--ease-in-out, ease) both;
+    animation: case-slide-out 180ms var(--ease-in-out, ease) both;
   }
   ::view-transition-new(case-content) {
-    animation: case-slide-in 460ms var(--ease-in-out, ease) both;
+    animation: case-slide-in 300ms var(--ease-in-out, ease) both;
   }
 
   /* Respect reduced-motion: skip the directional slide, keep a plain fade. */

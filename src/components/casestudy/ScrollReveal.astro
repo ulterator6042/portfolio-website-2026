@@ -11,12 +11,11 @@
 <style is:global>
   html.reveal-ready [data-reveal] {
     opacity: 0;
-    transform: translateY(18px) scale(0.99);
+    transform: translateY(12px);
     transition:
-      opacity 0.55s var(--ease-out, ease),
-      transform 0.55s var(--ease-out, ease);
+      opacity 0.4s var(--ease-out, ease),
+      transform 0.4s var(--ease-out, ease);
     transition-delay: var(--reveal-delay, 0ms);
-    will-change: opacity, transform;
   }
   html.reveal-ready [data-reveal].reveal-in {
     opacity: 1;
@@ -41,7 +40,7 @@
     // Per-group stagger: each item gets an incremental delay within its section.
     document.querySelectorAll<HTMLElement>('[data-reveal-group]').forEach((group) => {
       group.querySelectorAll<HTMLElement>('[data-reveal]').forEach((el, i) => {
-        el.style.setProperty('--reveal-delay', `${i * 70}ms`);
+        el.style.setProperty('--reveal-delay', `${i * 50}ms`);
       });
     });
 
