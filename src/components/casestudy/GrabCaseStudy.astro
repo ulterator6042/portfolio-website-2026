@@ -30,22 +30,22 @@ const stages = [
   <!-- ── Hero ─────────────────────────────────────────────────────────── -->
   <header class="grab-hero">
     <Image class="grab-hero__bg" src={hero} alt="" widths={[900, 1400, 1920]} sizes="100vw" />
-    <div class="grab-hero__inner grab-inner">
+    <div class="grab-hero__inner grab-inner" data-reveal-group>
       <div class="grab-hero__meta">
-        <p>Personal project — 2025</p>
-        <p>Tools: TouchDesigner, Claude Code, Python</p>
+        <p data-reveal>Personal project — 2025</p>
+        <p data-reveal>Tools: TouchDesigner, Claude Code, Python</p>
       </div>
       <div class="grab-hero__title">
-        <h1>Grab</h1>
-        <p>An exploration of a gesture-controlled photo gallery</p>
+        <h1 data-reveal>Grab</h1>
+        <p data-reveal>An exploration of a gesture-controlled photo gallery</p>
       </div>
     </div>
   </header>
 
   <!-- ── What is Grab? ────────────────────────────────────────────────── -->
-  <div class="grab-inner grab-whatis">
-    <h2 class="grab-display grab-display--full">What is Grab?</h2>
-    <p class="grab-whatis__lead">
+  <div class="grab-inner grab-whatis" data-reveal-group>
+    <h2 class="grab-display grab-display--full" data-reveal>What is Grab?</h2>
+    <p class="grab-whatis__lead" data-reveal>
       Grab is an <strong>experiment in browsing photos</strong> by moving through
       them rather than scrolling past them. A webcam reads your hand to move
       through the space, creating an experiment in <strong>gesture and discovery.</strong>
@@ -53,17 +53,17 @@ const stages = [
   </div>
 
   <!-- ── A new interaction with my photos ─────────────────────────────── -->
-  <div class="grab-inner grab-row">
-    <h2 class="grab-display">A new interaction with my photos</h2>
+  <div class="grab-inner grab-row" data-reveal-group>
+    <h2 class="grab-display" data-reveal>A new interaction with my photos</h2>
     <div class="grab-stack">
-      <div>
+      <div data-reveal>
         <h3>Every gallery looks the same</h3>
         <p>A grid, sorted newest-first, scrolled top to bottom. It is efficient and
           forgettable. We can intentionally retrieve a photo, but rarely rediscover
           one. The structure fixes the order, and the order flattens everything into
           a list.</p>
       </div>
-      <div>
+      <div data-reveal>
         <h3>Rethinking the structure</h3>
         <p>Grab starts from one provocation: what if there were no grid, no timeline,
           no scroll direction at all? Just an open field of images you drift across,
@@ -73,11 +73,11 @@ const stages = [
   </div>
 
   <!-- ── Video demo  ·  no imposed order ──────────────────────────────── -->
-  <div class="grab-inner grab-row grab-row--demo">
+  <div class="grab-inner grab-row grab-row--demo" data-reveal-group>
     <div class="grab-demo-copy">
-      <p class="grab-demo-copy__lead">No scroll direction, no imposed order.</p>
-      <p>Explore through your preferred peripheral or through your body.</p>
-      <div class="grab-demo-copy__icons">
+      <p class="grab-demo-copy__lead" data-reveal>No scroll direction, no imposed order.</p>
+      <p data-reveal>Explore through your preferred peripheral or through your body.</p>
+      <div class="grab-demo-copy__icons" data-reveal>
         <img src={iconOpenPalm.src} alt="" width={iconOpenPalm.width} height={iconOpenPalm.height} />
         <img src={iconGrab.src} alt="" width={iconGrab.width} height={iconGrab.height} />
         <img class="grab-demo-copy__cursor" src={iconCursor.src} alt="" width={iconCursor.width} height={iconCursor.height} />
@@ -87,15 +87,15 @@ const stages = [
   </div>
 
   <!-- ── In touch with your memories  ·  gestures ─────────────────────── -->
-  <div class="grab-inner grab-row grab-row--gestures">
+  <div class="grab-inner grab-row grab-row--gestures" data-reveal-group>
     <div class="grab-stack grab-stack--lead">
-      <h2 class="grab-display">In touch with your memories</h2>
-      <p>The whole interface is read from your webcam with no need for mouse or keys.
+      <h2 class="grab-display" data-reveal>In touch with your memories</h2>
+      <p data-reveal>The whole interface is read from your webcam with no need for mouse or keys.
         Open hand to move, closed hand to choose, and a single dot that mirrors where
         your hand is on the screen.</p>
     </div>
     <div class="grab-gestures">
-      <div class="grab-gesture">
+      <div class="grab-gesture" data-reveal>
         <img class="grab-gesture__icon" src={iconOpenPalm.src} alt="" width={iconOpenPalm.width} height={iconOpenPalm.height} />
         <div>
           <h3>Open palm <span>·</span> glide</h3>
@@ -103,7 +103,7 @@ const stages = [
             drifts to a stop, carrying momentum.</p>
         </div>
       </div>
-      <div class="grab-gesture">
+      <div class="grab-gesture" data-reveal>
         <img class="grab-gesture__icon" src={iconGrab.src} alt="" width={iconGrab.width} height={iconGrab.height} />
         <div>
           <h3>Closed fist <span>·</span> grab</h3>
@@ -111,7 +111,7 @@ const stages = [
             physicality to our decisions.</p>
         </div>
       </div>
-      <div class="grab-gesture">
+      <div class="grab-gesture" data-reveal>
         <img class="grab-gesture__icon grab-gesture__icon--dot" src={dot.src} alt="" width="96" height="96" />
         <div>
           <h3>The dot <span>·</span> your cursor</h3>
@@ -123,10 +123,10 @@ const stages = [
   </div>
 
   <!-- ── Real time pipeline ───────────────────────────────────────────── -->
-  <div class="grab-inner grab-row grab-row--pipeline">
+  <div class="grab-inner grab-row grab-row--pipeline" data-reveal-group>
     <div class="grab-stages">
       {stages.map((s) => (
-        <article class="grab-stage">
+        <article class="grab-stage" data-reveal>
           <div class="grab-stage__head">
             <span class="grab-stage__num">{s.n}</span>
             <h4>{s.title}</h4>
@@ -135,18 +135,18 @@ const stages = [
         </article>
       ))}
     </div>
-    <h2 class="grab-display grab-display--pipeline">Real time pipeline</h2>
+    <h2 class="grab-display grab-display--pipeline" data-reveal>Real time pipeline</h2>
   </div>
 
   <!-- ── Closing reflections ──────────────────────────────────────────── -->
-  <div class="grab-inner grab-row grab-row--closing">
+  <div class="grab-inner grab-row grab-row--closing" data-reveal-group>
     <div class="grab-stack">
-      <div>
+      <div data-reveal>
         <h3>Physicality creates pause</h3>
         <p>When selection costs a gesture instead of a click, people look longer
           before committing. Exploration becomes more intentional and personal.</p>
       </div>
-      <div>
+      <div data-reveal>
         <h3>Spatial browsing removes hierarchy</h3>
         <p>Without a clear grid and chronological order there is no “first” photo.
           Every encounter becomes a new finding, using the inherent chaos of the
@@ -154,6 +154,7 @@ const stages = [
       </div>
     </div>
     <Image
+      data-reveal
       class="grab-closing__img"
       src={closing}
       alt="A person reaching into a wall of projected photographs"
@@ -184,6 +185,31 @@ const stages = [
     max-width: 1280px;
     margin-inline: auto;
     padding-inline: clamp(1.25rem, 6vw, 5rem);
+  }
+
+  /* ── Scroll reveal (trial) ──────────────────────────────────────────────
+     Text pops in with a slight rise + fade as it scrolls into view; each
+     section staggers its own items. Gated behind `.reveal-ready` (added by
+     JS) so content stays visible if the script never runs. */
+  .grab.reveal-ready [data-reveal] {
+    opacity: 0;
+    transform: translateY(18px) scale(0.99);
+    transition:
+      opacity 0.55s var(--ease-out, ease),
+      transform 0.55s var(--ease-out, ease);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+  .grab.reveal-ready [data-reveal].reveal-in {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .grab.reveal-ready [data-reveal] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
 
   /* ── Hero ───────────────────────────────────────────────────────────── */
@@ -399,3 +425,38 @@ const stages = [
     .grab-display--pipeline { order: -1; }
   }
 </style>
+
+<script>
+  // Scroll-reveal trial (Grab only): stagger each section's [data-reveal] items,
+  // then fade/pop them in as they enter the viewport. Runs on load and after
+  // client-side navigation.
+  function initGrabReveal() {
+    const grab = document.querySelector<HTMLElement>('.grab');
+    if (!grab || grab.dataset.revealInit) return;
+    grab.dataset.revealInit = '1';
+
+    // Per-group stagger: each item gets an incremental delay within its section.
+    grab.querySelectorAll<HTMLElement>('[data-reveal-group]').forEach((group) => {
+      group.querySelectorAll<HTMLElement>('[data-reveal]').forEach((el, i) => {
+        el.style.setProperty('--reveal-delay', `${i * 70}ms`);
+      });
+    });
+
+    // Enable the hidden start-state only now that JS is here to reveal it.
+    grab.classList.add('reveal-ready');
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('reveal-in');
+            io.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' },
+    );
+    grab.querySelectorAll<HTMLElement>('[data-reveal]').forEach((el) => io.observe(el));
+  }
+  document.addEventListener('astro:page-load', initGrabReveal);
+</script>
