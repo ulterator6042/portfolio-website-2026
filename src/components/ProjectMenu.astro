@@ -2,35 +2,33 @@
 /**
  * The one project menu, shared by the home hero and every case-study rail so
  * the site's primary navigation is identical everywhere. Plain text items; on
- * hover/focus (or when it's the current project) the title takes the accent
- * colour and an underline grows in, while a soft gradient spotlight eases
- * behind it. `variant` only changes how the column is placed (the home menu
- * fills its column; the rail sticks) — the items look and behave the same.
- * The glow picks up whatever `--accent` is in scope, so on a case page it takes
- * that project's colour.
+ * hover/focus the title brightens to a neutral text colour, and the current
+ * project keeps the accent colour with an underline that morphs across pages
+ * on navigation. Minimal — no spotlight/glow behind the items.
  */
 import { projectHref, type Project } from '../lib/projects';
 
 interface Props {
   projects: Project[];
   current?: string;
+  /** Colour of the small hover dot (theme accent on project pages, text
+      colour on the home/about menu). */
+  dotColor?: string;
 }
-const { projects, current } = Astro.props;
+const { projects, current, dotColor = 'var(--text)' } = Astro.props;
 
 // Compact discipline label shown on hover (UI/UX vs Product).
 const catTag = (id: string) =>
   id === 'uiux' ? 'UI/UX' : id === 'product' ? 'Product' : id;
 ---
-<nav class="pmenu" aria-label="Projects" data-pmenu>
-  <!-- Gradient spotlight that chases the active item (decorative; see script). -->
-  <span class="pmenu__glow" data-glow aria-hidden="true"></span>
+<nav class="pmenu" aria-label="Projects" style={`--dot-color:${dotColor}`}>
   {projects.map((p) => (
     <a
       class:list={['pmenu__item', { active: p.id === current }]}
       href={projectHref(p)}
-      data-item
       aria-current={p.id === current ? 'page' : undefined}
     >
+      <span class="pmenu__dot" aria-hidden="true"></span>
       <span class="pmenu__name">
         {p.data.title}
         {/* Real underline element on the current project. It carries a shared
@@ -61,25 +59,6 @@ const catTag = (id: string) =>
   }
   .pmenu::-webkit-scrollbar { display: none; } /* Chromium/WebKit */
 
-  /* ── Gradient spotlight ─────────────────────────────────────────────── */
-  .pmenu__glow {
-    position: absolute;
-    left: 8px;
-    right: 8px;
-    top: 0; /* JS drives translateY relative to the scroll area */
-    height: 0;
-    opacity: 0;
-    border-radius: 12px;
-    pointer-events: none;
-    z-index: 0;
-    background:
-      radial-gradient(120% 80% at 6% 50%,
-        color-mix(in srgb, var(--accent) 22%, transparent) 0%,
-        color-mix(in srgb, var(--accent) 9%, transparent) 46%,
-        transparent 78%);
-    will-change: transform, height, opacity;
-  }
-
   /* ── Item ───────────────────────────────────────────────────────────── */
   .pmenu__item {
     position: relative;
@@ -92,6 +71,29 @@ const catTag = (id: string) =>
     color: inherit;
     border-radius: 12px;
   }
+  /* Small hover dot to the left of the item. Colour is driven by --dot-color
+     (accent on project pages, text colour on the home/about menu). */
+  .pmenu__dot {
+    position: absolute;
+    left: 2px;
+    top: 50%;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--dot-color, var(--text));
+    opacity: 0;
+    transform: translate(-4px, -50%) scale(0.5);
+    transition:
+      opacity var(--dur-1, 0.12s) var(--ease-out, ease),
+      transform var(--dur-1, 0.12s) var(--ease-out, ease);
+    pointer-events: none;
+  }
+  .pmenu__item:hover .pmenu__dot,
+  .pmenu__item:focus-visible .pmenu__dot {
+    opacity: 1;
+    transform: translate(0, -50%) scale(1);
+  }
+
   .pmenu__name {
     position: relative;
     font-weight: 600;
@@ -114,9 +116,10 @@ const catTag = (id: string) =>
     background: var(--accent);
     border-radius: 2px;
   }
-  /* Hover, focus, and current-project all take the accent colour. */
+  /* Hover / focus brighten to a neutral text colour (minimal, no accent).
+     Only the current project keeps the accent colour + underline. */
   .pmenu__item:hover .pmenu__name,
-  .pmenu__item:focus-visible .pmenu__name,
+  .pmenu__item:focus-visible .pmenu__name { color: var(--text); }
   .pmenu__item.active .pmenu__name { color: var(--accent); }
 
   /* Drive the underline morph: interpolate position + width over the same beat
@@ -132,8 +135,8 @@ const catTag = (id: string) =>
     align-self: center;
     padding: 3px 9px;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--accent) 12%, transparent);
-    color: var(--accent);
+    background: color-mix(in srgb, var(--text) 9%, transparent);
+    color: var(--muted);
     font-weight: 500;
     font-size: 11px;
     letter-spacing: 0.06em;
@@ -153,91 +156,3 @@ const catTag = (id: string) =>
   }
 </style>
 
-<script>
-  // Gradient spotlight: a soft glow eases toward whichever item is hovered or
-  // focused. On the rail it rests on the current project until you hover.
-  // Runs on every page load AND after each client-side navigation.
-  function initPmenu() {
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  document.querySelectorAll<HTMLElement>('[data-pmenu]').forEach((nav) => {
-    const glow = nav.querySelector<HTMLElement>('[data-glow]');
-    const items = Array.from(nav.querySelectorAll<HTMLElement>('[data-item]'));
-    if (!glow || !items.length) return;
-    const rest = nav.querySelector<HTMLElement>('[data-item].active');
-
-    const place = (el: HTMLElement) => {
-      glow!.style.transform = `translateY(${el.offsetTop - nav.scrollTop}px)`;
-      glow!.style.height = `${el.offsetHeight}px`;
-    };
-
-    if (reduce) {
-      // No motion: pin a static highlight on the active item, if any.
-      if (rest) { place(rest); glow.style.opacity = '0.5'; }
-      return;
-    }
-
-    let hovered: HTMLElement | null = null;
-    let raf = 0;
-    // Rendered state + the eased tween each move runs through.
-    let cy = 0, ch = 0, op = 0;
-    let fy = 0, fh = 0, fo = 0;   // from
-    let ty = 0, th = 0, to = 0;   // to
-    let t0 = 0;
-    const DUR = 240;              // ms per move — snappy follow
-    // easeOutCubic — quick to respond, gentle to settle.
-    const easeInOut = (t: number) => 1 - Math.pow(1 - t, 3);
-
-    const targetEl = () => hovered ?? rest ?? null;
-    const targetOp = () => (hovered ? 1 : rest ? 0.5 : 0);
-
-    function retarget() {
-      const el = targetEl();
-      // Fresh appearance: place the box on the item so it fades in, not slides.
-      if (!hovered && op < 0.02 && el) { cy = el.offsetTop - nav.scrollTop; ch = el.offsetHeight; }
-      fy = cy; fh = ch; fo = op;
-      ty = el ? el.offsetTop - nav.scrollTop : cy;
-      th = el ? el.offsetHeight : ch;
-      to = targetOp();
-      t0 = performance.now();
-      if (!raf) raf = requestAnimationFrame(frame);
-    }
-
-    function frame(now: number) {
-      const t = Math.min(1, (now - t0) / DUR);
-      const e = easeInOut(t);
-      cy = fy + (ty - fy) * e;
-      ch = fh + (th - fh) * e;
-      op = fo + (to - fo) * e;
-      glow!.style.transform = `translateY(${cy}px)`;
-      glow!.style.height = `${ch}px`;
-      glow!.style.opacity = `${op}`;
-      if (t < 1) raf = requestAnimationFrame(frame); else raf = 0;
-    }
-
-    // Rest on the current item (or the first) and fade in place.
-    const startEl = rest ?? items[0];
-    cy = startEl.offsetTop - nav.scrollTop;
-    ch = startEl.offsetHeight;
-    retarget();
-
-    items.forEach((el) => {
-      const enter = () => {
-        if (!hovered && op < 0.02) { cy = el.offsetTop - nav.scrollTop; ch = el.offsetHeight; }
-        hovered = el;
-        retarget();
-      };
-      el.addEventListener('pointerenter', enter);
-      el.addEventListener('focus', enter);
-    });
-    nav.addEventListener('pointerleave', () => { hovered = null; retarget(); });
-    nav.addEventListener('focusout', (e) => {
-      if (!nav.contains(e.relatedTarget as Node)) { hovered = null; retarget(); }
-    });
-    nav.addEventListener('scroll', retarget, { passive: true });
-  });
-  }
-
-  // astro:page-load fires on the initial load and after every view transition.
-  document.addEventListener('astro:page-load', initPmenu);
-</script>

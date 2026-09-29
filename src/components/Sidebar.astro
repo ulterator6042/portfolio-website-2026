@@ -23,7 +23,9 @@ const projects = all.filter((p) => p.data.category !== 'photography');
 ---
 <aside class="sidebar">
   <a class="sidebar__name" href="/">{site.name}</a>
-  <ProjectMenu projects={projects} current={current} />
+  {/* Hover dot: accent (theme colour) on a project page, plain text colour on
+      the home/about menu. */}
+  <ProjectMenu projects={projects} current={current} dotColor={current ? 'var(--accent)' : 'var(--text)'} />
   <a
     class:list={['sidebar__about', { active: aboutActive }]}
     href="/about"
