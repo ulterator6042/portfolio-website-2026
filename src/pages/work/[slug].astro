@@ -28,7 +28,7 @@ const accentVars = [
   .filter(Boolean)
   .join(';');
 ---
-<Base title={d.title} description={d.summary} hideFooter={dark}>
+<Base title={d.title} description={d.summary}>
   <div class:list={['case-shell', { dark }]} style={accentVars}>
     <ProjectRail projects={railProjects} current={project.id} dark={dark} />
     <article class="case">
@@ -49,6 +49,14 @@ const accentVars = [
     </article>
   </div>
 </Base>
+
+<!-- Case-study pages use the custom CaseScrollIndicator, so hide the native
+     scrollbar here (scroll still works). Scoped to these pages only — About /
+     Photography keep their normal scrollbar. -->
+<style is:global>
+  html { scrollbar-width: none; }        /* Firefox */
+  html::-webkit-scrollbar { display: none; } /* Chromium / WebKit */
+</style>
 
 <style>
   .case-shell {

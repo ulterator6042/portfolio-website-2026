@@ -1,7 +1,6 @@
 ---
 import { site, theme } from '@config/site';
 import Nav from '@components/Nav.astro';
-import Footer from '@components/Footer.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -9,10 +8,8 @@ interface Props {
   description?: string;
   /** Set on the home page so the header sits over the hero. */
   transparentNav?: boolean;
-  /** Hide the shared Nav + Footer (single-screen pages render their own chrome). */
+  /** Hide the shared Nav (single-screen pages render their own chrome). */
   bare?: boolean;
-  /** Hide just the Footer (e.g. the full-bleed Grab case study). */
-  hideFooter?: boolean;
   /** Lock the viewport — no page scroll (the fixed home screen). */
   lockScroll?: boolean;
 }
@@ -22,7 +19,6 @@ const {
   description = site.description,
   transparentNav = false,
   bare = false,
-  hideFooter = false,
   lockScroll = false,
 } = Astro.props;
 
@@ -77,6 +73,5 @@ const cssVars = [
     <main>
       <slot />
     </main>
-    {!bare && !hideFooter && <Footer />}
   </body>
 </html>
