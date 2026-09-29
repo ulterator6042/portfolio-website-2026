@@ -1,0 +1,65 @@
+---
+/**
+ * Shared scroll-reveal behaviour for case-study pages. Drop once per page; then
+ * any element marked `data-reveal` pops in (slight rise + fade) as it scrolls
+ * into view. Wrap a section in `data-reveal-group` to stagger its items.
+ *
+ * Gated behind `html.reveal-ready` (added by the script) so content stays fully
+ * visible if JS never runs, and it respects prefers-reduced-motion.
+ */
+---
+<style is:global>
+  html.reveal-ready [data-reveal] {
+    opacity: 0;
+    transform: translateY(18px) scale(0.99);
+    transition:
+      opacity 0.55s var(--ease-out, ease),
+      transform 0.55s var(--ease-out, ease);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+  html.reveal-ready [data-reveal].reveal-in {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html.reveal-ready [data-reveal] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // Reveal-on-scroll: stagger each group's items, then fade/pop them in as they
+  // enter view. Runs on load and after every client-side navigation.
+  function initReveal() {
+    const items = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
+    if (!items.length) return;
+
+    // Per-group stagger: each item gets an incremental delay within its section.
+    document.querySelectorAll<HTMLElement>('[data-reveal-group]').forEach((group) => {
+      group.querySelectorAll<HTMLElement>('[data-reveal]').forEach((el, i) => {
+        el.style.setProperty('--reveal-delay', `${i * 70}ms`);
+      });
+    });
+
+    // Enable the hidden start-state only now that JS is here to reveal it.
+    document.documentElement.classList.add('reveal-ready');
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('reveal-in');
+            io.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' },
+    );
+    items.forEach((el) => io.observe(el));
+  }
+  document.addEventListener('astro:page-load', initReveal);
+</script>

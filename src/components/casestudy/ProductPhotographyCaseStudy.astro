@@ -36,32 +36,32 @@ const grid = [
       widths={[600, 929, 1400]}
       sizes="(max-width: 900px) 100vw, 52vw"
     />
-    <div class="pp-inner pp-hero__text">
+    <div class="pp-inner pp-hero__text" data-reveal-group>
       <div class="pp-hero__meta">
-        <p>University Project - 2023</p>
-        <p>Tools: Adobe Lightroom, Keyshot, Alias 3D</p>
+        <p data-reveal>University Project - 2023</p>
+        <p data-reveal>Tools: Adobe Lightroom, Keyshot, Alias 3D</p>
       </div>
       <div class="pp-hero__title">
-        <h1>Product<br />photography</h1>
-        <p>Creative product advertisement picture and rendering exercise</p>
+        <h1 data-reveal>Product<br />photography</h1>
+        <p data-reveal>Creative product advertisement picture and rendering exercise</p>
       </div>
     </div>
   </header>
 
   <!-- ── 2×2 photo grid ───────────────────────────────────────────────── -->
-  <div class="pp-grid">
+  <div class="pp-grid" data-reveal-group>
     {grid.map((g) => (
-      <Image class="pp-grid__img" src={g.src} alt={g.alt} widths={[720, 1200, 1920]} sizes="(max-width: 720px) 100vw, 50vw" />
+      <Image data-reveal class="pp-grid__img" src={g.src} alt={g.alt} widths={[720, 1200, 1920]} sizes="(max-width: 720px) 100vw, 50vw" />
     ))}
   </div>
 
   <!-- ── Closing render pair ──────────────────────────────────────────── -->
   <div class="pp-close">
-    <div class="pp-inner pp-close__pair">
-      <Image class="pp-close__img" src={closeLeft} alt="Render of the goggles lit blue and magenta, three-quarter view" widths={[600, 800, 1200]} sizes="(max-width: 900px) 100vw, 50vw" />
-      <Image class="pp-close__img" src={closeRight} alt="Render of the goggles lit blue and magenta, alternate angle" widths={[600, 800, 1200]} sizes="(max-width: 900px) 100vw, 50vw" />
+    <div class="pp-inner pp-close__pair" data-reveal-group>
+      <Image data-reveal class="pp-close__img" src={closeLeft} alt="Render of the goggles lit blue and magenta, three-quarter view" widths={[600, 800, 1200]} sizes="(max-width: 900px) 100vw, 50vw" />
+      <Image data-reveal class="pp-close__img" src={closeRight} alt="Render of the goggles lit blue and magenta, alternate angle" widths={[600, 800, 1200]} sizes="(max-width: 900px) 100vw, 50vw" />
     </div>
-    <p class="pp-inner pp-close__caption">Model created with Alias 3D, renderings made with Keyshot 12.</p>
+    <p class="pp-inner pp-close__caption" data-reveal>Model created with Alias 3D, renderings made with Keyshot 12.</p>
   </div>
 </section>
 

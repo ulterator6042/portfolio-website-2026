@@ -80,17 +80,18 @@ const outcomes = [
 
   <!-- ── Hero ─────────────────────────────────────────────────────────── -->
   <header class="mind-hero">
-    <div class="mind-inner mind-hero__grid">
+    <div class="mind-inner mind-hero__grid" data-reveal-group>
       <div class="mind-hero__meta">
-        <p>Thesis project</p>
-        <p>Tools: Figma, Claude Code, Python</p>
+        <p data-reveal>Thesis project</p>
+        <p data-reveal>Tools: Figma, Claude Code, Python</p>
       </div>
       <Image class="mind-hero__marks" src={marks} alt="TU Delft × Logitech" widths={[300, 600]} sizes="260px" />
       <div class="mind-hero__title">
-        <h1><span class="mind-hero__logi">logitech</span><span class="mind-hero__brand">Mind</span></h1>
-        <p>Better recovery from workplace interruptions</p>
+        <h1 data-reveal><span class="mind-hero__logi">logitech</span><span class="mind-hero__brand">Mind</span></h1>
+        <p data-reveal>Better recovery from workplace interruptions</p>
       </div>
       <Image
+        data-reveal
         class="mind-hero__laptop"
         src={laptop}
         alt="A laptop showing the Mind interruption-manager interface capturing an active work session"
@@ -101,22 +102,23 @@ const outcomes = [
   </header>
 
   <!-- ── What is Logitech Mind? ───────────────────────────────────────── -->
-  <div class="mind-inner mind-stack mind-stack--lead">
-    <h2 class="mind-display">What is Logitech Mind?</h2>
-    <p>Mind is a desktop tool that helps workers <strong>recover from interruptions.</strong>
+  <div class="mind-inner mind-stack mind-stack--lead" data-reveal-group>
+    <h2 class="mind-display" data-reveal>What is Logitech Mind?</h2>
+    <p data-reveal>Mind is a desktop tool that helps workers <strong>recover from interruptions.</strong>
       One trigger captures everything you were working on, one trigger brings it all back;
       <strong>rebuilding your context in seconds.</strong></p>
   </div>
 
   <!-- ── Interruptions are inevitable · cycle diagram ─────────────────── -->
-  <div class="mind-inner mind-row mind-row--cycle">
+  <div class="mind-inner mind-row mind-row--cycle" data-reveal-group>
     <div class="mind-stack mind-stack--lead">
-      <h2 class="mind-display">Interruptions are inevitable.</h2>
-      <p>The average worker goes through 25 cycles of focus, interruption and re-entry in
+      <h2 class="mind-display" data-reveal>Interruptions are inevitable.</h2>
+      <p data-reveal>The average worker goes through 25 cycles of focus, interruption and re-entry in
         a single day, losing the precious momentum they had built while focusing on a
         task. <strong>The biggest energy cost is in the re-entry.</strong></p>
     </div>
     <Image
+      data-reveal
       class="mind-cycle"
       src={cycle}
       alt="A cycle repeated 25 times a day: Focused work → Trigger → Interruption → Resolution → Re-entry, and back to focused work."
@@ -126,28 +128,28 @@ const outcomes = [
   </div>
 
   <!-- ── Working prototype · video ────────────────────────────────────── -->
-  <div class="mind-inner mind-row mind-row--demo">
+  <div class="mind-inner mind-row mind-row--demo" data-reveal-group>
     <CaseVideo src="/media/mind.mp4" />
     <div class="mind-stack mind-stack--lead">
-      <h2 class="mind-display">Working prototype</h2>
-      <p><strong>One trigger</strong> saves everything you were doing before an interruption;
+      <h2 class="mind-display" data-reveal>Working prototype</h2>
+      <p data-reveal><strong>One trigger</strong> saves everything you were doing before an interruption;
         one trigger brings it all back.</p>
-      <p>It <strong>rebuilds your context</strong> and reminds you where you left off, so
+      <p data-reveal>It <strong>rebuilds your context</strong> and reminds you where you left off, so
         <strong>returning to work costs seconds instead of minutes.</strong></p>
     </div>
   </div>
 
   <!-- ── Priority to constraints · ranked survey mapping ──────────────── -->
-  <div class="mind-inner mind-priorities">
+  <div class="mind-inner mind-priorities" data-reveal-group>
     <div class="mind-priorities__head">
-      <h2 class="mind-display">Priority to constraints</h2>
+      <h2 class="mind-display" data-reveal>Priority to constraints</h2>
       <p class="mind-note">*153 survey samples</p>
     </div>
     <div class="mind-prio">
       <div class="mind-prio__rail" aria-hidden="true"></div>
       <ol class="mind-prio__rows">
         {priorities.map((p) => (
-          <li class="mind-prio__row">
+          <li class="mind-prio__row" data-reveal>
             <span class="mind-prio__pill">{p.need}</span>
             <span class="mind-prio__arrow" aria-hidden="true">→</span>
             <span class="mind-prio__pill mind-prio__pill--answer">{p.answer}</span>
@@ -158,9 +160,9 @@ const outcomes = [
   </div>
 
   <!-- ── User journey map · bespoke With/Without chart ────────────────── -->
-  <div class="mind-inner mind-journey">
-    <h2 class="mind-display">User journey map</h2>
-    <div class="mind-jscroll">
+  <div class="mind-inner mind-journey" data-reveal-group>
+    <h2 class="mind-display" data-reveal>User journey map</h2>
+    <div class="mind-jscroll" data-reveal>
       <div class="mind-jmap">
         <!-- Phase timeline -->
         <div></div>
@@ -217,11 +219,11 @@ const outcomes = [
   </div>
 
   <!-- ── Evaluation outcome · bespoke 3-card grid ─────────────────────── -->
-  <div class="mind-inner mind-outcome">
-    <h2 class="mind-display">Evaluation outcome</h2>
+  <div class="mind-inner mind-outcome" data-reveal-group>
+    <h2 class="mind-display" data-reveal>Evaluation outcome</h2>
     <div class="mind-cards">
       {outcomes.map((o) => (
-        <article class="mind-card">
+        <article class="mind-card" data-reveal>
           <span class="mind-card__num">{o.n}</span>
           <h3>{o.title}</h3>
           <div class="mind-card__rule"></div>

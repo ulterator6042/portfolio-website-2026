@@ -34,14 +34,14 @@ const steps = [
 
   <!-- ── Hero ─────────────────────────────────────────────────────────── -->
   <header class="chlo-hero">
-    <div class="chlo-inner chlo-hero__inner">
+    <div class="chlo-inner chlo-hero__inner" data-reveal-group>
       <div class="chlo-hero__meta">
-        <p>University Project — 2023</p>
-        <p>Tools: Autodesk Solidworks, Keyshot, Vizcom</p>
+        <p data-reveal>University Project — 2023</p>
+        <p data-reveal>Tools: Autodesk Solidworks, Keyshot, Vizcom</p>
       </div>
       <div class="chlo-hero__title">
-        <h1>Chlo&rsquo;</h1>
-        <p>Saving water with salt electrolysis conversion</p>
+        <h1 data-reveal>Chlo&rsquo;</h1>
+        <p data-reveal>Saving water with salt electrolysis conversion</p>
       </div>
     </div>
     <Image
@@ -54,8 +54,9 @@ const steps = [
   </header>
 
   <!-- ── What is Chlo'? ───────────────────────────────────────────────── -->
-  <div class="chlo-inner chlo-row chlo-row--what">
+  <div class="chlo-inner chlo-row chlo-row--what" data-reveal-group>
     <Image
+      data-reveal
       class="chlo-photo"
       src={pool}
       alt="A person relaxing at the edge of a small private pool"
@@ -63,8 +64,8 @@ const steps = [
       sizes="(max-width: 900px) 100vw, 45vw"
     />
     <div class="chlo-stack chlo-stack--lead">
-      <h2 class="chlo-display">What is Chlo&rsquo;?</h2>
-      <p>Chlo&rsquo; is an automatic salt pool chlorinator, built to extend the life of
+      <h2 class="chlo-display" data-reveal>What is Chlo&rsquo;?</h2>
+      <p data-reveal>Chlo&rsquo; is an automatic salt pool chlorinator, built to extend the life of
         small-scale pools. It completely automates the process of chlorination using
         salt electrolysis, removing the need to cyclically empty the pool for
         maintenance.</p>
@@ -72,13 +73,14 @@ const steps = [
   </div>
 
   <!-- ── Combat water waste ───────────────────────────────────────────── -->
-  <div class="chlo-inner chlo-row chlo-row--combat">
+  <div class="chlo-inner chlo-row chlo-row--combat" data-reveal-group>
     <div class="chlo-stack chlo-stack--lead">
-      <h2 class="chlo-display">Combat water waste</h2>
-      <p>Private pools can waste up to 50000 Liters of water every year, due to bad
+      <h2 class="chlo-display" data-reveal>Combat water waste</h2>
+      <p data-reveal>Private pools can waste up to 50000 Liters of water every year, due to bad
         maintenance practice and seasonal changes.</p>
     </div>
     <Image
+      data-reveal
       class="chlo-sketches"
       src={combatSketches}
       alt="Concept line sketches exploring the form and proportions of the chlorinator"
@@ -88,9 +90,9 @@ const steps = [
   </div>
 
   <!-- ── Usage steps ──────────────────────────────────────────────────── -->
-  <div class="chlo-inner chlo-steps">
+  <div class="chlo-inner chlo-steps" data-reveal-group>
     {steps.map((s) => (
-      <figure class="chlo-step">
+      <figure class="chlo-step" data-reveal>
         <Image class="chlo-step__img" src={s.img} alt={s.alt} widths={[300, 600]} sizes="(max-width: 900px) 45vw, 22vw" />
         <figcaption><strong>{s.lead}</strong>{s.body}</figcaption>
       </figure>
@@ -100,6 +102,7 @@ const steps = [
   <!-- ── Callout diagram: features + controls (exported flat, baked labels) -->
   <div class="chlo-diagram chlo-diagram--full">
     <Image
+      data-reveal
       src={calloutsTop}
       alt="Exploded callout diagram of the pod. Titanium plates inside the pod are easily accessible for maintenance and cleaning; counter weights at the top ensure continuous floating during the salination process. The settings button offers Eco mode (low consumption for long periods of usage), Boost mode (for a deep cleaning) and Normal mode (for everyday use). Signal LEDs inform the current mode, signal correct functionality, and signal whether the amount of salt used is correct or if a top-up is needed."
       widths={[900, 1400, 1920]}
@@ -110,6 +113,7 @@ const steps = [
   <!-- ── Detailed exploded assembly (exported flat, baked labels) ─────── -->
   <div class="chlo-diagram chlo-diagram--full">
     <Image
+      data-reveal
       src={explodedFeatures}
       alt="Exploded assembly diagram of the outer shell. Built without glues, only screws and locking mechanisms; material thickness considered; electrical layout and IPS standards; rigidity rivets and reinforcement plates labelled on the components."
       widths={[900, 1400, 1920]}
@@ -120,6 +124,7 @@ const steps = [
   <!-- ── Full exploded parts breakdown (exported flat, baked labels) ──── -->
   <div class="chlo-inner chlo-diagram">
     <Image
+      data-reveal
       class="chlo-diagram__img"
       src={explodedParts}
       alt="Detailed exploded parts diagram labelling every component: Base PP, Cable support PP, Divider, Motherboard, Transformer, Button membrane, LED lights, Outer shell PP, Handle PP, Handle TPU, Weight Pb, Plate Ti, Chlorinator cap PP and Chlorinator shell PP."

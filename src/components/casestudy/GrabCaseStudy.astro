@@ -187,31 +187,6 @@ const stages = [
     padding-inline: clamp(1.25rem, 6vw, 5rem);
   }
 
-  /* ── Scroll reveal (trial) ──────────────────────────────────────────────
-     Text pops in with a slight rise + fade as it scrolls into view; each
-     section staggers its own items. Gated behind `.reveal-ready` (added by
-     JS) so content stays visible if the script never runs. */
-  .grab.reveal-ready [data-reveal] {
-    opacity: 0;
-    transform: translateY(18px) scale(0.99);
-    transition:
-      opacity 0.55s var(--ease-out, ease),
-      transform 0.55s var(--ease-out, ease);
-    transition-delay: var(--reveal-delay, 0ms);
-    will-change: opacity, transform;
-  }
-  .grab.reveal-ready [data-reveal].reveal-in {
-    opacity: 1;
-    transform: none;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .grab.reveal-ready [data-reveal] {
-      opacity: 1;
-      transform: none;
-      transition: none;
-    }
-  }
-
   /* ── Hero ───────────────────────────────────────────────────────────── */
   .grab-hero {
     position: relative;
@@ -425,38 +400,3 @@ const stages = [
     .grab-display--pipeline { order: -1; }
   }
 </style>
-
-<script>
-  // Scroll-reveal trial (Grab only): stagger each section's [data-reveal] items,
-  // then fade/pop them in as they enter the viewport. Runs on load and after
-  // client-side navigation.
-  function initGrabReveal() {
-    const grab = document.querySelector<HTMLElement>('.grab');
-    if (!grab || grab.dataset.revealInit) return;
-    grab.dataset.revealInit = '1';
-
-    // Per-group stagger: each item gets an incremental delay within its section.
-    grab.querySelectorAll<HTMLElement>('[data-reveal-group]').forEach((group) => {
-      group.querySelectorAll<HTMLElement>('[data-reveal]').forEach((el, i) => {
-        el.style.setProperty('--reveal-delay', `${i * 70}ms`);
-      });
-    });
-
-    // Enable the hidden start-state only now that JS is here to reveal it.
-    grab.classList.add('reveal-ready');
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('reveal-in');
-            io.unobserve(entry.target);
-          }
-        }
-      },
-      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' },
-    );
-    grab.querySelectorAll<HTMLElement>('[data-reveal]').forEach((el) => io.observe(el));
-  }
-  document.addEventListener('astro:page-load', initGrabReveal);
-</script>

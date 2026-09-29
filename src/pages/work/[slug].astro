@@ -3,6 +3,7 @@ import { render } from 'astro:content';
 import Base from '@layouts/Base.astro';
 import ProjectHeader from '@components/ProjectHeader.astro';
 import ProjectRail from '@components/ProjectRail.astro';
+import ScrollReveal from '@components/casestudy/ScrollReveal.astro';
 import { getProjects } from '../../lib/projects';
 
 export async function getStaticPaths() {
@@ -29,6 +30,7 @@ const accentVars = [
   .join(';');
 ---
 <Base title={d.title} description={d.summary}>
+  <ScrollReveal />
   <div class:list={['case-shell', { dark }]} style={accentVars}>
     <ProjectRail projects={railProjects} current={project.id} dark={dark} />
     <article class="case" transition:name="case-content">
