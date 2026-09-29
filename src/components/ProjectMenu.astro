@@ -1,16 +1,14 @@
 ---
 /**
  * The one project menu, shared by the home hero and every case-study rail so
- * the site's primary navigation is identical everywhere. Text-only items; on
- * hover/focus the title underlines and a drop-down reveals the category + a few
- * keywords, while a soft gradient spotlight eases behind the active item.
- *
- * `variant` only scales spacing/type to the context — the interaction is one
- * and the same. `current` marks the open project (rail), where the spotlight
- * rests until you hover elsewhere. The glow picks up whatever `--accent` is in
- * scope, so on a case page it takes that project's colour.
+ * the site's primary navigation is identical everywhere. Plain text items; on
+ * hover/focus (or when it's the current project) the title takes the accent
+ * colour and an underline grows in, while a soft gradient spotlight eases
+ * behind it. `variant` only changes how the column is placed (the home menu
+ * fills its column; the rail sticks) — the items look and behave the same.
+ * The glow picks up whatever `--accent` is in scope, so on a case page it takes
+ * that project's colour.
  */
-import { categories } from '@config/site';
 import { projectHref, type Project } from '../lib/projects';
 
 interface Props {
@@ -19,16 +17,6 @@ interface Props {
   variant?: 'hero' | 'rail';
 }
 const { projects, current, variant = 'hero' } = Astro.props;
-
-const catLabel = (id: string) => categories.find((c) => c.id === id)?.label ?? id;
-
-// A few keywords surfaced in each item's drop-down. Prefer the project's
-// tools; fall back to the year so the panel is never empty.
-const keywordsFor = (p: Project) => {
-  const picks = (p.data.tools ?? []).slice(0, 3);
-  if (picks.length === 0 && p.data.year) picks.push(String(p.data.year));
-  return picks;
-};
 ---
 <nav class:list={['pmenu', `pmenu--${variant}`]} aria-label="Projects" data-pmenu>
   <!-- Gradient spotlight that chases the active item (decorative; see script). -->
@@ -41,18 +29,8 @@ const keywordsFor = (p: Project) => {
       aria-current={p.id === current ? 'page' : undefined}
       style={`--i:${i}`}
     >
-      <span class="pmenu__head">
-        <span class="pmenu__name">{p.data.title}</span>
-        {p.data.wip && <span class="pmenu__soon">Soon</span>}
-      </span>
-      <span class="pmenu__panel">
-        <span class="pmenu__panel-inner">
-          <span class="pmenu__cat">{catLabel(p.data.category)}</span>
-          {keywordsFor(p).map((k) => (
-            <span class="pmenu__kw">{k}</span>
-          ))}
-        </span>
-      </span>
+      <span class="pmenu__name">{p.data.title}</span>
+      {p.data.wip && <span class="pmenu__soon">Soon</span>}
     </a>
   ))}
 </nav>
@@ -62,29 +40,25 @@ const keywordsFor = (p: Project) => {
     position: relative; /* containing block for the spotlight */
     display: flex;
     flex-direction: column;
+    gap: 2px;
     overflow-y: auto;
     scrollbar-width: none; /* Firefox */
+    /* Shared item metrics — identical in both contexts. */
+    --pmenu-fs: 1.12rem;
+    --pmenu-pad: 7px 12px;
+    padding: 26px 18px 26px 30px;
   }
   .pmenu::-webkit-scrollbar { display: none; } /* Chromium/WebKit */
 
-  /* ── Variant layout ─────────────────────────────────────────────────── */
+  /* ── Variant = column placement only (items are the same) ────────────── */
   .pmenu--hero {
     flex: 1 1 auto;
     min-height: 0;
-    gap: 2px;
-    /* Left padding = 30px so the column aligns with the header name. */
-    padding: 2rem 20px 2rem 30px;
-    --pmenu-fs: clamp(1.5rem, 2.6vw, 2.15rem);
-    --pmenu-pad: 10px 14px;
   }
   .pmenu--rail {
     position: sticky;
     top: var(--nav-h); /* clears the sticky top nav */
     max-height: calc(100vh - var(--nav-h));
-    gap: 2px;
-    padding: 26px 18px 26px 30px;
-    --pmenu-fs: 1.12rem;
-    --pmenu-pad: 7px 12px;
   }
 
   /* ── Gradient spotlight ─────────────────────────────────────────────── */
@@ -95,7 +69,7 @@ const keywordsFor = (p: Project) => {
     top: 0; /* JS drives translateY relative to the scroll area */
     height: 0;
     opacity: 0;
-    border-radius: 14px;
+    border-radius: 12px;
     pointer-events: none;
     z-index: 0;
     background:
@@ -110,34 +84,35 @@ const keywordsFor = (p: Project) => {
   .pmenu__item {
     position: relative;
     z-index: 1;
-    display: block;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
     padding: var(--pmenu-pad);
     text-decoration: none;
     color: inherit;
-    border-radius: 14px;
+    border-radius: 12px;
   }
-  /* Signature: staggered rise on first paint (hero only). */
+  /* Signature: staggered rise on first paint (home only). */
   .pmenu--hero .pmenu__item {
     opacity: 0;
-    animation: pmenu-rise 0.65s var(--ease-out, ease) both;
+    animation: pmenu-rise 0.6s var(--ease-out, ease) both;
     animation-delay: calc(120ms + var(--i) * 65ms);
   }
   @keyframes pmenu-rise {
-    from { opacity: 0; transform: translateY(14px); }
+    from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  .pmenu__head { display: flex; align-items: baseline; gap: 12px; }
   .pmenu__name {
     position: relative;
     font-weight: 600;
     font-size: var(--pmenu-fs);
-    line-height: 1.12;
+    line-height: 1.2;
     letter-spacing: -0.01em;
     color: var(--muted);
-    transition: color var(--dur-2, 0.3s) var(--ease-out, ease);
+    transition: color var(--dur-1, 0.18s) var(--ease-out, ease);
   }
-  /* Animated underline — grows left→right on hover/focus. */
+  /* Animated underline — grows left→right on hover/focus/active. */
   .pmenu__name::after {
     content: '';
     position: absolute;
@@ -148,15 +123,15 @@ const keywordsFor = (p: Project) => {
     background: var(--accent);
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform var(--dur-2, 0.35s) var(--ease-out, ease);
+    transition: transform var(--dur-2, 0.32s) var(--ease-out, ease);
   }
+  /* Hover, focus, and current-project all resolve to the same accented state,
+     so the colour is correct regardless of whether the item is selected. */
   .pmenu__item:hover .pmenu__name,
-  .pmenu__item:focus-visible .pmenu__name { color: var(--text); }
-  .pmenu__item:hover .pmenu__name::after,
-  .pmenu__item:focus-visible .pmenu__name::after { transform: scaleX(1); }
-
-  /* Current project (rail): stays accented + underlined. */
+  .pmenu__item:focus-visible .pmenu__name,
   .pmenu__item.active .pmenu__name { color: var(--accent); }
+  .pmenu__item:hover .pmenu__name::after,
+  .pmenu__item:focus-visible .pmenu__name::after,
   .pmenu__item.active .pmenu__name::after { transform: scaleX(1); }
 
   /* "Soon" chip (e.g. Talaris) */
@@ -171,60 +146,11 @@ const keywordsFor = (p: Project) => {
     letter-spacing: 0.06em;
     text-transform: uppercase;
   }
-
-  /* Drop-down — opens via the 0fr → 1fr grid-rows technique. */
-  .pmenu__panel {
-    display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows var(--dur-3, 0.4s) var(--ease-out, ease);
-  }
-  .pmenu__panel-inner {
-    overflow: hidden;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
-    padding-top: 0;
-    opacity: 0;
-    transform: translateY(-4px);
-    transition:
-      opacity var(--dur-2, 0.3s) var(--ease-out, ease) 0.05s,
-      transform var(--dur-2, 0.3s) var(--ease-out, ease) 0.05s,
-      padding-top var(--dur-3, 0.4s) var(--ease-out, ease);
-  }
-  .pmenu__item:hover .pmenu__panel,
-  .pmenu__item:focus-visible .pmenu__panel { grid-template-rows: 1fr; }
-  .pmenu__item:hover .pmenu__panel-inner,
-  .pmenu__item:focus-visible .pmenu__panel-inner {
-    opacity: 1;
-    transform: translateY(0);
-    padding-top: 10px;
-  }
-
-  .pmenu__cat {
-    padding: 4px 12px;
-    border-radius: 999px;
-    background: var(--accent);
-    color: var(--accent-text, #fff);
-    font-weight: 500;
-    font-size: 12px;
-    letter-spacing: 0.02em;
-    white-space: nowrap;
-  }
-  .pmenu__kw {
-    padding: 4px 11px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    font-size: 12px;
-    white-space: nowrap;
-  }
 </style>
 
 <script>
   // Gradient spotlight: a soft glow eases toward whichever item is hovered or
-  // focused, re-reading the target every frame so it grows in sync with the
-  // drop-down. On the rail it rests on the current project until you hover.
+  // focused. On the rail it rests on the current project until you hover.
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   document.querySelectorAll<HTMLElement>('[data-pmenu]').forEach((nav) => {
@@ -279,7 +205,6 @@ const keywordsFor = (p: Project) => {
 
     items.forEach((el) => {
       const enter = () => {
-        // Fading in from nothing: appear at the item, not sliding from the top.
         if (!hovered && op < 0.02) { cy = el.offsetTop - nav.scrollTop; ch = el.offsetHeight; }
         hovered = el;
         kick();

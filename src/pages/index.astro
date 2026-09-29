@@ -84,12 +84,13 @@ const projects = all.filter((p) => p.data.category !== 'photography');
   .topbar__links a:hover,
   .topbar__links a:focus-visible { color: #fff; }
 
-  /* Stage = list + detail */
+  /* Stage = menu + detail. The menu column matches the in-project rail width
+     so the home and case-study navigation read as the same panel. */
   .stage {
     flex: 1 1 auto;
     min-height: 0;
     display: grid;
-    grid-template-columns: clamp(360px, 42%, 520px) 1fr;
+    grid-template-columns: 300px 1fr;
   }
 
   /* Left column wrapper (holds the shared ProjectMenu + the scroll cue). The
