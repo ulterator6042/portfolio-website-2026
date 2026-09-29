@@ -4,6 +4,21 @@
 *, *::before, *::after { box-sizing: border-box; }
 * { margin: 0; }
 
+/* ── Shared case-study tokens ─────────────────────────────────────────────
+   Fixed type scale + layout rhythm every project page reads from, so all four
+   case studies feel like siblings. Per-project accent is injected on the shell
+   by [slug].astro. See PORTING_GUIDE.md. */
+:root {
+  --fs-hero: clamp(4rem, 13vw, 11rem);
+  --fs-display: clamp(2.5rem, 6vw, 6rem);
+  --fs-h3: clamp(1.35rem, 2.1vw, 2rem);
+  --fs-body: clamp(1rem, 1.25vw, 1.35rem);
+  --fs-small: clamp(0.9rem, 1.1vw, 1.15rem);
+  --case-max: 1280px;
+  --case-pad: clamp(1.25rem, 6vw, 5rem);
+  --case-gap: clamp(4rem, 9vw, 9rem);
+}
+
 html {
   background: var(--bg);
   color: var(--text);
@@ -32,7 +47,8 @@ h2 { font-size: clamp(1.75rem, 3.5vw, 2.75rem); }
   padding-inline: var(--page-pad);
 }
 .eyebrow {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
+  font-weight: 500;
   font-size: 0.75rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;

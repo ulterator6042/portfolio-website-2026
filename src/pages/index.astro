@@ -33,6 +33,7 @@ const catLabel = (id: string) => categories.find((c) => c.id === id)?.label ?? i
                   : <span class="list__ph" aria-hidden="true"></span>}
                 <span class="list__scrim"></span>
                 <span class="list__tag">{catLabel(p.data.category)}</span>
+                {p.data.wip && <span class="list__wip">Soon</span>}
               </span>
               <span class="list__name">{p.data.title}</span>
             </a>
@@ -188,6 +189,22 @@ const catLabel = (id: string) => categories.find((c) => c.id === id)?.label ?? i
     transition: color 0.15s ease;
   }
   .list__item:hover .list__name { color: #111111; }
+
+  /* Under-construction badge (e.g. Talaris) */
+  .list__wip {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(10, 10, 10, 0.72);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
 
   /* Scroll cue — fades in over the bottom of the list when scrollable */
   .scroll-cue {

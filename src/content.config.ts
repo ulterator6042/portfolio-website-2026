@@ -32,6 +32,13 @@ const projects = defineCollection({
       hideHeader: z.boolean().default(false),
       // Dark-theme the case-study shell (project rail + canvas), e.g. Grab.
       dark: z.boolean().default(false),
+      // Single per-project accent (hex). Mirrored onto --accent for the whole
+      // case shell by [slug].astro. Falls back to the global theme accent.
+      accent: z.string().optional(),
+      // Foreground colour on top of the accent (::selection etc.).
+      accentText: z.string().optional(),
+      // Work-in-progress: renders an "under construction" state (e.g. Talaris).
+      wip: z.boolean().default(false),
     }),
 });
 

@@ -1,0 +1,77 @@
+---
+/**
+ * Shared lazy-loaded case-study video. The file is only fetched when the
+ * element first scrolls into view (src is attached on intersection), then it
+ * auto-plays muted / loops while visible and pauses when scrolled away — so a
+ * heavy MP4 never blocks initial load.
+ *
+ * Usage: <CaseVideo src="/media/mind.mp4" caption="Working prototype" />
+ * `src` is a site-root-relative path to a file in /public/media/.
+ */
+interface Props {
+  /** Site-root path to the MP4 in /public/media/. */
+  src: string;
+  /** Optional caption under the video. */
+  caption?: string;
+  /** Optional poster image path (shown before load / while paused). */
+  poster?: string;
+  /** Aspect ratio, CSS form. Defaults to 16 / 9. */
+  ratio?: string;
+  /** Extra class on the <figure> for per-page layout tweaks. */
+  class?: string;
+}
+const { src, caption, poster, ratio = '16 / 9', class: klass } = Astro.props;
+---
+<figure class:list={['case-video', klass]}>
+  <video
+    class="case-video__el"
+    data-src={src}
+    poster={poster}
+    style={`aspect-ratio:${ratio}`}
+    muted
+    loop
+    playsinline
+    preload="none"
+  ></video>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .case-video { margin: 0; display: flex; flex-direction: column; gap: 1rem; }
+  .case-video__el {
+    width: 100%;
+    object-fit: cover;
+    background: rgba(128, 128, 128, 0.12);
+    border: 1px solid rgba(128, 128, 128, 0.22);
+    border-radius: var(--radius-lg, 20px);
+  }
+  .case-video figcaption {
+    text-align: center;
+    opacity: 0.7;
+    font-weight: 300;
+    font-size: var(--fs-small);
+  }
+</style>
+
+<script>
+  // Attach src on first intersection, then play/pause with visibility. Runs for
+  // every CaseVideo on the page.
+  const vids = document.querySelectorAll<HTMLVideoElement>('.case-video__el');
+  if (vids.length) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const el = entry.target as HTMLVideoElement;
+          if (entry.isIntersecting) {
+            if (!el.src && el.dataset.src) el.src = el.dataset.src;
+            el.play().catch(() => {});
+          } else {
+            el.pause();
+          }
+        }
+      },
+      { threshold: 0.35 },
+    );
+    vids.forEach((v) => io.observe(v));
+  }
+</script>

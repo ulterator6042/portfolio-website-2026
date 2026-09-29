@@ -7,6 +7,7 @@
  * captions were corrected.
  */
 import { Image } from 'astro:assets';
+import CaseScrollIndicator from './CaseScrollIndicator.astro';
 import heroRender from '../../assets/product-photography/hero-render.png';
 import renderKeyshot from '../../assets/product-photography/render-keyshot.png';
 import dsc9436 from '../../assets/product-photography/dsc9436.png';
@@ -23,8 +24,7 @@ const grid = [
 ---
 
 <section class="pp">
-  <!-- Minimal scroll indicator -->
-  <div class="pp-scroll" aria-hidden="true"><div class="pp-scroll__thumb"></div></div>
+  <CaseScrollIndicator />
 
   <!-- ── Hero ─────────────────────────────────────────────────────────── -->
   <header class="pp-hero">
@@ -66,7 +66,6 @@ const grid = [
     --body: rgba(255, 255, 255, 0.82);
     background: var(--ink);
     color: #fff;
-    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
     display: flex;
     flex-direction: column;
     gap: clamp(3rem, 7vw, 7rem);
@@ -161,31 +160,6 @@ const grid = [
     font-size: clamp(1rem, 1.3vw, 1.35rem);
   }
 
-  /* ── Scroll indicator ───────────────────────────────────────────────── */
-  .pp-scroll {
-    position: fixed;
-    top: 65px;
-    right: 6px;
-    bottom: 10px;
-    width: 5px;
-    z-index: 40;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.06);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-  }
-  .pp-scroll__thumb {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    min-height: 40px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.85);
-    will-change: transform, height;
-  }
-
   /* ── Responsive ─────────────────────────────────────────────────────── */
   @media (max-width: 900px) {
     .pp-hero__grid { grid-template-columns: 1fr; }
@@ -193,32 +167,5 @@ const grid = [
   }
   @media (max-width: 720px) {
     .pp-grid { grid-template-columns: 1fr; }
-    .pp-scroll { display: none; }
   }
 </style>
-
-<script>
-  // Minimal scroll indicator — matches the Grab case study behaviour.
-  const bar = document.querySelector<HTMLElement>('.pp-scroll');
-  const thumb = document.querySelector<HTMLElement>('.pp-scroll__thumb');
-  if (bar && thumb) {
-    const update = () => {
-      const winH = window.innerHeight;
-      const docH = document.documentElement.scrollHeight;
-      const trackH = bar.clientHeight;
-      const scrollable = docH - winH;
-      if (scrollable <= 4) {
-        bar.style.opacity = '0';
-        return;
-      }
-      bar.style.opacity = '1';
-      const thumbH = Math.max(40, trackH * (winH / docH));
-      const scrolled = Math.min(1, Math.max(0, window.scrollY / scrollable));
-      thumb.style.height = `${thumbH}px`;
-      thumb.style.transform = `translateY(${scrolled * (trackH - thumbH)}px)`;
-    };
-    update();
-    window.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update);
-  }
-</script>

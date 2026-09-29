@@ -63,9 +63,11 @@ export const theme = {
     headerText: '#cfcfcf', // muted off-white name in the bar
   },
   font: {
-    // System-first stack; swap for a hosted/webfont later without touching pages.
-    sans: "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
-    mono: "'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace",
+    // DM Sans is the single site typeface (used bold/extra-light per the brand
+    // spec). `mono` is retired — it points at the same stack so any legacy
+    // reference still renders DM Sans. See PORTING_GUIDE.md.
+    sans: "'DM Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+    mono: "'DM Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
   },
   radius: { sm: '6px', md: '12px', lg: '20px' },
   space: { page: '6vw', max: '1200px' },

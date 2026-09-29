@@ -3,29 +3,33 @@ import { render } from 'astro:content';
 import Base from '@layouts/Base.astro';
 import ProjectHeader from '@components/ProjectHeader.astro';
 import ProjectRail from '@components/ProjectRail.astro';
-import { getProjects, projectHref } from '../../lib/projects';
+import { getProjects } from '../../lib/projects';
 
 export async function getStaticPaths() {
   const projects = await getProjects();
   // Skip projects that render through a custom route (e.g. photography).
   return projects
     .filter((p) => !p.data.externalTemplate)
-    .map((p, i) => {
-      const next = projects[(i + 1) % projects.length];
-      return { params: { slug: p.id }, props: { project: p, next } };
-    });
+    .map((p) => ({ params: { slug: p.id }, props: { project: p } }));
 }
 
-const { project, next } = Astro.props;
+const { project } = Astro.props;
 const { Content } = await render(project);
 const d = project.data;
 // Side rail mirrors the Figma project column — the built case studies only
 // (exclude custom-route entries like the Photography gallery).
 const railProjects = (await getProjects()).filter((p) => !p.data.externalTemplate);
 const dark = d.dark;
+// Per-project accent → --accent on the shell (falls back to the global token).
+const accentVars = [
+  d.accent && `--accent:${d.accent}`,
+  d.accentText && `--accent-text:${d.accentText}`,
+]
+  .filter(Boolean)
+  .join(';');
 ---
 <Base title={d.title} description={d.summary} hideFooter={dark}>
-  <div class:list={['case-shell', { dark }]}>
+  <div class:list={['case-shell', { dark }]} style={accentVars}>
     <ProjectRail projects={railProjects} current={project.id} dark={dark} />
     <article class="case">
       {!d.hideHeader && (
@@ -42,11 +46,6 @@ const dark = d.dark;
       <div class:list={['case__body', { 'case__body--flush': d.hideHeader }]}>
         <Content />
       </div>
-
-      <a class="next container" href={projectHref(next)}>
-        <span class="eyebrow">Next project</span>
-        <span class="next__title">{next.data.title} →</span>
-      </a>
     </article>
   </div>
 </Base>
@@ -66,16 +65,4 @@ const dark = d.dark;
   .case__body { margin-top: clamp(2rem, 6vw, 4rem); }
   /* Full-bleed case studies render their own hero flush under the nav. */
   .case__body--flush { margin-top: 0; }
-  .next {
-    display: block;
-    margin-top: 6rem;
-    padding-block: 3rem;
-    border-top: 1px solid var(--border);
-    text-decoration: none;
-    color: var(--text);
-  }
-  .case-shell.dark .next { border-top-color: rgba(255, 255, 255, 0.08); color: #fff; }
-  .next__title { display: block; margin-top: 0.5rem; font-size: clamp(1.5rem, 4vw, 2.5rem); font-weight: 600; }
-  .next:hover .next__title { color: var(--accent); }
-  .case-shell.dark .next:hover .next__title { color: #e07856; }
 </style>

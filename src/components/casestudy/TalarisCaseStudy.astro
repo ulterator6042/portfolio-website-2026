@@ -1,0 +1,37 @@
+---
+/**
+ * Talaris — placeholder case study. The full page is still under construction;
+ * for now it renders a centered "coming soon" state using the shared tokens.
+ */
+---
+<section class="wip">
+  <p class="wip__eyebrow">Product Design</p>
+  <h1 class="wip__title">Talaris</h1>
+  <p class="wip__note">This case study is under construction — check back soon.</p>
+</section>
+
+<style>
+  .wip {
+    min-height: 62vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 1rem;
+    padding: clamp(3rem, 10vw, 8rem) var(--case-pad);
+  }
+  .wip__eyebrow {
+    font-weight: 500;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .wip__title {
+    font-weight: 800;
+    font-size: var(--fs-display);
+    letter-spacing: -0.02em;
+  }
+  .wip__note { color: var(--muted); font-weight: 300; font-size: var(--fs-body); }
+</style>

@@ -6,6 +6,8 @@
  * of obvious source typos were corrected in the prose.
  */
 import { Image } from 'astro:assets';
+import CaseScrollIndicator from './CaseScrollIndicator.astro';
+import CaseVideo from './CaseVideo.astro';
 import hero from '../../assets/grab/hero.png';
 import closing from '../../assets/grab/closing.png';
 import iconOpenPalm from '../../assets/grab/icon-open-palm.png';
@@ -22,8 +24,7 @@ const stages = [
 ---
 
 <section class="grab">
-  <!-- Minimal scroll indicator (project accent) -->
-  <div class="grab-scroll" aria-hidden="true"><div class="grab-scroll__thumb"></div></div>
+  <CaseScrollIndicator />
 
   <!-- ── Hero ─────────────────────────────────────────────────────────── -->
   <header class="grab-hero">
@@ -98,17 +99,7 @@ const stages = [
 
   <!-- ── Video demo  ·  no imposed order ──────────────────────────────── -->
   <div class="grab-inner grab-row grab-row--demo">
-    <figure class="grab-video">
-      <video
-        class="grab-video__el"
-        data-src="/media/grab-demo.mp4"
-        muted
-        loop
-        playsinline
-        preload="none"
-      ></video>
-      <figcaption>Video demo</figcaption>
-    </figure>
+    <CaseVideo src="/media/grab.mp4" caption="Video demo" />
     <div class="grab-demo-copy">
       <p class="grab-demo-copy__lead">No scroll direction, no imposed order.</p>
       <p>Explore through your preferred peripheral or through your body.</p>
@@ -169,13 +160,11 @@ const stages = [
 <style>
   .grab {
     --ink: #0e0e0e;
-    --orange: #e07856;
     --card: #161616;
     --hair: rgba(255, 255, 255, 0.08);
     --body: rgba(255, 255, 255, 0.82);
     background: var(--ink);
     color: #fff;
-    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
     display: flex;
     flex-direction: column;
     gap: clamp(4rem, 9vw, 9rem);
@@ -258,7 +247,7 @@ const stages = [
   .grab-display {
     font-family: 'DM Sans', sans-serif;
     font-weight: 800;
-    color: var(--orange);
+    color: var(--accent);
     font-size: clamp(2.5rem, 6vw, 6rem);
     line-height: 1.02;
     letter-spacing: -0.02em;
@@ -271,7 +260,7 @@ const stages = [
   }
   .grab-stack--lead { gap: clamp(1.5rem, 2.5vw, 2rem); }
   .grab h3 {
-    font-family: 'Inter', sans-serif;
+    
     font-weight: 700;
     font-size: clamp(1.35rem, 2.1vw, 2rem);
     line-height: 1.15;
@@ -306,28 +295,12 @@ const stages = [
   }
   .grab-gesture__icon--dot { width: clamp(64px, 7vw, 96px); }
   .grab-gesture h3 { font-size: clamp(1.2rem, 1.9vw, 1.75rem); }
-  .grab-gesture h3 span { color: var(--orange); margin-inline: 0.15em; }
+  .grab-gesture h3 span { color: var(--accent); margin-inline: 0.15em; }
   .grab-gesture p { font-size: clamp(0.95rem, 1.15vw, 1.25rem); }
 
   /* ── Video demo row ─────────────────────────────────────────────────── */
   .grab-row--demo { grid-template-columns: 1.1fr 0.9fr; }
-  .grab-video { margin: 0; display: flex; flex-direction: column; gap: 1rem; }
-  .grab-video__el {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
-    background: var(--card);
-    border: 1px solid var(--hair);
-    border-radius: 20px;
-  }
-  .grab-video figcaption {
-    text-align: center;
-    color: rgba(255, 255, 255, 0.7);
-    font-weight: 300;
-    font-size: clamp(0.95rem, 1.15vw, 1.25rem);
-  }
   .grab-demo-copy__lead {
-    font-family: 'Inter', sans-serif;
     font-weight: 700;
     color: #fff;
     font-size: clamp(1.35rem, 2.1vw, 2rem);
@@ -362,9 +335,9 @@ const stages = [
     padding: clamp(1.25rem, 2vw, 2rem) clamp(1.25rem, 2.2vw, 2.5rem);
     box-shadow: 0 11px 33px 1px rgba(0, 0, 0, 0.25);
   }
-  .grab-stage__num { color: var(--orange); font-weight: 700; font-size: 1.05rem; }
+  .grab-stage__num { color: var(--accent); font-weight: 700; font-size: 1.05rem; }
   .grab-stage h4 {
-    font-family: 'Inter', sans-serif;
+    
     font-weight: 700;
     font-size: clamp(1.15rem, 1.6vw, 1.5rem);
     line-height: 1.15;
@@ -385,34 +358,8 @@ const stages = [
     border-radius: 16px;
   }
 
-  /* ── Scroll indicator ───────────────────────────────────────────────── */
-  .grab-scroll {
-    position: fixed;
-    top: 65px;
-    right: 6px;
-    bottom: 10px;
-    width: 5px;
-    z-index: 40;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.06);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-  }
-  .grab-scroll__thumb {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    min-height: 40px;
-    border-radius: 999px;
-    background: var(--orange);
-    will-change: transform, height;
-  }
-
   /* ── Responsive ─────────────────────────────────────────────────────── */
   @media (max-width: 900px) {
-    .grab-scroll { display: none; }
     .grab-row,
     .grab-row--demo { grid-template-columns: 1fr; }
     /* Lead heading + intro should read heading-first on mobile. */
@@ -422,53 +369,3 @@ const stages = [
     .grab-stage__arrow { transform: rotate(90deg); }
   }
 </style>
-
-<script>
-  // Lazy-load the demo video (src attached on first intersection so the 45 MB
-  // file isn't fetched until scrolled near) and autoplay/pause with visibility.
-  const video = document.querySelector<HTMLVideoElement>('.grab-video__el');
-  if (video) {
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          const el = entry.target as HTMLVideoElement;
-          if (entry.isIntersecting) {
-            if (!el.src && el.dataset.src) {
-              el.src = el.dataset.src;
-            }
-            el.play().catch(() => {});
-          } else {
-            el.pause();
-          }
-        }
-      },
-      { threshold: 0.35 },
-    );
-    io.observe(video);
-  }
-
-  // Minimal scroll indicator — thumb height reflects how much is visible,
-  // its position reflects how far down the page you are.
-  const bar = document.querySelector<HTMLElement>('.grab-scroll');
-  const thumb = document.querySelector<HTMLElement>('.grab-scroll__thumb');
-  if (bar && thumb) {
-    const update = () => {
-      const winH = window.innerHeight;
-      const docH = document.documentElement.scrollHeight;
-      const trackH = bar.clientHeight;
-      const scrollable = docH - winH;
-      if (scrollable <= 4) {
-        bar.style.opacity = '0';
-        return;
-      }
-      bar.style.opacity = '1';
-      const thumbH = Math.max(40, trackH * (winH / docH));
-      const scrolled = Math.min(1, Math.max(0, window.scrollY / scrollable));
-      thumb.style.height = `${thumbH}px`;
-      thumb.style.transform = `translateY(${scrolled * (trackH - thumbH)}px)`;
-    };
-    update();
-    window.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update);
-  }
-</script>
