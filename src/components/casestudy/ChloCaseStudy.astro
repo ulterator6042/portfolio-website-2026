@@ -139,8 +139,9 @@ const steps = [
     color: #141c2c;
     display: flex;
     flex-direction: column;
-    gap: var(--case-gap);
-    padding-bottom: var(--case-gap);
+    /* Tighter than the global --case-gap — this deck's sections read better close. */
+    gap: clamp(2.5rem, 5vw, 5rem);
+    padding-bottom: clamp(2.5rem, 5vw, 5rem);
     width: 100%;
     overflow-x: clip;
   }
