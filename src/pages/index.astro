@@ -1,6 +1,5 @@
 ---
 import Base from '@layouts/Base.astro';
-import { Image } from 'astro:assets';
 import { site, categories } from '@config/site';
 import { getProjects, projectHref } from '../lib/projects';
 
@@ -8,6 +7,15 @@ const all = await getProjects();
 // Photography is not a column item — it's a header link next to About.
 const projects = all.filter((p) => p.data.category !== 'photography');
 const catLabel = (id: string) => categories.find((c) => c.id === id)?.label ?? id;
+
+// A few keywords surfaced in each item's drop-down. Prefer the project's
+// tools; fall back to the year so the panel is never empty.
+const keywordsFor = (p: (typeof projects)[number]) => {
+  const tools = p.data.tools ?? [];
+  const picks = tools.slice(0, 3);
+  if (picks.length === 0 && p.data.year) picks.push(String(p.data.year));
+  return picks;
+};
 ---
 <Base bare={true} lockScroll={true}>
   <div class="home">
@@ -24,18 +32,23 @@ const catLabel = (id: string) => categories.find((c) => c.id === id)?.label ?? i
       <!-- Left: the project menu — identical behaviour to the in-project rail.
            Each item links straight to that project's scrollable page. -->
       <div class="col">
-        <nav class="list" aria-label="Projects">
+        <nav class="list" aria-label="Projects" data-list>
+          <!-- The gradient spotlight that chases the hovered item (decorative). -->
+          <span class="glow" data-glow aria-hidden="true"></span>
           {projects.map((p) => (
-            <a class="list__item" href={projectHref(p)}>
-              <span class="list__thumb">
-                {p.data.cover
-                  ? <Image class="list__img" src={p.data.cover} alt={p.data.title} widths={[220, 440]} sizes="220px" />
-                  : <span class="list__ph" aria-hidden="true"></span>}
-                <span class="list__scrim"></span>
-                <span class="list__tag">{catLabel(p.data.category)}</span>
-                {p.data.wip && <span class="list__wip">Soon</span>}
+            <a class="list__item" href={projectHref(p)} data-item>
+              <span class="list__head">
+                <span class="list__name">{p.data.title}</span>
+                {p.data.wip && <span class="list__soon">Soon</span>}
               </span>
-              <span class="list__name">{p.data.title}</span>
+              <span class="list__panel">
+                <span class="list__panel-inner">
+                  <span class="list__cat">{catLabel(p.data.category)}</span>
+                  {keywordsFor(p).map((k) => (
+                    <span class="list__kw">{k}</span>
+                  ))}
+                </span>
+              </span>
             </a>
           ))}
         </nav>
@@ -68,6 +81,80 @@ const catLabel = (id: string) => categories.find((c) => c.id === id)?.label ?? i
   list?.addEventListener('scroll', updateCue, { passive: true });
   window.addEventListener('resize', updateCue);
   updateCue();
+
+  // ── Gradient spotlight ────────────────────────────────────────────────
+  // A soft glow eases toward whichever item is hovered/focused, re-reading
+  // the target every frame so it grows in sync with the drop-down opening.
+  const glow = document.querySelector<HTMLElement>('[data-glow]');
+  const items = Array.from(document.querySelectorAll<HTMLElement>('[data-item]'));
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (glow && list && items.length && !reduce) {
+    let active: HTMLElement | null = null;   // item the pointer is on
+    let raf = 0;
+    // Current (rendered) box and its eased velocity.
+    let cy = 0, ch = 0, opacity = 0;
+    let settled = true;
+
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+    function frame() {
+      if (!glow || !list) return;
+      // Target: live geometry of the active item (relative to the scroll area).
+      const ty = active ? active.offsetTop - list.scrollTop : cy;
+      const th = active ? active.offsetHeight : ch;
+      const to = active ? 1 : 0;
+
+      cy = lerp(cy, ty, 0.22);
+      ch = lerp(ch, th, 0.22);
+      opacity = lerp(opacity, to, 0.18);
+
+      glow.style.transform = `translateY(${cy}px)`;
+      glow.style.height = `${ch}px`;
+      glow.style.opacity = `${opacity}`;
+
+      const done =
+        !active &&
+        Math.abs(opacity) < 0.01 &&
+        Math.abs(cy - ty) < 0.5 &&
+        Math.abs(ch - th) < 0.5;
+      if (done) {
+        settled = true;
+        glow.style.opacity = '0';
+        raf = 0;
+        return;
+      }
+      raf = requestAnimationFrame(frame);
+    }
+
+    function kick() {
+      settled = false;
+      if (!raf) raf = requestAnimationFrame(frame);
+    }
+
+    items.forEach((el) => {
+      const enter = () => {
+        // First appearance: snap the glow onto the item so it fades in place
+        // instead of sliding in from the top.
+        if (settled && opacity < 0.02 && list) {
+          cy = el.offsetTop - list.scrollTop;
+          ch = el.offsetHeight;
+        }
+        active = el;
+        kick();
+      };
+      el.addEventListener('pointerenter', enter);
+      el.addEventListener('focus', enter);
+    });
+
+    const clear = () => { active = null; kick(); };
+    list.addEventListener('pointerleave', clear);
+    list.addEventListener('focusout', (e) => {
+      if (!list.contains(e.relatedTarget as Node)) clear();
+    });
+    // Keep the glow pinned to the active item while the list scrolls.
+    list.addEventListener('scroll', () => { if (active) kick(); }, { passive: true });
+  }
 </script>
 
 <style>
@@ -107,7 +194,7 @@ const catLabel = (id: string) => categories.find((c) => c.id === id)?.label ?? i
     flex: 1 1 auto;
     min-height: 0;
     display: grid;
-    grid-template-columns: 260px 1fr;
+    grid-template-columns: clamp(360px, 42%, 520px) 1fr;
   }
 
   /* Left column wrapper (holds the scroll area + the scroll cue) */
@@ -119,91 +206,138 @@ const catLabel = (id: string) => categories.find((c) => c.id === id)?.label ?? i
     border-right: 1px solid var(--border);
   }
   .list {
+    position: relative; /* anchor for the gradient spotlight */
     flex: 1 1 auto;
     min-height: 0;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 2px;
     /* Left padding = 30px so the column aligns with the header name. */
-    padding: 1.5rem 20px 1.5rem 30px;
+    padding: 2rem 20px 2rem 30px;
     overflow-y: auto;
     scrollbar-width: none; /* Firefox */
   }
   .list::-webkit-scrollbar { display: none; } /* Chromium/WebKit */
 
-  /* ── Menu item — mirrors the in-project rail (art + hover pill) ──────── */
+  /* ── Gradient spotlight — eases behind the hovered item (see <script>) ── */
+  .glow {
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    top: 2rem; /* matches list padding; JS drives translateY from here */
+    height: 0;
+    opacity: 0;
+    border-radius: 14px;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(120% 80% at 8% 50%,
+        color-mix(in srgb, var(--accent) 20%, transparent) 0%,
+        color-mix(in srgb, var(--accent) 9%, transparent) 45%,
+        transparent 78%);
+    will-change: transform, height, opacity;
+  }
+
+  /* ── Menu item — big text + reveal-on-hover drop-down ─────────────────── */
   .list__item {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    position: relative;
+    z-index: 1;
+    display: block;
+    padding: 10px 14px;
     text-decoration: none;
     color: inherit;
+    border-radius: 14px;
   }
-  .list__thumb {
-    position: relative;
-    display: block;
-    height: 108px;
-    border-radius: 6px;
-    overflow: hidden;
-    background: #f0f0f0;
-  }
-  .list__img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: filter 0.25s ease, transform 0.25s ease;
-  }
-  .list__ph { position: absolute; inset: 0; background: #f0f0f0; }
-  .list__scrim {
-    position: absolute;
-    inset: 0;
-    background: rgba(10, 10, 10, 0);
-    transition: background 0.25s ease;
-  }
-  .list__tag {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%) scale(0.94);
-    padding: 5px 15px;
-    border: 2px solid #ffffff;
-    border-radius: 29px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    color: #ffffff;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-  }
-  .list__item:hover .list__img { filter: blur(6px); transform: scale(1.06); }
-  .list__item:hover .list__scrim { background: rgba(10, 10, 10, 0.35); }
-  .list__item:hover .list__tag { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-
+  .list__head { display: flex; align-items: baseline; gap: 12px; }
   .list__name {
+    position: relative;
     font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
+    font-weight: 600;
+    font-size: clamp(1.5rem, 2.6vw, 2.15rem);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
     color: #6b6b6b;
-    transition: color 0.15s ease;
+    transition: color 0.25s ease;
   }
-  .list__item:hover .list__name { color: #111111; }
-
-  /* Under-construction badge (e.g. Talaris) */
-  .list__wip {
+  /* Animated underline — grows left→right on hover/focus. */
+  .list__name::after {
+    content: '';
     position: absolute;
-    top: 8px;
-    left: 8px;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .list__item:hover .list__name,
+  .list__item:focus-visible .list__name { color: #111111; }
+  .list__item:hover .list__name::after,
+  .list__item:focus-visible .list__name::after { transform: scaleX(1); }
+
+  /* "Soon" chip (e.g. Talaris) */
+  .list__soon {
+    align-self: center;
     padding: 3px 9px;
     border-radius: 999px;
-    background: rgba(10, 10, 10, 0.72);
-    color: #fff;
+    background: rgba(10, 10, 10, 0.08);
+    color: var(--muted);
     font-family: 'DM Sans', sans-serif;
     font-weight: 500;
     font-size: 11px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
+  }
+
+  /* Drop-down — animates open via the 0fr → 1fr grid-rows technique. */
+  .list__panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .list__panel-inner {
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    /* Padding-top lives here so it collapses to zero with the row. */
+    padding-top: 0;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.3s ease 0.05s, transform 0.3s ease 0.05s,
+      padding-top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .list__item:hover .list__panel,
+  .list__item:focus-visible .list__panel { grid-template-rows: 1fr; }
+  .list__item:hover .list__panel-inner,
+  .list__item:focus-visible .list__panel-inner {
+    opacity: 1;
+    transform: translateY(0);
+    padding-top: 10px;
+  }
+
+  .list__cat {
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--accent-text, #fff);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .list__kw {
+    padding: 4px 11px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    white-space: nowrap;
   }
 
   /* Scroll cue — fades in over the bottom of the list when scrollable */
