@@ -1,15 +1,16 @@
 ---
 /**
  * Product Photography — full-bleed dark case study, ported from the Figma
- * "Frame 143" layout. Image-forward: hero render, a 2×2 photo grid, and a
- * closing render pair with caption. Renders its own hero (the [slug] template
- * drops ProjectHeader via `hideHeader: true`). A couple of source typos in the
- * captions were corrected.
+ * "Product photography demo" page (node 87:1740). Image-forward: hero render
+ * bleeding right, a 2×2 photo grid, and a closing pair of renders with caption.
+ * Renders its own hero (the [slug] template drops ProjectHeader via hideHeader).
+ * Copy verbatim from the deck (typos fixed).
  */
 import { Image } from 'astro:assets';
 import CaseScrollIndicator from './CaseScrollIndicator.astro';
 import heroRender from '../../assets/product-photography/hero-render.png';
-import renderKeyshot from '../../assets/product-photography/render-keyshot.png';
+import closeLeft from '../../assets/product-photography/close-left.png';
+import closeRight from '../../assets/product-photography/close-right.png';
 import dsc9436 from '../../assets/product-photography/dsc9436.png';
 import dsc9408 from '../../assets/product-photography/dsc9408.png';
 import dsc9395 from '../../assets/product-photography/dsc9395.png';
@@ -28,18 +29,22 @@ const grid = [
 
   <!-- ── Hero ─────────────────────────────────────────────────────────── -->
   <header class="pp-hero">
-    <div class="pp-inner pp-hero__grid">
-      <div class="pp-hero__text">
-        <div class="pp-hero__meta">
-          <p>University project — 2023</p>
-          <p>Tools: Adobe Lightroom, KeyShot, Alias 3D</p>
-        </div>
-        <div class="pp-hero__title">
-          <h1>Product<br />photography</h1>
-          <p>Creative product advertisement, picture and rendering exercise</p>
-        </div>
+    <Image
+      class="pp-hero__render"
+      src={heroRender}
+      alt="Neon-lit render of the goggles in blue and magenta on black"
+      widths={[600, 929, 1400]}
+      sizes="(max-width: 900px) 100vw, 52vw"
+    />
+    <div class="pp-inner pp-hero__text">
+      <div class="pp-hero__meta">
+        <p>University Project - 2023</p>
+        <p>Tools: Adobe Lightroom, Keyshot, Alias 3D</p>
       </div>
-      <Image class="pp-hero__render" src={heroRender} alt="Neon-lit render of the goggles in blue and magenta" widths={[600, 1050]} sizes="(max-width: 900px) 90vw, 45vw" />
+      <div class="pp-hero__title">
+        <h1>Product<br />photography</h1>
+        <p>Creative product advertisement picture and rendering exercise</p>
+      </div>
     </div>
   </header>
 
@@ -53,10 +58,10 @@ const grid = [
   <!-- ── Closing render pair ──────────────────────────────────────────── -->
   <div class="pp-close">
     <div class="pp-inner pp-close__pair">
-      <Image class="pp-close__img" src={heroRender} alt="Final render of the goggles" widths={[600, 1050]} sizes="(max-width: 900px) 90vw, 45vw" />
-      <Image class="pp-close__img" src={renderKeyshot} alt="KeyShot render presentation of the goggles" widths={[700, 1200]} sizes="(max-width: 900px) 90vw, 45vw" />
+      <Image class="pp-close__img" src={closeLeft} alt="Render of the goggles lit blue and magenta, three-quarter view" widths={[600, 800, 1200]} sizes="(max-width: 900px) 100vw, 50vw" />
+      <Image class="pp-close__img" src={closeRight} alt="Render of the goggles lit blue and magenta, alternate angle" widths={[600, 800, 1200]} sizes="(max-width: 900px) 100vw, 50vw" />
     </div>
-    <p class="pp-inner pp-close__caption">Model created with Alias 3D, renderings made with KeyShot 12.</p>
+    <p class="pp-inner pp-close__caption">Model created with Alias 3D, renderings made with Keyshot 12.</p>
   </div>
 </section>
 
@@ -80,31 +85,39 @@ const grid = [
     padding-inline: var(--case-pad);
   }
 
-  /* ── Hero ───────────────────────────────────────────────────────────── */
-  .pp-hero__grid {
-    min-height: min(84vh, 840px);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+  /* ── Hero: text left, render bleeding to the right edge ──────────────── */
+  .pp-hero {
+    position: relative;
+    isolation: isolate;
+    min-height: min(86vh, 860px);
+    display: flex;
     align-items: center;
-    gap: clamp(2rem, 5vw, 5rem);
+  }
+  .pp-hero__render {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: min(52%, 1000px);
+    height: auto;
+    object-fit: contain;
+    z-index: -1;
   }
   .pp-hero__text {
     display: flex;
     flex-direction: column;
-    gap: clamp(1.5rem, 4vw, 3rem);
+    gap: clamp(1.5rem, 5vw, 3.5rem);
   }
   .pp-hero__meta {
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
-    font-weight: 200;
-    font-size: clamp(0.85rem, 1.4vw, 1.1rem);
+    font-weight: 300;
+    font-size: var(--fs-small);
     color: rgba(255, 255, 255, 0.85);
   }
   .pp-hero__title h1 {
     font-weight: 900;
-    /* Tuned down from --fs-hero: the title sits in the left half-column, so the
-       full 11rem hero cap would overflow. Same role, column-fit scale. */
     font-size: clamp(3rem, 8vw, 8rem);
     line-height: 0.95;
     letter-spacing: -0.03em;
@@ -114,31 +127,15 @@ const grid = [
     margin-top: 0.75rem;
     font-weight: 700;
     font-size: clamp(1.15rem, 2.4vw, 2.25rem);
-    max-width: 20ch;
-  }
-  .pp-hero__render {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
+    max-width: 22ch;
   }
 
   /* ── Photo grid ─────────────────────────────────────────────────────── */
-  .pp-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-  }
-  .pp-grid__img {
-    width: 100%;
-    height: clamp(220px, 30vw, 540px);
-    object-fit: cover;
-    display: block;
-  }
+  .pp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .pp-grid__img { width: 100%; height: clamp(220px, 30vw, 540px); object-fit: cover; display: block; }
 
   /* ── Closing pair ───────────────────────────────────────────────────── */
   .pp-close {
-    background: #000;
-    padding-block: clamp(2.5rem, 6vw, 5rem);
     display: flex;
     flex-direction: column;
     gap: clamp(1.5rem, 3vw, 2.5rem);
@@ -149,20 +146,14 @@ const grid = [
     align-items: center;
     gap: clamp(1.5rem, 4vw, 3.5rem);
   }
-  .pp-close__img {
-    width: 100%;
-    height: auto;
-    border-radius: var(--radius-lg, 16px);
-  }
-  .pp-close__caption {
-    color: var(--body);
-    font-weight: 300;
-    font-size: var(--fs-small);
-  }
+  .pp-close__img { width: 100%; height: auto; }
+  .pp-close__caption { color: var(--body); font-weight: 300; font-size: var(--fs-small); }
 
   /* ── Responsive ─────────────────────────────────────────────────────── */
   @media (max-width: 900px) {
-    .pp-hero__grid { grid-template-columns: 1fr; }
+    .pp-hero { min-height: 0; flex-direction: column; align-items: stretch; padding-top: 2rem; }
+    .pp-hero__render { position: static; transform: none; width: 100%; order: 1; margin-top: 1.5rem; }
+    .pp-hero__text { order: 0; }
     .pp-close__pair { grid-template-columns: 1fr; }
   }
   @media (max-width: 720px) {
