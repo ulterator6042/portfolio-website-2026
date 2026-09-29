@@ -133,7 +133,9 @@ const steps = [
   .chlo {
     --hair: rgba(20, 30, 50, 0.1);
     --body: rgba(20, 28, 44, 0.78);
-    background: #f2f3f7;
+    /* Match the off-white baked into the exported figure/render images so the
+       image rectangles blend seamlessly into the page (no grey-on-white seam). */
+    background: #e9e9f1;
     color: #141c2c;
     display: flex;
     flex-direction: column;
@@ -237,10 +239,22 @@ const steps = [
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: clamp(1rem, 3vw, 2.5rem);
-    align-items: end;
+    align-items: start;
   }
-  .chlo-step { margin: 0; display: flex; flex-direction: column; gap: 1.25rem; }
-  .chlo-step__img { width: 100%; height: auto; object-fit: contain; }
+  /* Fixed-height image row + bottom-anchored figures so every ground line and
+     caption lines up across the four columns, regardless of figure height. */
+  .chlo-step {
+    margin: 0;
+    display: grid;
+    grid-template-rows: clamp(220px, 26vw, 340px) auto;
+    gap: 1.25rem;
+  }
+  .chlo-step__img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center bottom;
+  }
   .chlo-step figcaption {
     font-weight: 300;
     font-size: var(--fs-small);
@@ -251,13 +265,18 @@ const steps = [
 
   /* ── Diagrams (exported flat images) ────────────────────────────────── */
   .chlo-diagram { display: flex; justify-content: center; }
+  /* Renderings are low-res, so cap their size — this both hides the low quality
+     and lets the whole labelled diagram sit within one screen. */
   .chlo-diagram--full { width: 100%; }
   .chlo-diagram--full :global(img) {
     width: 100%;
+    max-width: 1040px;
+    margin-inline: auto;
     height: auto;
   }
   .chlo-diagram__img {
     width: 100%;
+    max-width: 900px;
     height: auto;
     border-radius: var(--radius-lg, 20px);
   }

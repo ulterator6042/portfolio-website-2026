@@ -12,7 +12,7 @@ import CaseVideo from './CaseVideo.astro';
 import hero from '../../assets/grab/hero.png';
 import closing from '../../assets/grab/closing.png';
 import iconOpenPalm from '../../assets/grab/icon-open-palm.svg';
-import iconPoint from '../../assets/grab/icon-point.png';
+import iconCursor from '../../assets/grab/cursor.svg';
 import iconGrab from '../../assets/grab/icon-grab.svg';
 import dot from '../../assets/grab/dot.svg';
 
@@ -80,7 +80,7 @@ const stages = [
       <div class="grab-demo-copy__icons">
         <img src={iconOpenPalm.src} alt="" width={iconOpenPalm.width} height={iconOpenPalm.height} />
         <img src={iconGrab.src} alt="" width={iconGrab.width} height={iconGrab.height} />
-        <Image src={iconPoint} alt="" widths={[62, 124]} />
+        <img class="grab-demo-copy__cursor" src={iconCursor.src} alt="" width={iconCursor.width} height={iconCursor.height} />
       </div>
     </div>
     <CaseVideo src="/media/grab.mp4" caption="Video demo" />
