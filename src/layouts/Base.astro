@@ -23,7 +23,9 @@ const {
   lockScroll = false,
 } = Astro.props;
 
-const pageTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.tagline}`;
+// Tabs + link previews read this. Sub-pages get "<Page> — Matteo Isabella";
+// the site default (home / anything without its own title) is the portfolio title.
+const pageTitle = title ? `${title} — ${site.name}` : 'Matteo Isabella - portfolio';
 
 // Mirror the master-config design tokens into CSS custom properties so the
 // whole stylesheet (and every page) reads from one place.
