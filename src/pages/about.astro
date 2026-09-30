@@ -1,34 +1,175 @@
 ---
 import Base from '@layouts/Base.astro';
 import Sidebar from '@components/Sidebar.astro';
-import { site, socials } from '@config/site';
+import ScrollReveal from '@components/casestudy/ScrollReveal.astro';
+import { site } from '@config/site';
+
+/* ── Content — sourced verbatim from MatteoIsabella_CV_2026 ───────────────── */
+const role = 'Product designer';
+
+// The "About me" statement, split into its two paragraphs.
+const bio = [
+  `I'm a product designer passionate about solving real-life problems. I thrive
+   working on physical products where design constraints become creative
+   opportunities.`,
+  `I enjoy immersing myself in a wide range of creative projects, spanning from
+   metal-working to painting and sewing, always taking something from each
+   passion and bringing it into my design process.`,
+];
+
+// "What I do" — the CV's three capability blocks.
+const capabilities = [
+  {
+    title: 'Design',
+    body: 'User research & usability testing, interaction design, wireframing & prototyping, design systems, visual / UI design.',
+  },
+  {
+    title: 'Tools',
+    body: 'SolidWorks, Blender, KeyShot, Adobe Suite, Figma Dev.',
+  },
+  {
+    title: 'AI workflows',
+    body: 'Claude Code, Vizcom. Building functional interactive prototypes and code, generating UI and form variations, building agents to automate repetitive tasks, and aiding realistic product research with web scraping.',
+  },
+];
+
+// Selected background — experience then education, newest first.
+const experience = [
+  {
+    period: '2025 — 2026',
+    org: 'Logitech',
+    place: 'Lausanne · Remote',
+    body: 'Master’s thesis project, exploring standalone concepts and UX redesign opportunities. Leading the end-to-end design process from initial concept through comprehensive user research, interviews, and iterative prototyping validation.',
+  },
+  {
+    period: '2025 — 2026',
+    org: 'Philips',
+    place: 'Amsterdam',
+    body: 'Contributed to a premium multi-shaver case and attachments design, addressing compactness, part handling, and material constraints. Executed iterations incorporating user-testing feedback; created prototypes and 3D visuals.',
+  },
+  {
+    period: '2023 — 2024',
+    org: '5VIE network',
+    place: 'Milano',
+    body: 'Graphic designer, exhibition installer, gallery guide, and event organizer for the 5VIE district during Milan Design Week.',
+  },
+];
+
+const education = [
+  {
+    period: '2024 — ongoing',
+    org: 'TU Delft',
+    place: 'Master’s degree in Interaction Design',
+  },
+  {
+    period: '2021 — 2024',
+    org: 'Politecnico di Milano',
+    place: 'Bachelor’s degree in Product Design',
+  },
+];
+
+const languages = [
+  { name: 'Italian', level: 'Native' },
+  { name: 'English', level: 'Fluent · C2' },
+];
+
+const contact = [
+  { label: 'matteo.isabella@gmail.com', href: 'mailto:matteo.isabella@gmail.com', external: false },
+  { label: '+39 391 722 9267', href: 'tel:+393917229267', external: false },
+];
 ---
-<Base title="About" description={`About ${site.name}`} bare={true}>
+<Base title="About" description={`About ${site.name} — ${role.toLowerCase()}.`} bare={true}>
+  <ScrollReveal />
   <div class="page-shell">
     <Sidebar aboutActive={true} drawer />
     <main class="page-main">
-      <section class="about">
-        <p class="eyebrow reveal" style="--i:0">About</p>
-        <h1 class="reveal" style="--i:1">{site.name}</h1>
-        <div class="about__body">
-          <p class="reveal" style="--i:2">
-            I'm a designer and creative technologist working across interaction
-            design, product design, and photography. This page is a placeholder —
-            the full bio, background, and CV go here.
-          </p>
-          <p class="about__label reveal" style="--i:3">Get in touch</p>
-          <ul class="about__links reveal" style="--i:4">
-            {socials.map((s) => (
-              <li>
-                <a class="u-underline"
-                   href={s.href}
-                   rel={('external' in s && s.external) ? 'noopener noreferrer' : undefined}
-                   target={('external' in s && s.external) ? '_blank' : undefined}>{s.label}</a>
+      <article class="about">
+
+        {/* ── Header ─────────────────────────────────────────────────────── */}
+        <header class="about__head" data-reveal-group>
+          <p class="eyebrow" data-reveal>About</p>
+          <h1 class="about__name" data-reveal>{site.name}</h1>
+          <p class="about__role" data-reveal>{role}</p>
+          <div class="about__bio" data-reveal>
+            {bio.map((p) => <p>{p}</p>)}
+          </div>
+        </header>
+
+        {/* ── What I do ──────────────────────────────────────────────────── */}
+        <section class="about__block" data-reveal-group>
+          <h2 class="about__label" data-reveal>What I do</h2>
+          <div class="cap-grid">
+            {capabilities.map((c) => (
+              <div class="cap" data-reveal>
+                <h3 class="cap__title">{c.title}</h3>
+                <p class="cap__body">{c.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── Selected background ─────────────────────────────────────────── */}
+        <section class="about__block" data-reveal-group>
+          <h2 class="about__label" data-reveal>Experience</h2>
+          <ul class="timeline">
+            {experience.map((e) => (
+              <li class="entry" data-reveal>
+                <span class="entry__period">{e.period}</span>
+                <div class="entry__main">
+                  <h3 class="entry__org">
+                    {e.org}<span class="entry__place">{e.place}</span>
+                  </h3>
+                  <p class="entry__body">{e.body}</p>
+                </div>
               </li>
             ))}
           </ul>
-        </div>
-      </section>
+        </section>
+
+        <section class="about__block" data-reveal-group>
+          <h2 class="about__label" data-reveal>Education</h2>
+          <ul class="timeline">
+            {education.map((e) => (
+              <li class="entry" data-reveal>
+                <span class="entry__period">{e.period}</span>
+                <div class="entry__main">
+                  <h3 class="entry__org">{e.org}</h3>
+                  <p class="entry__body">{e.place}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* ── Languages ──────────────────────────────────────────────────── */}
+        <section class="about__block" data-reveal-group>
+          <h2 class="about__label" data-reveal>Languages</h2>
+          <ul class="langs">
+            {languages.map((l) => (
+              <li class="lang" data-reveal>
+                <span class="lang__name">{l.name}</span>
+                <span class="lang__level">{l.level}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* ── Contact ────────────────────────────────────────────────────── */}
+        <section class="about__block about__contact" data-reveal-group>
+          <h2 class="about__label" data-reveal>Get in touch</h2>
+          <ul class="contact" data-reveal>
+            {contact.map((c) => (
+              <li>
+                <a class="u-underline"
+                   href={c.href}
+                   rel={c.external ? 'noopener noreferrer' : undefined}
+                   target={c.external ? '_blank' : undefined}>{c.label}</a>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+      </article>
     </main>
   </div>
 </Base>
@@ -42,40 +183,147 @@ import { site, socials } from '@config/site';
     flex: 1 1 auto;
     min-width: 0;
   }
+
   .about {
-    padding: clamp(5rem, 12vw, 9rem) var(--case-pad) clamp(3rem, 8vw, 6rem);
-    max-width: 760px;
+    padding: clamp(5rem, 12vw, 9rem) var(--case-pad) clamp(4rem, 10vw, 8rem);
+    max-width: 820px;
   }
-  .about__body { margin-top: 2rem; }
-  .about__body p { color: var(--muted); font-size: clamp(1.05rem, 1.6vw, 1.25rem); }
+
+  /* ── Header ─────────────────────────────────────────────────────────────── */
+  .about__name {
+    margin-top: 0.6rem;
+    font-size: var(--fs-display);
+    letter-spacing: -0.03em;
+  }
+  .about__role {
+    margin-top: 0.4rem;
+    font-size: var(--fs-h3);
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .about__bio {
+    margin-top: clamp(1.75rem, 4vw, 2.75rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1.1em;
+    max-width: 60ch;
+  }
+  .about__bio p {
+    font-size: var(--fs-body);
+    color: var(--text);
+  }
+
+  /* ── Section rhythm ─────────────────────────────────────────────────────── */
+  .about__block {
+    margin-top: var(--case-gap);
+    padding-top: clamp(2rem, 4vw, 3rem);
+    border-top: 1px solid var(--border);
+  }
   .about__label {
-    margin-top: 2.5rem;
-    font-size: 0.75rem !important;
-    letter-spacing: 0.15em;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--text) !important;
+    color: var(--muted);
+    margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
   }
-  .about__links {
+
+  /* ── What I do ──────────────────────────────────────────────────────────── */
+  .cap-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: clamp(1.75rem, 4vw, 3rem);
+  }
+  .cap__title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .cap__body {
+    margin-top: 0.6rem;
+    font-size: var(--fs-small);
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  /* ── Timeline (experience / education) ──────────────────────────────────── */
+  .timeline {
     list-style: none;
     padding: 0;
-    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.75rem, 3.5vw, 2.75rem);
+  }
+  .entry {
+    display: grid;
+    grid-template-columns: 8rem 1fr;
+    gap: clamp(1rem, 3vw, 2.5rem);
+    align-items: baseline;
+  }
+  .entry__period {
+    font-size: var(--fs-small);
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .entry__org {
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
     display: flex;
     flex-wrap: wrap;
-    gap: 1.5rem;
+    align-items: baseline;
+    gap: 0.75rem;
   }
-  .about__links a { color: var(--accent); }
+  .entry__place {
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+  }
+  .entry__body {
+    margin-top: 0.55rem;
+    font-size: var(--fs-small);
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 56ch;
+  }
 
-  /* Staggered entrance on load. */
-  .reveal {
-    opacity: 0;
-    animation: about-rise 0.45s var(--ease-out) both;
-    animation-delay: calc(60ms + var(--i) * 55ms);
+  /* ── Languages ──────────────────────────────────────────────────────────── */
+  .langs {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 3rem;
   }
-  @keyframes about-rise {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
+  .lang {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
   }
-  @media (prefers-reduced-motion: reduce) {
-    .reveal { animation: none; opacity: 1; }
+  .lang__name { font-size: 1.15rem; font-weight: 600; }
+  .lang__level { font-size: var(--fs-small); color: var(--muted); }
+
+  /* ── Contact ────────────────────────────────────────────────────────────── */
+  .contact {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2.5rem;
+  }
+  .contact a {
+    font-size: var(--fs-body);
+    color: var(--accent);
+  }
+
+  /* ── Responsive ─────────────────────────────────────────────────────────── */
+  @media (max-width: 560px) {
+    .entry {
+      grid-template-columns: 1fr;
+      gap: 0.4rem;
+    }
+    .entry__period { order: -1; }
   }
 </style>

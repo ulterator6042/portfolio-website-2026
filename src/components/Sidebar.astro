@@ -179,6 +179,18 @@ const hasLL = llIndex >= 0;
     }
     .sidebar__backdrop.show { opacity: 1; visibility: visible; }
 
+    /* Case / About drawer: mirror the home mobile layout — name + About grouped
+       at the top, the project menu pinned to the bottom, and the open middle left
+       as breathing room (no pong game here). */
+    .sidebar.drawer .sidebar__name { order: 0; }
+    .sidebar.drawer .sidebar__about { order: 1; padding: 4px 30px 8px; }
+    .sidebar.drawer :global(.pmenu) {
+      order: 2;
+      padding-bottom: 24px;
+    }
+    /* Push the whole project list to the bottom of the flex-grown menu. */
+    .sidebar.drawer :global(.pmenu__item:first-child) { margin-top: auto; }
+
     /* Home layout: name + About at the top (reachable), project menu pinned to
        the bottom-left, and the open middle is the pong play area. */
     .sidebar.home .sidebar__name { order: 0; }
