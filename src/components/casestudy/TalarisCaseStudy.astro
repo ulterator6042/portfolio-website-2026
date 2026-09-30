@@ -1,37 +1,27 @@
 ---
 /**
- * Talaris — placeholder case study. The full page is still under construction;
- * for now it renders a centered "coming soon" state using the shared tokens.
+ * Talaris — placeholder page. The case study is still under construction, so
+ * the page mirrors the home hero (see index.astro): a single large, left-
+ * aligned line, vertically centred beside the sidebar. Nothing else.
  */
 ---
 <section class="wip" data-reveal-group>
-  <p class="wip__eyebrow" data-reveal>Product Design</p>
-  <h1 class="wip__title" data-reveal>Talaris</h1>
-  <p class="wip__note" data-reveal>This case study is under construction — check back soon.</p>
+  <h1 class="wip__title" data-reveal>Under construction!</h1>
 </section>
 
 <style>
+  /* Match the home intro: fill the viewport height and centre a single line,
+     left-aligned, using the base h1 style. */
   .wip {
-    min-height: 62vh;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
-    text-align: center;
-    gap: 1rem;
-    padding: clamp(3rem, 10vw, 8rem) var(--case-pad);
-  }
-  .wip__eyebrow {
-    font-weight: 500;
-    font-size: 0.75rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--accent);
+    padding: clamp(2rem, 6vw, 5rem);
   }
   .wip__title {
-    font-weight: 800;
-    font-size: var(--fs-display);
+    max-width: 16ch;
+    font-size: clamp(2.5rem, 6vw, 5rem);
     letter-spacing: -0.02em;
   }
-  .wip__note { color: var(--muted); font-weight: 300; font-size: var(--fs-body); }
 </style>

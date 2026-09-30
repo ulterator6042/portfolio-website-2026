@@ -74,7 +74,8 @@ const grid = [
     display: flex;
     flex-direction: column;
     gap: var(--case-gap);
-    padding-bottom: var(--case-gap);
+    /* No page-level bottom padding — the closing black slide supplies its own,
+       so the black bleeds cleanly to the foot of the page. */
     width: 100%;
     overflow-x: clip;
   }
@@ -139,6 +140,10 @@ const grid = [
     display: flex;
     flex-direction: column;
     gap: clamp(1.5rem, 3vw, 2.5rem);
+    /* Pure black to match the black baked into the closing renders, so the
+       goggles read as floating rather than sitting on a coloured rectangle. */
+    background: #000;
+    padding-block: clamp(2.5rem, 6vw, 5rem);
   }
   .pp-close__pair {
     display: grid;

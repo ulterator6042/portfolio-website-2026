@@ -292,13 +292,23 @@ const steps = [
     .chlo-hero {
       min-height: 0;
       flex-direction: column;
+      align-items: stretch;
+      gap: clamp(1.25rem, 4vw, 2rem);
+      padding-inline: var(--case-pad);
+      padding-block: clamp(1.75rem, 7vw, 3rem);
     }
+    /* Unwrap the inner so meta / render / title stack in the Mind hero order:
+       small meta on top, hero render in the middle, big title + subtitle last. */
+    .chlo-hero__inner { display: contents; }
+    .chlo-hero__meta { order: 1; }
     .chlo-hero__img {
       position: static;
       width: 100%;
       height: auto;
-      order: -1;
+      order: 2;
+      margin-block: clamp(0.5rem, 2vw, 1rem);
     }
+    .chlo-hero__title { order: 3; }
     .chlo-row { grid-template-columns: 1fr; }
     /* Heading-first reading order on mobile for the "What is Chlo'?" row. */
     .chlo-row--what .chlo-stack--lead { order: -1; }

@@ -12,7 +12,7 @@ import CaseVideo from './CaseVideo.astro';
 import hero from '../../assets/grab/hero.png';
 import closing from '../../assets/grab/closing.png';
 import iconOpenPalm from '../../assets/grab/icon-open-palm.svg';
-import iconCursor from '../../assets/grab/cursor.svg';
+import iconCursor from '../../assets/grab/arrow-selector.svg';
 import iconGrab from '../../assets/grab/icon-grab.svg';
 import dot from '../../assets/grab/dot.svg';
 
@@ -394,8 +394,18 @@ const stages = [
     .grab-row--demo,
     .grab-row--pipeline { grid-template-columns: 1fr; }
     .grab-stages { grid-template-columns: 1fr; }
-    /* On mobile the demo video should read after its copy. */
-    .grab-row--demo .grab-demo-copy { order: -1; }
+    /* On mobile the demo copy reads after the video, with the icons above the
+       text (inverted from the desktop stacking). */
+    .grab-row--demo .grab-demo-copy {
+      order: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .grab-row--demo .grab-demo-copy__icons {
+      order: -1;
+      margin-top: 0;
+      margin-bottom: clamp(1.25rem, 4vw, 1.75rem);
+    }
     /* Pipeline heading reads first on mobile. */
     .grab-display--pipeline { order: -1; }
   }

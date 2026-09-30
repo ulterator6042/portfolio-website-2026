@@ -290,7 +290,7 @@ const outcomes = [
   .mind-hero__marks {
     grid-column: 2; grid-row: 1;
     justify-self: end; align-self: start;
-    width: clamp(180px, 20vw, 280px); height: auto;
+    width: clamp(120px, 13vw, 190px); height: auto;
   }
   .mind-hero__title { grid-column: 1; grid-row: 2; align-self: center; }
   .mind-hero__title h1 {
@@ -335,7 +335,7 @@ const outcomes = [
   .mind-priorities__head { display: flex; flex-direction: column; gap: 0.75rem; }
   .mind-note { font-weight: 500; font-size: var(--fs-small); color: var(--body); letter-spacing: 0.02em; }
 
-  .mind-prio { display: grid; grid-template-columns: auto 1fr; gap: clamp(1rem, 3vw, 2.5rem); }
+  .mind-prio { display: grid; grid-template-columns: auto 1fr; gap: clamp(0.75rem, 1.6vw, 1.35rem); }
   .mind-prio__rail {
     width: 10px; border-radius: 999px;
     background: linear-gradient(to bottom, var(--accent), rgba(138, 115, 224, 0.12));
@@ -346,11 +346,11 @@ const outcomes = [
   }
   .mind-prio__row {
     display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-    align-items: center; gap: clamp(1rem, 4vw, 4rem);
+    align-items: center; gap: clamp(0.75rem, 2vw, 1.75rem);
   }
   .mind-prio__pill {
     justify-self: start;
-    background: var(--card); border: 1px solid var(--hair); border-radius: 999px;
+    background: var(--card); border-radius: 999px;
     padding: clamp(0.7rem, 1.3vw, 1rem) clamp(1.25rem, 2.2vw, 1.9rem);
     font-weight: 500; font-size: clamp(0.95rem, 1.15vw, 1.2rem);
     box-shadow: 0 12px 26px -16px rgba(30, 20, 60, 0.4);
@@ -382,12 +382,12 @@ const outcomes = [
   .mind-jmap__phase b { font-weight: 700; font-size: clamp(0.85rem, 1vw, 1.05rem); }
 
   .mind-jcard {
-    background: var(--card); border: 1px solid var(--hair); border-radius: 14px;
+    background: var(--card); border-radius: 14px;
     padding: clamp(0.7rem, 1.1vw, 1.05rem);
     display: flex; flex-direction: column; gap: 0.55rem;
     box-shadow: 0 10px 24px -18px rgba(30, 20, 60, 0.4);
   }
-  .mind-jcard--hl { border-color: rgba(138, 115, 224, 0.55); background: #f3f0fd; }
+  .mind-jcard--hl { border: 1px solid rgba(138, 115, 224, 0.55); background: #f3f0fd; }
   .mind-jcard p { font-size: clamp(0.78rem, 0.9vw, 0.95rem); line-height: 1.4; margin: 0; color: var(--ink); font-weight: 400; }
   .mind-jcard__emo { display: flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; color: var(--body); }
   .mind-jcard__dot { width: 9px; height: 9px; border-radius: 999px; flex: 0 0 auto; }
@@ -402,10 +402,17 @@ const outcomes = [
 
   /* ── Evaluation outcome cards ───────────────────────────────────────── */
   .mind-outcome { display: flex; flex-direction: column; gap: clamp(1.5rem, 3vw, 2.5rem); }
-  .mind-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.25rem, 2.5vw, 2rem); align-items: stretch; }
+  .mind-cards {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(5, auto);
+    column-gap: clamp(1.25rem, 2.5vw, 2rem);
+    row-gap: clamp(0.75rem, 1.4vw, 1.15rem);
+    align-items: stretch;
+  }
   .mind-card {
-    display: flex; flex-direction: column; gap: clamp(0.75rem, 1.4vw, 1.15rem);
-    background: var(--card); border: 1px solid var(--hair);
+    grid-row: span 5;
+    display: grid; grid-template-rows: subgrid;
+    background: var(--card);
     border-radius: var(--radius-lg, 20px); padding: clamp(1.5rem, 2.4vw, 2.25rem);
     box-shadow: 0 18px 40px -26px rgba(30, 20, 60, 0.4);
   }
@@ -427,7 +434,34 @@ const outcomes = [
     .mind-hero__title { grid-column: 1; grid-row: 3; }
     .mind-row, .mind-row--demo { grid-template-columns: 1fr; }
     .mind-row--cycle .mind-stack--lead { order: -1; }
+    .mind-row--demo .mind-stack--lead { order: -1; }
     .mind-prio__row { gap: clamp(0.75rem, 3vw, 1.5rem); }
     .mind-cards { grid-template-columns: 1fr; }
   }
 </style>
+
+<script>
+  // On touch/narrow screens, give the horizontally-scrollable journey map a
+  // one-time nudge when it first enters view, hinting that it can be scrolled.
+  const scroller = document.querySelector('.mind-jscroll');
+  if (scroller instanceof HTMLElement && window.matchMedia('(max-width: 900px)').matches) {
+    let played = false;
+    const nudge = () => {
+      const max = scroller.scrollWidth - scroller.clientWidth;
+      if (max <= 8) return;
+      const to = Math.min(max, 64);
+      scroller.scrollTo({ left: to, behavior: 'smooth' });
+      window.setTimeout(() => scroller.scrollTo({ left: 0, behavior: 'smooth' }), 650);
+    };
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting && !played) {
+          played = true;
+          window.setTimeout(nudge, 400);
+          io.disconnect();
+        }
+      }
+    }, { threshold: 0.4 });
+    io.observe(scroller);
+  }
+</script>
