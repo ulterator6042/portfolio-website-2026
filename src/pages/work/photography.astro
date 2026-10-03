@@ -63,8 +63,8 @@ for (const [path, mod] of Object.entries(imageModules)) {
   ></script>
   <!-- End Cloudflare Web Analytics -->
   <!-- Microsoft Clarity -->
-  <!-- Guarded so client-side navigation doesn't re-initialise Clarity and
-       split a visit into one recording per page. See Base.astro. -->
+  <!-- Standalone page (no ClientRouter), so a plain guarded loader is enough.
+       See Base.astro for the persisted-holder variant used by the SPA pages. -->
   <script is:inline type="text/javascript">
     if (!window.clarity) {
       (function(c,l,a,r,i,t,y){
