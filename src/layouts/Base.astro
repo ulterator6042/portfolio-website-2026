@@ -72,6 +72,13 @@ const cssVars = [
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="canonical" href={new URL(Astro.url.pathname, site.url)} />
+    <!-- Cloudflare Web Analytics -->
+    <script
+      type="module"
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon='{"token": "3b52754f7a114ef193fcb27ec79c7178"}'
+    ></script>
+    <!-- End Cloudflare Web Analytics -->
   </head>
   <body class:list={{ 'lock-scroll': lockScroll }}>
     {!bare && <Nav transparent={transparentNav} />}
