@@ -278,7 +278,8 @@ const hasLL = llIndex >= 0;
     document.addEventListener('keydown', w.__sbEsc);
   }
 
-  document.addEventListener('astro:page-load', initSidebar);
+  if (document.readyState !== 'loading') initSidebar();
+  else document.addEventListener('DOMContentLoaded', initSidebar);
 
   // Home pong easter egg: tap the black dot in the negative space and the name's
   // "ll" travel down into the play area as two paddles that volley the dot fast.
@@ -453,5 +454,6 @@ const hasLL = llIndex >= 0;
     reset();
   }
 
-  document.addEventListener('astro:page-load', initPong);
+  if (document.readyState !== 'loading') initPong();
+  else document.addEventListener('DOMContentLoaded', initPong);
 </script>

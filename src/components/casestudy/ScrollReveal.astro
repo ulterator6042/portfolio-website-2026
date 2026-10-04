@@ -60,5 +60,6 @@
     );
     items.forEach((el) => io.observe(el));
   }
-  document.addEventListener('astro:page-load', initReveal);
+  if (document.readyState !== 'loading') initReveal();
+  else document.addEventListener('DOMContentLoaded', initReveal);
 </script>

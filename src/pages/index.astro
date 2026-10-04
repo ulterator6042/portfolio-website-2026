@@ -144,5 +144,6 @@ import Sidebar from '@components/Sidebar.astro';
     window.addEventListener('resize', () => { if (!hovered) measure(); });
   }
 
-  document.addEventListener('astro:page-load', initHeroDot);
+  if (document.readyState !== 'loading') initHeroDot();
+  else document.addEventListener('DOMContentLoaded', initHeroDot);
 </script>

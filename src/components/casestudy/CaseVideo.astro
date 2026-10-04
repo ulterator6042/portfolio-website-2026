@@ -78,5 +78,6 @@ const { src, caption, poster, ratio = '16 / 9', class: klass } = Astro.props;
       if (!v.dataset.observed) { io!.observe(v); v.dataset.observed = '1'; }
     });
   }
-  document.addEventListener('astro:page-load', scanVideos);
+  if (document.readyState !== 'loading') scanVideos();
+  else document.addEventListener('DOMContentLoaded', scanVideos);
 </script>

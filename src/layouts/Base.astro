@@ -1,5 +1,4 @@
 ---
-import { ClientRouter } from 'astro:transitions';
 import { site, theme } from '@config/site';
 import Nav from '@components/Nav.astro';
 import '../styles/global.css';
@@ -63,8 +62,6 @@ const cssVars = [
       rel="stylesheet"
     />
     <title>{pageTitle}</title>
-    <!-- Client-side routing so project↔project navigation can animate. -->
-    <ClientRouter />
     <meta name="description" content={description} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
@@ -80,34 +77,16 @@ const cssVars = [
     ></script>
     <!-- End Cloudflare Web Analytics -->
     <!-- Microsoft Clarity -->
-    <!-- The recorder tag is injected into the #clarity-holder node in <body>,
-         which is marked transition:persist so Astro's ClientRouter carries the
-         live recorder across view transitions instead of tearing it down each
-         navigation. Without this, each project is torn down + rebuilt and
-         Clarity records one clip per project instead of one session per visit.
-         Guarded + deferred so it initialises exactly once, after the holder
-         exists. -->
     <script is:inline type="text/javascript">
-      (function () {
-        function loadClarity() {
-          if (window.clarity) return;
-          (function (c, l, a, r, i) {
-            c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments); };
-            var t = l.createElement(r); t.async = 1;
-            t.src = "https://www.clarity.ms/tag/" + i;
-            (l.getElementById("clarity-holder") || l.head).appendChild(t);
-          })(window, document, "clarity", "script", "ys63ilzx54");
-        }
-        if (document.readyState !== "loading") loadClarity();
-        else document.addEventListener("DOMContentLoaded", loadClarity, { once: true });
-      })();
+      (function(c,l,a,r,i,t,y){
+          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "ys63ilzx54");
     </script>
     <!-- End Microsoft Clarity -->
   </head>
   <body class:list={{ 'lock-scroll': lockScroll }}>
-    <!-- Persisted across ClientRouter navigations so the Clarity recorder
-         injected into it survives view transitions (see <head>). -->
-    <div id="clarity-holder" transition:persist="clarity-holder" aria-hidden="true" style="display:none"></div>
     {!bare && <Nav transparent={transparentNav} />}
     <main>
       <slot />
