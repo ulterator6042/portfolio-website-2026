@@ -53,10 +53,10 @@ import Sidebar from '@components/Sidebar.astro';
     left: 50%;
     top: 0;
     transform: translateX(-50%);
-    width: 0.11em;
+    width: calc(0.11em + 2px);
     height: 0.52em;
     background: currentColor;
-    border-radius: 0.06em;
+    border-radius: 0;
   }
   /* The travelling dot. Centred with margin (not transform) so transform is
      free for the flight. z-index lifts it above the sidebar column. */

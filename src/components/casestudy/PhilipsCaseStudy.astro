@@ -1,0 +1,436 @@
+---
+/**
+ * Philips Travel Case — dark-theme product case study, ported from the Figma
+ * "Philips Travel Case demo" page (node 165:508). Self-contained hero
+ * (hideHeader: true). Shares the same type scale, editorial rhythm and dark
+ * card language as the Grab / Product Photography studies.
+ *
+ * Copy is verbatim from Figma (typos fixed only: "manifacture"→"manufacture").
+ * NOTE: the Figma archetype labels read Eggshell (left, "Chosen") / Donut
+ * (right), but every other signal — the descriptions, the chosen badge and the
+ * Outcome copy ("the chosen donut… sent to manufacturers") — indicates the two
+ * names are swapped. Ported as authored; flagged for the author to confirm.
+ *
+ * Surface design is withheld at Philips' request (see closing note); the
+ * renders shown are the ones placed in the panel.
+ */
+import { Image } from 'astro:assets';
+import CaseScrollIndicator from './CaseScrollIndicator.astro';
+import hero from '../../assets/philips/hero.png';
+import philipsLogo from '../../assets/philips/philips-logo.png';
+import persona from '../../assets/philips/persona.png';
+import archetypeLeft from '../../assets/philips/archetype-left.png';
+import archetypeRight from '../../assets/philips/archetype-right.png';
+import process from '../../assets/philips/process.png';
+import felt from '../../assets/philips/felt.png';
+
+// ── Initial constraints · the two poles every decision lived between ─────────
+const tensions = [
+  { a: 'Compact footprint', b: 'Premium, elevated experience' },
+  { a: 'Premium material feel', b: 'Recyclable & non-toxic' },
+  { a: 'Only the essentials', b: 'Ready for any occasion' },
+];
+
+// ── Two archetypes (verbatim from Figma; see header note on the name swap) ───
+const archetypes = [
+  {
+    img: archetypeLeft,
+    alt: 'Render of the closed, self-standing travel case',
+    name: 'Eggshell',
+    chosen: true,
+    desc: 'A vertical slit opening that lets the case stand on its own and double as a display. A middle flap divides the two half and protects all the attachments',
+  },
+  {
+    img: archetypeRight,
+    alt: 'Render of the open case cradling the shaver and attachments',
+    name: 'Donut',
+    chosen: false,
+    desc: 'A "premium tool" presentation, the shaver and attachments cradled in a protective shell, inspired by the foam-lined cases of professional equipment.',
+  },
+];
+
+// ── From sketch to manufacture · six months of iteration ────────────────────
+const stages = [
+  { n: '01', title: 'Sketch', body: 'Hundreds of sketches, rapid form-and-function iteration into two archetypes.' },
+  { n: '02', title: 'Prototype', body: 'Around five to six 3D-printed prototypes per direction, each semi-refined.' },
+  { n: '03', title: 'Test', body: 'A 30-person user panel voiced their preferences and needs helping us select the best design direction' },
+  { n: '04', title: 'Production', body: 'Form and size polished, files sent to manufacturers; the first samples arrived as the internship closed.' },
+];
+
+// ── Outcome ──────────────────────────────────────────────────────────────────
+const outcomes = [
+  { n: '01', title: 'Shipped to tooling', body: 'The chosen donut was polished for form and size and sent to manufacturers for a first, lower-grade sample.' },
+  { n: '02', title: 'First samples in hand', body: 'My internship closed as the first physical samples arrived, the full loop from sketch to real object completed.' },
+  { n: '03', title: 'What I would do next', body: 'With more time: deeper validation of the coated felt and of carrying capacity across a wider set of travel personas.' },
+];
+---
+
+<section class="ph">
+  <CaseScrollIndicator />
+
+  <!-- ── Hero ─────────────────────────────────────────────────────────── -->
+  <header class="ph-hero">
+    <div class="ph-inner ph-hero__grid" data-reveal-group>
+      <div class="ph-hero__meta">
+        <p data-reveal>Internship · Philips — 2024</p>
+        <p data-reveal>Tools: SolidWorks, KeyShot</p>
+      </div>
+      <Image class="ph-hero__logo" src={philipsLogo} alt="Philips" widths={[250, 500]} sizes="190px" />
+      <div class="ph-hero__title">
+        <h1 data-reveal>Philips Travel Case</h1>
+        <p data-reveal>A compact travel case for a premium multishaver system.</p>
+      </div>
+      <Image
+        data-reveal
+        class="ph-hero__render"
+        src={hero}
+        alt="Product render of the premium multishaver and its travel case"
+        widths={[700, 1100, 1400]}
+        sizes="(max-width: 900px) 100vw, 48vw"
+      />
+    </div>
+  </header>
+
+  <!-- ── What is it? ──────────────────────────────────────────────────── -->
+  <div class="ph-inner ph-stack ph-stack--lead" data-reveal-group>
+    <h2 class="ph-display" data-reveal>What is it?</h2>
+    <p data-reveal>Part of a new premium-tier multishaver system with twelve grooming attachments.
+      My focus was the concepting, development and modelling of the travel case, the piece that
+      carries the shaver body and a few key attachments on the road.</p>
+  </div>
+
+  <!-- ── Designing for the trip · persona ─────────────────────────────── -->
+  <div class="ph-inner ph-row ph-row--persona" data-reveal-group>
+    <div class="ph-stack ph-stack--lead">
+      <h2 class="ph-display" data-reveal>Designing for the trip</h2>
+      <p data-reveal>We focused on one persona: the young professional in consulting-style work, away
+        for two to three days, who needs only the basics to stay tidy for any occasion. Every
+        decision was weighed against that short, high-stakes trip.</p>
+    </div>
+    <figure class="ph-persona" data-reveal>
+      <Image
+        class="ph-persona__img"
+        src={persona}
+        alt="A young professional in a button-down shirt"
+        widths={[600, 900, 1200]}
+        sizes="(max-width: 900px) 100vw, 42vw"
+      />
+      <figcaption>
+        <strong>The young professionals</strong>
+        <span>Consulting-style work · 2–3 day trips · basics to stay presentable</span>
+      </figcaption>
+    </figure>
+  </div>
+
+  <!-- ── Initial constraints · two tensions ───────────────────────────── -->
+  <div class="ph-inner ph-tensions" data-reveal-group>
+    <div class="ph-tensions__head">
+      <h2 class="ph-display" data-reveal>Initial constraints</h2>
+      <p class="ph-sub" data-reveal>Every form and material decision lived between these poles.</p>
+    </div>
+    <ol class="ph-tensions__list">
+      {tensions.map((t) => (
+        <li class="ph-tension" data-reveal>
+          <span class="ph-chip ph-chip--a">{t.a}</span>
+          <span class="ph-tension__arrow" aria-hidden="true">↔</span>
+          <span class="ph-chip ph-chip--b">{t.b}</span>
+        </li>
+      ))}
+    </ol>
+  </div>
+
+  <!-- ── Two archetypes ───────────────────────────────────────────────── -->
+  <div class="ph-inner ph-archetypes" data-reveal-group>
+    <h2 class="ph-display" data-reveal>Two archetypes</h2>
+    <div class="ph-arch__grid">
+      {archetypes.map((a) => (
+        <article class="ph-arch" data-reveal>
+          <div class="ph-arch__media">
+            <Image src={a.img} alt={a.alt} widths={[280, 460]} sizes="(max-width: 900px) 90vw, 460px" />
+          </div>
+          <div class="ph-arch__body">
+            <div class="ph-arch__name">
+              <h3>{a.name}</h3>
+              {a.chosen && <span class="ph-arch__badge">Chosen direction</span>}
+            </div>
+            <p>{a.desc}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+
+  <!-- ── From sketch to manufacture ───────────────────────────────────── -->
+  <div class="ph-inner ph-process" data-reveal-group>
+    <div class="ph-process__head">
+      <h2 class="ph-display" data-reveal>From sketch to manufacture</h2>
+      <p class="ph-sub" data-reveal>Six months of rapid iteration: hundreds of sketches narrowed to two
+        archetypes, then tested with real users before one went to tooling.</p>
+    </div>
+    <Image
+      data-reveal
+      class="ph-process__strip"
+      src={process}
+      alt="A lineup of 3D-printed travel-case prototypes, from early forms to refined shells"
+      widths={[1100, 1600, 2200]}
+      sizes="100vw"
+    />
+    <ol class="ph-stages">
+      {stages.map((s) => (
+        <li class="ph-stage" data-reveal>
+          <span class="ph-stage__num">{s.n}</span>
+          <h3 class="ph-stage__title">{s.title}</h3>
+          <p>{s.body}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+
+  <!-- ── Premium that recycles · material ─────────────────────────────── -->
+  <div class="ph-inner ph-row ph-row--material" data-reveal-group>
+    <div class="ph-stack ph-stack--lead">
+      <h2 class="ph-display" data-reveal>Premium that recycles</h2>
+      <p data-reveal>We wanted a premium feel without premium guilt. The case settled on a fine felt
+        with a waterproof coating, warm and tactile in the hand, yet recyclable and non-toxic.</p>
+    </div>
+    <Image
+      data-reveal
+      class="ph-material__img"
+      src={felt}
+      alt="Close render of the coated felt material"
+      widths={[700, 1100, 1400]}
+      sizes="(max-width: 900px) 100vw, 48vw"
+    />
+  </div>
+
+  <!-- ── Outcome ──────────────────────────────────────────────────────── -->
+  <div class="ph-inner ph-outcome" data-reveal-group>
+    <h2 class="ph-display" data-reveal>Outcome</h2>
+    <div class="ph-cards">
+      {outcomes.map((o) => (
+        <article class="ph-card" data-reveal>
+          <span class="ph-card__num">{o.n}</span>
+          <h3>{o.title}</h3>
+          <p>{o.body}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+
+  <!-- ── NDA note ─────────────────────────────────────────────────────── -->
+  <div class="ph-inner ph-nda">
+    <p>Surface design withheld at Philips’ request.</p>
+  </div>
+</section>
+
+<style>
+  .ph {
+    --paper: #f3f2f1;                    /* off-white text */
+    --body: rgba(243, 242, 241, 0.72);   /* muted body copy */
+    --card: #161616;
+    --line: #333333;
+    background: #000000;
+    color: var(--paper);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(3rem, 6vw, 6rem);
+    padding-bottom: clamp(2.5rem, 5vw, 5rem);
+    width: 100%;
+    overflow-x: clip;
+  }
+
+  .ph-inner {
+    width: 100%;
+    max-width: var(--case-max);
+    margin-inline: auto;
+    padding-inline: var(--case-pad);
+  }
+
+  /* ── Shared type ────────────────────────────────────────────────────── */
+  .ph-display {
+    font-weight: 800;
+    color: var(--accent);
+    font-size: var(--fs-display);
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .ph-sub { font-weight: 300; font-size: clamp(1.05rem, 1.4vw, 1.5rem); color: var(--paper); }
+  .ph p { font-weight: 300; font-size: var(--fs-body); line-height: 1.6; color: var(--body); }
+  .ph strong { font-weight: 700; color: var(--paper); }
+  .ph-stack { display: flex; flex-direction: column; gap: clamp(1.25rem, 2.5vw, 2rem); }
+  .ph-stack--lead > p { font-size: clamp(1.05rem, 1.4vw, 1.5rem); color: var(--paper); font-weight: 300; }
+
+  /* ── Hero ───────────────────────────────────────────────────────────── */
+  .ph-hero { background: #000; }
+  .ph-hero__grid {
+    min-height: min(82vh, 820px);
+    display: grid;
+    grid-template-columns: 1.02fr 0.98fr;
+    grid-template-rows: auto 1fr;
+    align-items: center;
+    column-gap: clamp(1rem, 3vw, 3rem);
+    padding-block: clamp(1.75rem, 3.5vw, 3rem);
+  }
+  .ph-hero__meta {
+    grid-column: 1; grid-row: 1; align-self: start;
+    display: flex; flex-direction: column; gap: 0.3rem;
+    font-weight: 300; font-size: var(--fs-small); color: var(--accent);
+  }
+  .ph-hero__logo {
+    grid-column: 2; grid-row: 1;
+    justify-self: end; align-self: start;
+    width: clamp(120px, 13vw, 190px); height: auto;
+  }
+  .ph-hero__title { grid-column: 1; grid-row: 2; align-self: center; }
+  .ph-hero__title h1 {
+    font-weight: 900; color: var(--accent);
+    font-size: clamp(2.75rem, 7vw, 6.5rem);
+    line-height: 0.92; letter-spacing: -0.04em; margin: 0;
+  }
+  .ph-hero__title p {
+    margin-top: 0.8rem; font-weight: 700; color: var(--accent);
+    font-size: clamp(1.05rem, 2.2vw, 2rem); max-width: 22ch;
+  }
+  .ph-hero__render {
+    grid-column: 2; grid-row: 2;
+    justify-self: end; align-self: center;
+    width: 100%; max-width: 820px; height: auto; object-fit: contain;
+  }
+
+  /* ── Editorial rows ─────────────────────────────────────────────────── */
+  .ph-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 6vw, 6.5rem); align-items: center;
+  }
+  /* Stretch the material render to the full height of the title+text column so
+     its top and bottom edges line up with the copy beside it. */
+  .ph-row--material { grid-template-columns: 0.75fr 1.25fr; align-items: stretch; gap: clamp(2rem, 5vw, 5rem); }
+  .ph-material__img { width: 100%; height: 100%; min-height: clamp(360px, 44vw, 640px); object-fit: cover; border-radius: var(--radius-lg, 20px); }
+
+  /* ── Persona card ───────────────────────────────────────────────────── */
+  .ph-persona {
+    margin: 0; background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius-lg, 20px); overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .ph-persona__img { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; }
+  .ph-persona figcaption {
+    display: flex; flex-direction: column; gap: 0.4rem;
+    padding: clamp(1.1rem, 1.8vw, 1.6rem) clamp(1.25rem, 2vw, 1.75rem) clamp(1.25rem, 2vw, 1.75rem);
+  }
+  .ph-persona figcaption strong { font-weight: 700; font-size: var(--fs-h3); color: var(--paper); }
+  .ph-persona figcaption span { font-weight: 300; font-size: var(--fs-small); color: var(--body); }
+
+  /* ── Initial constraints · tensions ─────────────────────────────────── */
+  .ph-tensions { display: flex; flex-direction: column; gap: clamp(1.75rem, 3.5vw, 3rem); }
+  .ph-tensions__head { display: flex; flex-direction: column; gap: 0.75rem; }
+  .ph-tensions__list {
+    list-style: none; margin: 0; padding: 0;
+    display: flex; flex-direction: column; gap: clamp(1rem, 2.2vw, 2rem);
+  }
+  .ph-tension {
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    align-items: center; gap: clamp(1rem, 3vw, 3rem);
+  }
+  .ph-chip {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: clamp(0.8rem, 1.5vw, 1.15rem) clamp(1.5rem, 2.4vw, 2.5rem);
+    font-weight: 500; font-size: clamp(1rem, 1.3vw, 1.35rem); color: var(--paper);
+    box-shadow: 9px 15px 18px -2px rgba(0, 0, 0, 0.25);
+    white-space: nowrap;
+  }
+  .ph-chip--a { justify-self: end; text-align: right; }
+  .ph-chip--b { justify-self: start; }
+  .ph-tension__arrow { justify-self: center; color: var(--accent); font-weight: 700; font-size: clamp(1.5rem, 2.4vw, 2.25rem); }
+
+  /* ── Two archetypes ─────────────────────────────────────────────────── */
+  .ph-archetypes { display: flex; flex-direction: column; gap: clamp(1.75rem, 3.5vw, 3rem); }
+  .ph-arch__grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.5rem, 4vw, 4rem); align-items: stretch; }
+  .ph-arch {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius-lg, 20px); overflow: hidden;
+    display: flex; flex-direction: column;
+    padding: clamp(1.75rem, 3vw, 3.5rem) clamp(1.5rem, 2.5vw, 2.75rem) clamp(1.75rem, 2.8vw, 2.5rem);
+    gap: clamp(1.25rem, 2.5vw, 2rem);
+  }
+  /* Identical media footprint in both cards. The box aspect matches the taller
+     render, so `contain` scales BOTH images to the full box width (equal
+     horizontal space, proportions kept) and centres the shorter one vertically
+     — the two products line up on their centres. */
+  .ph-arch__media {
+    width: 100%; max-width: 460px; margin-inline: auto;
+    aspect-ratio: 455 / 443;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ph-arch__media :global(img) { width: 100%; height: 100%; object-fit: contain; object-position: center; }
+  .ph-arch__body { display: flex; flex-direction: column; gap: 1rem; }
+  .ph-arch__name { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .ph-arch__name h3 { font-weight: 700; font-size: var(--fs-h3); color: var(--paper); margin: 0; }
+  .ph-arch__badge {
+    background: var(--accent); color: var(--accent-text, #161616);
+    border-radius: 999px; padding: 6px 16px;
+    font-weight: 600; font-size: 0.95rem;
+  }
+  .ph-arch__body p { font-size: clamp(1rem, 1.2vw, 1.25rem); color: var(--body); }
+
+  /* ── From sketch to manufacture ─────────────────────────────────────── */
+  .ph-process { display: flex; flex-direction: column; gap: clamp(1.75rem, 3.5vw, 3rem); }
+  .ph-process__head { display: flex; flex-direction: column; gap: 0.75rem; }
+  .ph-process__strip {
+    width: 100%; height: auto; object-fit: contain;
+    border-radius: var(--radius-lg, 20px);
+  }
+  .ph-stages {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+  }
+  .ph-stage { display: flex; flex-direction: column; gap: 0.6rem; }
+  .ph-stage__num { color: var(--accent); font-weight: 700; font-size: 0.95rem; }
+  .ph-stage__title { font-weight: 700; font-size: var(--fs-h3); color: var(--paper); margin: 0; }
+  .ph-stage p { font-size: var(--fs-small); line-height: 1.55; }
+
+  /* ── Outcome cards ──────────────────────────────────────────────────── */
+  .ph-outcome { display: flex; flex-direction: column; gap: clamp(1.5rem, 3vw, 2.5rem); }
+  .ph-cards {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: clamp(1.25rem, 2.5vw, 2rem); align-items: stretch;
+  }
+  .ph-card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius-lg, 20px);
+    padding: clamp(1.5rem, 2.4vw, 2.25rem);
+    display: flex; flex-direction: column; gap: 0.85rem;
+  }
+  .ph-card__num { color: var(--accent); font-weight: 700; font-size: 0.95rem; }
+  .ph-card h3 { font-weight: 700; font-size: var(--fs-h3); color: var(--paper); line-height: 1.15; margin: 0; }
+  .ph-card p { font-size: clamp(0.95rem, 1.1vw, 1.15rem); line-height: 1.55; }
+
+  /* ── NDA note ───────────────────────────────────────────────────────── */
+  .ph-nda { margin-top: clamp(0.5rem, 2vw, 1.5rem); }
+  .ph-nda p { font-weight: 300; font-size: var(--fs-small); color: var(--body); font-style: italic; }
+
+  /* ── Responsive ─────────────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .ph-hero__grid { grid-template-columns: 1fr; grid-template-rows: auto auto auto; }
+    .ph-hero__meta { grid-column: 1; grid-row: 1; }
+    .ph-hero__logo { grid-column: 1; grid-row: 1; }
+    .ph-hero__render { grid-column: 1; grid-row: 2; justify-self: center; margin-block: 1.5rem; }
+    .ph-hero__title { grid-column: 1; grid-row: 3; }
+
+    .ph-row, .ph-row--material { grid-template-columns: 1fr; }
+    .ph-row--persona .ph-stack--lead,
+    .ph-row--material .ph-stack--lead { order: -1; }
+
+    .ph-tension { grid-template-columns: 1fr; gap: 0.5rem; justify-items: center; }
+    .ph-chip { white-space: normal; text-align: center; }
+    .ph-chip--a, .ph-chip--b { justify-self: center; text-align: center; }
+    .ph-tension__arrow { transform: rotate(90deg); }
+
+    .ph-arch__grid { grid-template-columns: 1fr; }
+    .ph-stages { grid-template-columns: repeat(2, 1fr); }
+    .ph-cards { grid-template-columns: 1fr; }
+  }
+</style>

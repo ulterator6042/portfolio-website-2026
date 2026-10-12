@@ -154,5 +154,14 @@ const catTag = (id: string) =>
     opacity: 1;
     transform: none;
   }
+
+  /* On mobile the menu lives in a tap-driven drawer with no hover, so the
+     discipline chips are shown at rest instead of fading in on hover. */
+  @media (max-width: 720px) {
+    .pmenu__tag {
+      opacity: 1;
+      transform: none;
+    }
+  }
 </style>
 

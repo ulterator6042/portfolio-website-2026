@@ -23,27 +23,66 @@ interface Props {
 const { src, caption, poster, ratio = '16 / 9', class: klass } = Astro.props;
 ---
 <figure class:list={['case-video', klass]}>
-  <video
-    class="case-video__el"
-    data-src={src}
-    poster={poster}
-    style={`aspect-ratio:${ratio}`}
-    muted
-    loop
-    playsinline
-    preload="none"
-  ></video>
+  <div class="case-video__frame">
+    <video
+      class="case-video__el"
+      data-src={src}
+      poster={poster}
+      style={`aspect-ratio:${ratio}`}
+      muted
+      loop
+      playsinline
+      preload="none"
+    ></video>
+    {/* Mobile-only fullscreen affordance — touch has no hover, so always shown. */}
+    <button
+      type="button"
+      class="case-video__fs"
+      aria-label="Play video fullscreen"
+      data-video-fs
+    >
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3" />
+      </svg>
+    </button>
+  </div>
   {caption && <figcaption>{caption}</figcaption>}
 </figure>
 
 <style>
   .case-video { margin: 0; display: flex; flex-direction: column; gap: 1rem; }
+  .case-video__frame { position: relative; }
   .case-video__el {
     width: 100%;
     object-fit: cover;
     background: rgba(128, 128, 128, 0.12);
     border: 1px solid rgba(128, 128, 128, 0.22);
     border-radius: var(--radius-lg, 20px);
+  }
+
+  /* Fullscreen button: desktop has hover/scroll-to-watch and no need for it, so
+     it is hidden there and only revealed on the mobile (touch) breakpoint. */
+  .case-video__fs {
+    display: none;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 38px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.42);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    color: #fff;
+    cursor: pointer;
+    z-index: 2;
+  }
+  @media (max-width: 720px) {
+    .case-video__fs { display: inline-flex; }
   }
   .case-video figcaption {
     text-align: center;
@@ -78,6 +117,32 @@ const { src, caption, poster, ratio = '16 / 9', class: klass } = Astro.props;
       if (!v.dataset.observed) { io!.observe(v); v.dataset.observed = '1'; }
     });
   }
-  if (document.readyState !== 'loading') scanVideos();
-  else document.addEventListener('DOMContentLoaded', scanVideos);
+
+  // Mobile fullscreen: tap the button to open its sibling video fullscreen.
+  // iOS Safari only exposes the native player via webkitEnterFullscreen on the
+  // <video> itself; other browsers use the standard Fullscreen API. The src is
+  // attached on demand in case the button is tapped before the video scrolls in.
+  function bindFullscreen() {
+    document.querySelectorAll<HTMLButtonElement>('[data-video-fs]').forEach((btn) => {
+      if (btn.dataset.fsBound) return;
+      btn.dataset.fsBound = '1';
+      btn.addEventListener('click', () => {
+        const video = btn.parentElement?.querySelector<HTMLVideoElement>('.case-video__el');
+        if (!video) return;
+        if (!video.src && video.dataset.src) video.src = video.dataset.src;
+        video.muted = false;
+        const anyVideo = video as HTMLVideoElement & { webkitEnterFullscreen?: () => void };
+        if (typeof anyVideo.webkitEnterFullscreen === 'function') {
+          video.play().catch(() => {});
+          anyVideo.webkitEnterFullscreen();
+        } else if (video.requestFullscreen) {
+          video.requestFullscreen().then(() => video.play().catch(() => {})).catch(() => {});
+        }
+      });
+    });
+  }
+
+  function initCaseVideos() { scanVideos(); bindFullscreen(); }
+  if (document.readyState !== 'loading') initCaseVideos();
+  else document.addEventListener('DOMContentLoaded', initCaseVideos);
 </script>
