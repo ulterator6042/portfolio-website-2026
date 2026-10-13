@@ -17,12 +17,47 @@ interface Props {
 }
 const { projects, current, dotColor = 'var(--text)' } = Astro.props;
 
-// Compact discipline label shown on hover (UI/UX vs Product).
-const catTag = (id: string) =>
-  id === 'uiux' ? 'UI/UX' : id === 'product' ? 'Product' : id;
+// The menu is split into disciplines, each with a heading + divider. Industrial
+// design first, then UI/UX. Projects keep the order defined by their `order`
+// field; only the grouping is applied here.
+const groups = [
+  { id: 'product', label: 'Industrial Design' },
+  { id: 'uiux', label: 'UI/UX' },
+] as const;
+const sections = groups
+  .map((g) => ({ ...g, items: projects.filter((p) => p.data.category === g.id) }))
+  .filter((g) => g.items.length > 0);
+// Anything that doesn't fall into a named group still shows (ungrouped, no
+// heading) so a new category never silently disappears from the menu.
+const known = new Set(groups.map((g) => g.id));
+const ungrouped = projects.filter((p) => !known.has(p.data.category as typeof groups[number]['id']));
 ---
 <nav class="pmenu" aria-label="Projects" style={`--dot-color:${dotColor}`}>
-  {projects.map((p) => (
+  {sections.map((section) => (
+    <div class="pmenu__group">
+      <p class="pmenu__heading">{section.label}</p>
+      {section.items.map((p) => (
+        <a
+          class:list={['pmenu__item', { active: p.id === current }]}
+          href={projectHref(p)}
+          aria-current={p.id === current ? 'page' : undefined}
+        >
+          <span class="pmenu__dot" aria-hidden="true"></span>
+          <span class="pmenu__name">
+            {p.data.title}
+            {/* Real underline element on the current project. It carries a shared
+                view-transition-name so the browser morphs it (width + colour) from
+                the old project to the new one when you navigate. */}
+            {p.id === current && (
+              <span class="pmenu__rule" transition:name="proj-underline"></span>
+            )}
+          </span>
+          {p.data.wip && <span class="pmenu__tag">Soon</span>}
+        </a>
+      ))}
+    </div>
+  ))}
+  {ungrouped.map((p) => (
     <a
       class:list={['pmenu__item', { active: p.id === current }]}
       href={projectHref(p)}
@@ -31,14 +66,11 @@ const catTag = (id: string) =>
       <span class="pmenu__dot" aria-hidden="true"></span>
       <span class="pmenu__name">
         {p.data.title}
-        {/* Real underline element on the current project. It carries a shared
-            view-transition-name so the browser morphs it (width + colour) from
-            the old project to the new one when you navigate. */}
         {p.id === current && (
           <span class="pmenu__rule" transition:name="proj-underline"></span>
         )}
       </span>
-      <span class="pmenu__tag">{p.data.wip ? 'Soon' : catTag(p.data.category)}</span>
+      {p.data.wip && <span class="pmenu__tag">Soon</span>}
     </a>
   ))}
 </nav>
@@ -58,6 +90,23 @@ const catTag = (id: string) =>
     padding: 4px 18px 8px 18px; /* item text lands at 30px, aligned with name */
   }
   .pmenu::-webkit-scrollbar { display: none; } /* Chromium/WebKit */
+
+  /* ── Discipline group ───────────────────────────────────────────────────
+     Each section is a small uppercase heading over a hairline divider, then
+     its projects. The first group drops its top gap so it sits snug under the
+     name. */
+  .pmenu__group { display: flex; flex-direction: column; gap: 2px; }
+  .pmenu__group + .pmenu__group { margin-top: 18px; }
+  .pmenu__heading {
+    margin: 0 0 6px;
+    padding: 0 12px 6px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
 
   /* ── Item ───────────────────────────────────────────────────────────── */
   .pmenu__item {
@@ -96,7 +145,7 @@ const catTag = (id: string) =>
 
   .pmenu__name {
     position: relative;
-    font-weight: 600;
+    font-weight: 500;
     font-size: var(--pmenu-fs);
     line-height: 1.2;
     letter-spacing: -0.01em;
@@ -120,7 +169,7 @@ const catTag = (id: string) =>
      Only the current project keeps the accent colour + underline. */
   .pmenu__item:hover .pmenu__name,
   .pmenu__item:focus-visible .pmenu__name { color: var(--text); }
-  .pmenu__item.active .pmenu__name { color: var(--accent); }
+  .pmenu__item.active .pmenu__name { color: var(--accent); font-weight: 600; }
 
   /* Drive the underline morph: interpolate position + width over the same beat
      as the page slide; the old/new colours cross-fade as it travels. */
