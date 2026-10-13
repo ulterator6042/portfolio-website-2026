@@ -1,28 +1,29 @@
 ---
 /**
- * Philips Travel Case — dark-theme product case study, ported from the Figma
- * "Philips Travel Case demo" page (node 165:508). Self-contained hero
+ * Travel Case — dark-theme product case study, ported from the Figma
+ * "Travel Case demo" page (node 165:508). Self-contained hero
  * (hideHeader: true). Shares the same type scale, editorial rhythm and dark
  * card language as the Grab / Product Photography studies.
  *
- * Copy is verbatim from Figma (typos fixed only: "manifacture"→"manufacture").
+ * De-branded for NDA safety: the client's name, wordmark logo and any on-render
+ * logo have been removed/blurred. Copy is verbatim from Figma (typos fixed
+ * only: "manifacture"→"manufacture").
  * NOTE: the Figma archetype labels read Eggshell (left, "Chosen") / Donut
- * (right), but every other signal — the descriptions, the chosen badge and the
- * Outcome copy ("the chosen donut… sent to manufacturers") — indicates the two
+ * (right), but every other signal (the descriptions, the chosen badge and the
+ * Outcome copy, "the chosen donut… sent to manufacturers") indicates the two
  * names are swapped. Ported as authored; flagged for the author to confirm.
  *
- * Surface design is withheld at Philips' request (see closing note); the
+ * Surface design is withheld at the client's request (see closing note); the
  * renders shown are the ones placed in the panel.
  */
 import { Image } from 'astro:assets';
 import CaseScrollIndicator from './CaseScrollIndicator.astro';
-import hero from '../../assets/philips/hero.png';
-import philipsLogo from '../../assets/philips/philips-logo.png';
-import persona from '../../assets/philips/persona.png';
-import archetypeLeft from '../../assets/philips/archetype-left.png';
-import archetypeRight from '../../assets/philips/archetype-right.png';
-import process from '../../assets/philips/process.png';
-import felt from '../../assets/philips/felt.png';
+import hero from '../../assets/travel-case/hero.png';
+import persona from '../../assets/travel-case/persona.png';
+import archetypeLeft from '../../assets/travel-case/archetype-left.png';
+import archetypeRight from '../../assets/travel-case/archetype-right.png';
+import process from '../../assets/travel-case/process.png';
+import felt from '../../assets/travel-case/felt.png';
 
 // ── Initial constraints · the two poles every decision lived between ─────────
 const tensions = [
@@ -72,12 +73,11 @@ const outcomes = [
   <header class="ph-hero">
     <div class="ph-inner ph-hero__grid" data-reveal-group>
       <div class="ph-hero__meta">
-        <p data-reveal>Internship · Philips — 2024</p>
+        <p data-reveal>Internship · 2024</p>
         <p data-reveal>Tools: SolidWorks, KeyShot</p>
       </div>
-      <Image class="ph-hero__logo" src={philipsLogo} alt="Philips" widths={[250, 500]} sizes="190px" />
       <div class="ph-hero__title">
-        <h1 data-reveal>Philips Travel Case</h1>
+        <h1 data-reveal>Travel Case</h1>
         <p data-reveal>A compact travel case for a premium multishaver system.</p>
       </div>
       <Image
@@ -219,7 +219,7 @@ const outcomes = [
 
   <!-- ── NDA note ─────────────────────────────────────────────────────── -->
   <div class="ph-inner ph-nda">
-    <p>Surface design withheld at Philips’ request.</p>
+    <p>Surface design withheld at the client’s request.</p>
   </div>
 </section>
 
@@ -276,11 +276,6 @@ const outcomes = [
     grid-column: 1; grid-row: 1; align-self: start;
     display: flex; flex-direction: column; gap: 0.3rem;
     font-weight: 300; font-size: var(--fs-small); color: var(--accent);
-  }
-  .ph-hero__logo {
-    grid-column: 2; grid-row: 1;
-    justify-self: end; align-self: start;
-    width: clamp(120px, 13vw, 190px); height: auto;
   }
   .ph-hero__title { grid-column: 1; grid-row: 2; align-self: center; }
   .ph-hero__title h1 {
@@ -416,7 +411,6 @@ const outcomes = [
   @media (max-width: 900px) {
     .ph-hero__grid { grid-template-columns: 1fr; grid-template-rows: auto auto auto; }
     .ph-hero__meta { grid-column: 1; grid-row: 1; }
-    .ph-hero__logo { grid-column: 1; grid-row: 1; }
     .ph-hero__render { grid-column: 1; grid-row: 2; justify-self: center; margin-block: 1.5rem; }
     .ph-hero__title { grid-column: 1; grid-row: 3; }
 

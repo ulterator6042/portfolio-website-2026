@@ -1,27 +1,309 @@
 ---
 /**
- * Talaris — placeholder page. The case study is still under construction, so
- * the page mirrors the home hero (see index.astro): a single large, left-
- * aligned line, vertically centred beside the sidebar. Nothing else.
+ * Talaris — light-theme product case study, ported from the Figma "Talaris Demo"
+ * page (node 88:2406). Self-contained hero (hideHeader: true). Shares the type
+ * scale and editorial rhythm of the Chlo study, but section labels are modest
+ * subtitles (not full display headings) and the renders are transparent cutouts
+ * floating on white.
+ *
+ * Copy is verbatim from Figma (typos fixed only: "strenght"→strength,
+ * "phisycal"→physical, "composed by"→composed of, double spaces collapsed).
+ * Accent is a medical teal (#0E9E8B) — the same teal baked into the exported
+ * problem-diagram leader lines.
+ *
+ * Image assets in src/assets/talaris/ were exported from Figma, then had their
+ * baked #F6F6F6 background keyed out to true transparency (border flood-fill)
+ * so they sit cleanly on the white page. The hero stays a full photographic
+ * scene, bled to the right edge with a white gradient blending its left side.
  */
+import { Image } from 'astro:assets';
+import CaseScrollIndicator from './CaseScrollIndicator.astro';
+import hero from '../../assets/talaris/hero.png';
+import problem from '../../assets/talaris/problem.png';
+import step1 from '../../assets/talaris/step-1.png';
+import step2 from '../../assets/talaris/step-2.png';
+import step3 from '../../assets/talaris/step-3.png';
+import step4 from '../../assets/talaris/step-4.png';
+import cable from '../../assets/talaris/cable.png';
+import electrodes from '../../assets/talaris/electrodes.png';
+import remote from '../../assets/talaris/remote.png';
+
+const steps = [
+  { img: step1, n: '01', alt: 'A person on a recumbent FES bike wearing the belt device', body: 'First, wear the belt device' },
+  { img: step2, n: '02', alt: 'The user connecting a cable to the bottom of the belt device', body: 'Next, connect the cables to the bottom of the device' },
+  { img: step3, n: '03', alt: 'Cables and electrodes running down the legs, snapped into place', body: 'Apply the electrodes on the specified areas, snapping them to the cable' },
+  { img: step4, n: '04', alt: 'A hand holding the remote to start a workout', body: 'Lastly, start the workout through the remote interface' },
+];
+
+const controls = [
+  { title: 'Signal LEDs', body: 'show battery status or connection errors.' },
+  { title: 'Emergency stop button', body: 'is reserved a central spot for easy immediate access.' },
+  { title: 'Magnetic connectors', body: 'help guide the cable in the slot for an easy connection and removal.' },
+];
 ---
-<section class="wip" data-reveal-group>
-  <h1 class="wip__title" data-reveal>Under construction!</h1>
+
+<section class="tal">
+  <CaseScrollIndicator />
+
+  <!-- ── Hero ─────────────────────────────────────────────────────────── -->
+  <header class="tal-hero">
+    <div class="tal-hero__media">
+      <Image
+        class="tal-hero__img"
+        src={hero}
+        alt="A person exercising on a recumbent FES bike while wearing the Talaris belt"
+        widths={[900, 1400, 1920]}
+        sizes="(max-width: 900px) 100vw, 64vw"
+      />
+      <div class="tal-hero__fade" aria-hidden="true"></div>
+    </div>
+    <div class="tal-inner tal-hero__content" data-reveal-group>
+      <div class="tal-hero__meta">
+        <p data-reveal>University Project · 2024</p>
+        <p data-reveal>Tools: Autodesk Solidworks, Keyshot</p>
+      </div>
+      <div class="tal-hero__title">
+        <h1 data-reveal>Talaris</h1>
+        <p data-reveal>FES therapy device for paraplegic patients</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── What is Talaris? ─────────────────────────────────────────────── -->
+  <div class="tal-inner tal-stack tal-stack--lead" data-reveal-group>
+    <h2 class="tal-display" data-reveal>What is Talaris?</h2>
+    <p data-reveal>Talaris is a tool that will make FES therapy more accessible in private homes,
+      rather than having to rely on hospital equipment, helping the patient to find a new strength
+      both in physical and mental terms.</p>
+    <p data-reveal>The kit is composed of the belt, which controls the power output, 4 cables to
+      manage the connections with the electrodes, 20 electrodes that can be placed according to the
+      patient&rsquo;s needs, and the remote to set up and launch workouts.</p>
+  </div>
+
+  <!-- ── The problem ──────────────────────────────────────────────────── -->
+  <div class="tal-inner tal-row tal-row--problem" data-reveal-group>
+    <div class="tal-stack tal-stack--lead">
+      <h2 class="tal-display" data-reveal>The problem</h2>
+      <p data-reveal>Functional electrical stimulation technology (FES) has been proven helpful in
+        rehabilitating people with paraplegia. However, various structural problems, costs, and
+        availability, deny patients the right amount of care they need for a successful therapy.
+        Talaris tackles these issues by focusing on making this technology easier to produce and
+        distribute for private consumers.</p>
+    </div>
+    <Image
+      data-reveal
+      class="tal-problem__img"
+      src={problem}
+      alt="An existing FES exercise bike annotated with its problems: loose cables, uncomfortable attachments and messy controls"
+      widths={[600, 900, 1200]}
+      sizes="(max-width: 900px) 100vw, 46vw"
+    />
+  </div>
+
+  <!-- ── How it works · usage steps ───────────────────────────────────── -->
+  <div class="tal-inner tal-howto" data-reveal-group>
+    <h2 class="tal-display" data-reveal>How it works</h2>
+    <ol class="tal-steps">
+      {steps.map((s) => (
+        <li class="tal-step" data-reveal>
+          <div class="tal-step__media">
+            <Image class="tal-step__img" src={s.img} alt={s.alt} widths={[300, 600]} sizes="(max-width: 900px) 45vw, 22vw" />
+          </div>
+          <span class="tal-step__num">{s.n}</span>
+          <p>{s.body}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+
+  <!-- ── The elastic cable ────────────────────────────────────────────── -->
+  <div class="tal-inner tal-row tal-row--feature" data-reveal-group>
+    <div class="tal-stack tal-stack--lead">
+      <h3 class="tal-term" data-reveal>The elastic cable</h3>
+      <p data-reveal>Realized in silicone to ensure elasticity, the copper cables are also printed on
+        a wavy silicone mold to allow them to stretch following the movement of the body.</p>
+    </div>
+    <div class="tal-render" data-reveal>
+      <Image src={cable} alt="Render of the elastic silicone cable with its magnetic end connector" widths={[700, 1100]} sizes="(max-width: 900px) 100vw, 48vw" />
+    </div>
+  </div>
+
+  <!-- ── Snap-on electrodes ───────────────────────────────────────────── -->
+  <div class="tal-inner tal-row tal-row--feature tal-row--flip" data-reveal-group>
+    <div class="tal-render" data-reveal>
+      <Image src={electrodes} alt="Exploded render of an electrode and its snap-on connector" widths={[700, 1100]} sizes="(max-width: 900px) 100vw, 42vw" />
+    </div>
+    <div class="tal-stack tal-stack--lead">
+      <h3 class="tal-term" data-reveal>Snap-on electrodes</h3>
+      <p data-reveal>The electrodes fit on the cable thanks to the snap-on fit, to ensure inclusion for
+        any body size. Production is standardized to fit any commercially available electrode.</p>
+    </div>
+  </div>
+
+  <!-- ── Control & feedback · the remote ──────────────────────────────── -->
+  <div class="tal-inner tal-row tal-row--control" data-reveal-group>
+    <div class="tal-stack">
+      <h3 class="tal-term" data-reveal>Control &amp; feedback</h3>
+      <ul class="tal-controls">
+        {controls.map((c) => (
+          <li class="tal-control" data-reveal>
+            <strong>{c.title}</strong> {c.body}
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div class="tal-render tal-render--control" data-reveal>
+      <Image src={remote} alt="Top render of the remote and belt controller: four status LEDs, a central emergency-stop button and magnetic connectors along the base" widths={[700, 1100]} sizes="(max-width: 900px) 100vw, 46vw" />
+    </div>
+  </div>
 </section>
 
 <style>
-  /* Match the home intro: fill the viewport height and centre a single line,
-     left-aligned, using the base h1 style. */
-  .wip {
-    min-height: 100dvh;
+  .tal {
+    --hair: rgba(18, 26, 30, 0.1);
+    --body: rgba(18, 26, 30, 0.74);
+    background: #ffffff;
+    color: #121a1e;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(3rem, 6.5vw, 7rem);
+    padding-bottom: clamp(2.5rem, 5vw, 5rem);
+    width: 100%;
+    overflow-x: clip;
+  }
+
+  .tal-inner {
+    width: 100%;
+    max-width: var(--case-max);
+    margin-inline: auto;
+    padding-inline: var(--case-pad);
+  }
+
+  /* ── Shared type ────────────────────────────────────────────────────── */
+  /* Full display heading for the narrative sections. */
+  .tal-display {
+    font-weight: 800;
+    color: var(--accent);
+    font-size: var(--fs-display);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  /* Feature-term label: just bold + accent, not a full display header. */
+  .tal-term {
+    font-weight: 700;
+    color: var(--accent);
+    font-size: clamp(1.1rem, 1.4vw, 1.4rem);
+    line-height: 1.3;
+    margin: 0;
+  }
+  .tal p { font-weight: 300; font-size: var(--fs-body); line-height: 1.6; color: var(--body); }
+  .tal strong { font-weight: 700; color: #121a1e; }
+  .tal-stack { display: flex; flex-direction: column; gap: clamp(1rem, 2vw, 1.5rem); }
+  .tal-stack--lead > p { font-size: clamp(1.05rem, 1.35vw, 1.4rem); line-height: 1.55; }
+
+  /* ── Hero · full-bleed photo + left gradient ────────────────────────── */
+  .tal-hero {
+    position: relative;
+    isolation: isolate;
+    min-height: min(86vh, 860px);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+  .tal-hero__media {
+    position: absolute;
+    inset: 0 0 0 auto;
+    width: min(66%, 1200px);
+    z-index: -1;
+  }
+  .tal-hero__img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+  /* White gradient dissolving the image's left edge into the page. */
+  .tal-hero__fade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, #fff 0%, rgba(255, 255, 255, 0.92) 16%, rgba(255, 255, 255, 0) 46%);
+  }
+  .tal-hero__content {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: clamp(2rem, 6vw, 5rem);
+    gap: clamp(2rem, 7vw, 5rem);
+    padding-block: clamp(2rem, 5vw, 4rem);
   }
-  .wip__title {
-    max-width: 16ch;
-    font-size: clamp(2.5rem, 6vw, 5rem);
-    letter-spacing: -0.02em;
+  .tal-hero__meta {
+    display: flex; flex-direction: column; gap: 0.3rem;
+    font-weight: 300; font-size: var(--fs-small); color: var(--body);
+  }
+  .tal-hero__title h1 {
+    font-weight: 900; font-size: var(--fs-hero);
+    line-height: 0.9; letter-spacing: -0.03em; margin: 0;
+  }
+  .tal-hero__title p {
+    margin-top: 0.7rem; font-weight: 700;
+    font-size: clamp(1.15rem, 2.6vw, 2.25rem); max-width: 18ch;
+  }
+
+  /* ── Editorial rows ─────────────────────────────────────────────────── */
+  .tal-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 6vw, 6rem); align-items: center;
+  }
+  .tal-problem__img { width: 100%; height: auto; }
+  .tal-render { display: flex; align-items: center; justify-content: center; }
+  .tal-render :global(img) {
+    width: 100%; height: auto;
+    max-height: clamp(300px, 40vw, 520px);
+    object-fit: contain;
+  }
+  .tal-render--control :global(img) { max-height: clamp(280px, 34vw, 460px); }
+
+  /* ── How it works · steps ───────────────────────────────────────────── */
+  .tal-howto { display: flex; flex-direction: column; gap: clamp(1.5rem, 3vw, 2.5rem); }
+  .tal-steps {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    align-items: start;
+  }
+  /* Equal-height media cell per step so the figures share a ground line and the
+     numbers + captions line up across all four columns. */
+  .tal-step { margin: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+  .tal-step__media {
+    height: clamp(210px, 22vw, 290px);
+    display: flex; align-items: flex-start; justify-content: center;
+  }
+  .tal-step__img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+  .tal-step__num { color: var(--accent); font-weight: 700; font-size: 0.95rem; letter-spacing: 0.08em; margin-top: 0.4rem; }
+  .tal-step p { font-size: var(--fs-small); line-height: 1.5; }
+
+  /* ── Control & feedback ─────────────────────────────────────────────── */
+  .tal-controls { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: clamp(1rem, 2vw, 1.5rem); }
+  .tal-control {
+    font-weight: 300; font-size: clamp(1rem, 1.2vw, 1.25rem); line-height: 1.55; color: var(--body);
+    padding-left: 1.1rem; border-left: 2px solid var(--accent);
+  }
+
+  /* ── Responsive ─────────────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .tal-hero {
+      min-height: 0;
+      flex-direction: column;
+      align-items: stretch;
+      padding-block: clamp(1.5rem, 6vw, 3rem);
+    }
+    .tal-hero__media { position: static; width: 100%; height: auto; order: 2; margin-top: 1.25rem; z-index: auto; }
+    .tal-hero__img { height: auto; }
+    .tal-hero__fade { display: none; }
+    .tal-hero__content { order: 1; gap: 1.25rem; padding-block: 0; }
+
+    .tal-row, .tal-row--problem, .tal-row--control { grid-template-columns: 1fr; }
+    .tal-row--problem .tal-stack--lead,
+    .tal-row--control .tal-stack { order: -1; }
+    .tal-row--flip .tal-render { order: 1; }
+
+    .tal-steps { grid-template-columns: repeat(2, 1fr); }
+    .tal-step__media { height: clamp(170px, 42vw, 240px); }
   }
 </style>
